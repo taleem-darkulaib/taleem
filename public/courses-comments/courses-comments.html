@@ -1,0 +1,209 @@
+<div ng-controller="courses-comments">
+	
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group">
+					<label for="level" class="form-label">
+						<i class="bi bi-layers"></i>
+						{{labels.level}}
+					</label>
+					<select id="level" ng-model="level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in levels | orderBy:'index'" ng-disabled="submitted" ng-change="updateLevel(true)">
+						<option disabled="disabled" value="">اختر</option>
+					</select>
+				</div>
+			</div>
+			
+			<div class="col-md-4">
+				<div class="form-group">
+					<label for="course" class="form-label">
+						<i class="bi bi-book"></i>
+						{{labels.course}}
+					</label>
+					<select id="course" ng-model="course" class="form-select" placeholder="{{labels.course}}" ng-options="course.id as course.name for course in levelCourses" required="required" ng-disabled="submitted" ng-change="updateCourse()">
+						<option disabled="disabled" value="">اختر {{labels.course}}</option>
+					</select>
+				</div>
+			</div>
+			
+			<div class="col-md-4">
+				<div class="form-group">
+					<label for="teacher" class="form-label">
+						<i class="bi bi-person-badge"></i>
+						المعلم
+					</label>
+					<div class="input-group">
+						<span class="input-group-text">
+							<i class="bi bi-person-badge"></i>
+						</span>
+						<input id="teacher" ng-value="teachers[teacher].name" class="form-control" placeholder="المعلم" readonly="readonly" ng-disabled="submitted">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="card" ng-show="level != null && course != null">
+		<div class="card-header d-flex justify-content-between align-items-center py-3">
+			<div class="d-flex align-items-center">
+				<i class="bi bi-table"></i>
+				ملاحظات مادة {{courses[course].name}}
+			</div>
+			<button class="btn btn-add" ng-click="toAddComment()" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#commentModal">
+				<i class="bi bi-plus-lg"></i>
+				إضافة ملاحظة جديدة
+			</button>
+		</div>
+		<div class="table-responsive">
+			<table class="table course-comments-table">
+				<thead>
+					<tr>
+						<th>
+							<i class="bi bi-hash"></i>
+						</th>
+						<th>
+							<i class="bi bi-chat-text"></i>
+							محتوى الملاحظة
+						</th>
+						<th>
+							<i class="bi bi-clock"></i>
+							تاريخ الإنشاء
+						</th>
+						<th class="text-center">
+							<i class="bi bi-gear"></i>
+							الإجراءات
+						</th>
+					</tr>
+				</thead>
+					<tr ng-repeat="comment in comments track by $index">
+						<td>
+							<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+						</td>
+						<td>
+							<div class="info-panel">
+								<small class="text-helper">
+									<i class="bi bi-chat-text"></i>
+									<span ng-bind-html="comment.content"></span>
+								</small>
+							</div>
+						</td>
+						<td>
+							{{comment.time}}
+						</td>
+						<td class="text-center">
+							<button class="btn-action-secondary" ng-click="toEditComment(comment)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#commentModal">
+								<i class="bi bi-pencil-square"></i>
+								تعديل
+							</button>
+							<button class="btn btn-delete" ng-click="selectComment(comment)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#deleteCommentModal" ng-if="isStringNotEmpty(comment.id)">
+								<i class="bi bi-trash"></i>
+								حذف
+							</button>
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div id="commentModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-chat-text-fill"></i>
+						</div>
+						تفاصيل ملاحظة {{labels.course}}
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class" ng-show="alert.message">
+						<i class="bi alert-icon" ng-class="alert.icon"></i>
+						<div>
+							<strong class="ms-2">{{alert.title}}</strong> {{alert.message}}
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="content" class="form-label">
+							<i class="bi bi-chat-text"></i>
+							محتوى الملاحظة
+						</label>
+						<textarea id="content" ng-model="comment.content" rows="6" class="form-control comment-textarea" placeholder="اكتب محتوى ملاحظة {{labels.course}} هنا..." required="required" ng-disabled="submitted" maxlength="1000"></textarea>
+						<small class="text-muted">
+							<i class="bi bi-info-circle"></i>
+							الحد الأقصى: 1000 حرف
+						</small>
+						<div class="help-text-enhanced">
+							<small>
+								<i class="bi bi-lightbulb"></i>
+								ستظهر هذه الملاحظة في جميع صفحات هذه {{labels.course}}
+							</small>
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<div class="modal-actions">
+						<button class="btn-action-primary" ng-click="saveCourseComment()">
+							<i class="bi bi-floppy"></i>
+							حفظ الملاحظة
+						</button>
+						<button type="button" class="btn-action-secondary" data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i>
+							إلغاء
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="deleteCommentModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header bg-danger">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-exclamation-triangle-fill"></i>
+						</div>
+						تأكيد حذف الملاحظة
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body text-center">
+					<div class="delete-confirmation-content">
+						<div class="delete-icon">
+							<i class="bi bi-trash3-fill"></i>
+						</div>
+						<h4 class="delete-title">هل أنت متأكد من الحذف؟</h4>
+						<p class="delete-message">
+							سيتم حذف هذه الملاحظة نهائياً من ولن يمكن استعادتها
+						</p>
+						<div>
+							<strong>الملاحظة المحددة:</strong>
+							<div>{{comment.content}}</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<div class="modal-actions">
+						<button type="button" class="btn-action-warning" data-bs-dismiss="modal" ng-click="deleteComment()">
+							<i class="bi bi-trash"></i>
+							تأكيد الحذف
+						</button>
+						<button type="button" class="btn-action-secondary" data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i>
+							إلغاء
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

@@ -1,0 +1,61 @@
+<div ng-controller="nights">
+	
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h3>إدارة الليالي</h3>
+		<button class="btn btn-add" ng-click="addNight()" ng-hide="submitted">
+			<i class="bi bi-plus-lg"></i>
+			إضافة {{addLabel[config.period]}} جديدة
+		</button>
+	</div>
+
+	<div class="list-item-complex list-fade-in" ng-repeat="night in nights track by $index">
+		<div class="list-item-header">
+			<div class="list-title-section">
+				<div class="list-item-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="list-item-title">
+					<i class="bi bi-moon-stars list-icon-md"></i>
+					{{config.period}} رقم {{$index + 1}}
+				</div>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+			<div class="input-group list-input-group">
+				<span class="input-group-text list-switch-container">
+					<div class="form-check form-switch">
+						<input ng-model="night.active" type="checkbox" class="form-check-input form-check-input-lg" ng-value="true" ng-true-value="true" ng-false-value="false" ng-disabled="submitted">
+						<label class="list-switch-label">
+							<span ng-if="night.active" class="status-badge status-badge-active">مفعل</span>
+							<span ng-if="!night.active" class="status-badge status-badge-inactive">معطل</span>
+						</label>
+					</div>
+				</span>
+				<input ng-model="night.name" type="text" class="form-control" placeholder="اسم {{config.period}}" maxlength="20" required="required" autocomplete="off" ng-disabled="submitted">
+				<span class="input-group-text list-order">
+					<i class="bi bi-sort-numeric-down list-icon-sm"></i>
+					{{$index + 1}}
+				</span>
+			</div>
+			
+			<div class="list-help-text">
+				<small class="list-text-helper">
+					<i class="bi bi-info-circle list-icon-sm"></i>
+					أدخل اسماً مميزاً لهذه {{config.period}}
+				</small>
+			</div>
+		</div>
+	</div>
+	
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<div class="spinner-border loading-spinner" role="status" ng-show="loading">
+			<span class="visually-hidden">جاري التحميل...</span>
+		</div>
+		<button class="btn btn-primary" ng-click="saveNights()" ng-hide="loading">
+			<i class="bi bi-floppy"></i>
+			حفظ الليالي
+		</button>
+	</div>
+	
+</div>

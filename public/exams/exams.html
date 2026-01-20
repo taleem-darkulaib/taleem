@@ -1,0 +1,262 @@
+<div ng-controller="exams">
+	
+	<div class="card">
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<div class="d-flex align-items-center">
+				<i class="bi bi-file-earmark-text"></i>
+				قائمة الإمتحانات
+			</div>
+			<button class="btn btn-add" ng-click="toAddExam()" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#examModal">
+				<i class="bi bi-plus-lg"></i>
+				إضافة امتحان جديد
+			</button>
+		</div>	
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							<i class="bi bi-hash"></i>
+							#
+						</th>
+						<th>
+							<i class="bi bi-file-earmark-text"></i>
+							الامتحان
+						</th>
+						<th>
+							<i class="bi bi-calendar-range"></i>
+							فترة الامتحان
+						</th>
+						<th>
+							<i class="bi bi-clock"></i>
+							وقت الامتحان
+						</th>
+						<th class="text-center">
+							<i class="bi bi-gear-fill"></i>
+							الإجراءات
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="exam in exams track by $index">
+						<td>
+							<div class="counter-badge counter-badge-sm">
+								{{$index + 1}}
+							</div>
+						</td>
+						<td>
+							{{exam.title}}
+						</td>
+						<td>
+							<div><strong>من:</strong> {{exam.startDate}}</div>
+							<div><strong>إلى:</strong> {{exam.endDate}}</div>
+						</td>
+						<td>
+							<div>{{exam.startTime}} - {{exam.endTime}}</div>
+						</td>
+						<td class="text-center">
+							<button class="btn btn-edit" ng-click="toEditExam(exam)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#examModal">
+								<i class="bi bi-pencil-square"></i>
+								تعديل
+							</button>
+							<button class="btn btn-delete" ng-click="selectExam(exam)" data-bs-toggle="modal" data-bs-target="#deleteModal" ng-hide="submitted" title="حذف الامتحان" ng-if="isStringNotEmpty(exam.id)">
+								<i class="bi bi-trash"></i>
+								حذف
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div id="examModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-clipboard-check-fill"></i>
+						</div>
+						معلومات الامتحان
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class" ng-show="alert.message">
+						<i class="bi alert-icon" ng-class="alert.icon"></i>
+						<div>{{alert.message}}</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-clipboard-check"></i>
+							اسم الجدول
+						</label>
+						<input id="title" ng-model="exam.title" class="form-control" placeholder="اسم الجدول" maxlength="40" required="required" autocomplete="off" ng-disabled="submitted">
+					</div>
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-calendar-plus"></i>
+									من تاريخ
+								</label>
+								<input id="startDate" ng-model="exam.startDate" class="form-control date" readonly="readonly" placeholder="من تاريخ" maxlength="10" required="required" autocomplete="off" ng-disabled="submitted" ng-change="updatePeriod()">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-calendar-minus"></i>
+									إلى تاريخ
+								</label>
+								<input id="endDate" ng-model="exam.endDate" class="form-control date" readonly="readonly" placeholder="إلى تاريخ" maxlength="10" required="required" autocomplete="off" ng-disabled="submitted" ng-change="updatePeriod()">
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-clock"></i>
+									من الساعة
+								</label>
+								<select id="startTime" ng-model="exam.startTime" class="form-select" placeholder="من الساعة" ng-options="time for time in times" ng-disabled="submitted">
+									<option value="">من الساعة</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-clock-fill"></i>
+									إلى الساعة
+								</label>
+								<select id="endTime" ng-model="exam.endTime" class="form-select" placeholder="إلى الساعة" ng-options="time for time in times" ng-disabled="submitted">
+									<option value="">إلى الساعة</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-chat-text"></i>
+							الملاحظات
+						</label>
+						<div class="input-group mt-1" ng-repeat="comment in exam.comments track by $index">
+							<button class="input-group-btn btn-action-primary" ng-click="addComment()" ng-if="$index == 0 && !submitted" title="إضافة ملاحظة">
+								<i class="bi bi-plus-lg"></i>
+							</button>
+							<button class="input-group-btn btn-action-warning" ng-click="deleteComment($index)" ng-if="$index != 0 && !submitted" title="حذف الملاحظة">
+								<i class="bi bi-x-lg"></i>
+							</button>
+							<input id="comments{{$index}}" name="comments" ng-model="comment.content" type="text" class="form-control" required="required" maxlength="100" placeholder="ملاحظة على الامتحان" autocomplete="off" ng-disabled="submitted">
+							<div class="input-group-text">
+								<i class="bi bi-hash"></i>
+								{{$index + 1}}
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-calendar-week"></i>
+							أيام الامتحان
+						</label>
+						<div class="input-group mt-1" ng-repeat="date in dates track by $index">
+							<label for="date_{{$index}}" class="form-control">
+								{{getNight(date)}} {{date}}
+							</label>
+							<div class="input-group-text">
+								<div class="form-check form-switch">
+									<input id="date_{{$index}}" checklist-model="exam.dates" checklist-value="date" class="form-check-input" type="checkbox" ng-disabled="submitted">
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-layers"></i>
+							توزيع {{labels.courses}} على {{labels.levels}}
+						</label>
+						<div class="card" ng-repeat="level in levels | orderBy:'index' track by $index">
+							<div class="card-header">
+								<div class="header-content">
+									<div class="header-title">
+										<span class="counter-badge counter-badge-sm">{{$index + 1}}</span>
+										{{level.name}}
+									</div>
+								</div>
+							</div>
+							<div class="card-body">
+								<div class="form-group" ng-repeat="date in exam.dates track by $index">
+									<label for="exam_{{level.id}}_{{$index}}" class="form-label">{{getNight(date)}} {{date}}</label>
+									<select id="exam_{{level.id}}_{{$index}}" ng-model="exam.plan[level.id][date]" class="form-select" ng-options="course.id as course.name for course in level.courses" ng-disabled="submitted" ng-change="updateCourse()">
+										<option value="">اختر {{labels.course}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<div class="d-flex align-items-center gap-3">
+						<button class="btn btn-action-primary" ng-click="saveExam()" ng-hide="loading">
+							<i class="bi bi-floppy"></i>
+							حفظ الامتحان
+						</button>
+						<div class="d-flex align-items-center" ng-show="loading">
+							<div class="loading-spinner"></div>
+						</div>
+						<button type="button" class="btn-outline-dark" data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i>
+							إغلاق
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="deleteModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-exclamation-triangle"></i>
+						حذف الامتحان
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+				</div>
+				<div class="modal-body">
+					<div class="text-center">
+						<h3 class="mb-3">
+							هل أنت متأكد من حذف امتحان "{{exam.title}}"؟
+						</h3>
+						<p class="text-muted">
+							هذا الإجراء لا يمكن التراجع عنه وسيتم حذف جميع البيانات المرتبطة بهذه الامتحان.
+						</p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-delete" data-bs-dismiss="modal" ng-click="deleteExam()">
+						<i class="bi bi-check-lg"></i>
+						تأكيد الحذف
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

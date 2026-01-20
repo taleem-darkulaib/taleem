@@ -1,0 +1,102 @@
+<div ng-controller="levels-plan">
+	
+	<div class="table-responsive mt-2">
+		<table class="table table-striped table-bordered border-dark">
+			<thead>
+				<tr>
+					<th class="text-center">
+						<button type="button" class="btn btn-sm btn-outline-dark d-print-none" data-bs-toggle="modal" data-bs-target="#printModal">
+							<i class="bi bi-card-checklist"></i>
+							تحديد
+						</button>
+					</th>
+					<th class="text-center" ng-repeat="night in nights track by $index" ng-show="night.selected">
+						{{night.name}}
+					</th>
+				</tr>
+			</thead>
+			<tbody class="border-3" ng-repeat="level in levels | orderBy : 'index' track by $index" ng-if="plan[level.id] != null" ng-show="level.selected">
+				<tr>
+					<td class="text-center" rowspan="3" style="vertical-align:middle">
+						{{level.name}}
+					</td>
+					<td class="text-center" ng-repeat="night in nights track by $index" ng-show="night.selected">
+						{{courses[plan[level.id][night.id].course].name}}
+					</td>
+				</tr>
+				<tr>
+					<td class="text-center" ng-repeat="night in nights track by $index" ng-show="night.selected">
+						{{teachers[plan[level.id][night.id].teacher].name}}
+					</td>
+				</tr>
+				<tr>
+					<td class="text-center" ng-repeat="night in nights track by $index" ng-show="night.selected">
+						{{rooms[plan[level.id][night.id].room].name}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="form-controls d-print-none">
+		<button type="button" class="btn btn-outline-dark" onclick="window.print()">
+			<i class="bi bi-printer"></i>
+			طباعة
+		</button>
+	</div>
+
+	<div id="printModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						تحديد الجدول
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="card">	
+						<div class="card-header">
+							الليالي
+						</div>
+						<div class="card-body">
+							<div class="input-group mt-2" ng-repeat="night in nights track by $index">
+								<label class="input-group-text" for="night-{{$index}}">
+									<div class="form-check form-switch">
+										<input id="night-{{$index}}" class="form-check-input" type="checkbox" role="switch" ng-model="night.selected" ng-value="true" ng-true-value="true" ng-false-value="false">
+										<label class="form-check-label" for="night-{{$index}}"></label>
+									</div>
+								</label>
+								<label class="form-control" for="night-{{$index}}">
+									{{night.name}}
+								</label>
+							</div>
+						</div>
+					</div>
+					
+					<div class="card">	
+						<div class="card-header">
+							{{labels.levels}}
+						</div>
+						<div class="card-body">
+							<div class="input-group mt-2" ng-repeat="level in levels | orderBy : 'index' track by $index">
+								<label class="input-group-text" for="level-{{$index}}">
+									<div class="form-check form-switch">
+										<input id="level-{{$index}}" class="form-check-input" type="checkbox" role="switch" ng-model="level.selected" ng-value="true" ng-true-value="true" ng-false-value="false">
+										<label class="form-check-label" for="level-{{$index}}"></label>
+									</div>
+								</label>
+								<label class="form-control" for="level-{{$index}}">
+									{{level.name}}
+								</label>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

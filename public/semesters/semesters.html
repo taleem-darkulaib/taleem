@@ -1,0 +1,249 @@
+<div ng-controller="semesters">
+
+	<div class="card">
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<div class="d-flex align-items-center">
+				<i class="bi bi-table"></i>
+				قائمة الفصول الدراسية
+			</div>
+			<button class="btn btn-add" ng-click="toAddSemester()" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#semesterModal">
+				<i class="bi bi-plus-lg"></i>
+				إضافة فصل جديد
+			</button>
+		</div>
+		
+		<div class="table-responsive">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>
+							<i class="bi bi-hash"></i>
+						</th>
+						<th>
+							<i class="bi bi-calendar3"></i>
+							اسم الفصل
+						</th>
+						<th>
+							<i class="bi bi-currency-dollar"></i>
+							الرسوم (د.ب)
+						</th>
+						<th>
+							<i class="bi bi-align-top"></i>
+							الحد الأقصى لكل {{labels.level}}
+						</th>
+						<th>
+							<i class="bi bi-star-fill"></i>
+							الفصل الحالي
+						</th>
+						<th class="text-center">
+							<i class="bi bi-gear-fill"></i>
+							الإجراءات
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="semester in semesters track by $index" ng-hide="loading" class="fade-in">
+						<th>
+							<div class="category-counter">{{$index + 1}}</div>
+						</th>
+						<td>
+							<div class="d-flex align-items-center">
+								<div class="submenu-icon">
+									<i class="bi bi-calendar-event m-0"></i>
+								</div>
+								<div>
+									<div class="fw-bold">{{semester.name}}</div>
+									<small class="text-muted">الفصل الدراسي</small>
+								</div>
+							</div>
+						</td>
+						<td class="text-center">
+							<span class="fees-badge">
+								{{semester.fees}}
+							</span>
+						</td>
+						<td class="text-center">
+							{{semester.limit}}
+						</td>
+						<td class="text-center">
+							<div class="form-check form-switch d-flex justify-content-center">
+								<input id="current_{{$index}}" ng-model="semester.current" ng-true-value="true" ng-false-value="false" class="form-check-input form-check-input-lg" type="checkbox" role="switch" ng-change="updateCurrent(semester)" ng-disabled="submitted">
+							</div>
+						</td>
+						<td class="text-center">
+							<div class="action-buttons justify-content-center">
+								<button class="btn btn-edit" ng-click="toEditSemester(semester)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#semesterModal" title="تعديل الفصل">
+									<i class="bi bi-pencil-square"></i>
+									تعديل
+								</button>
+								<button class="btn btn-delete" ng-click="selectSemester(semester)" data-bs-toggle="modal" data-bs-target="#deleteModal" ng-hide="submitted" title="حذف الفصل" ng-if="isStringNotEmpty(semester.id)">
+									<i class="bi bi-trash"></i>
+									حذف
+								</button>
+							</div>
+						</td>
+					</tr>
+					<tr ng-show="!loading && semesters.length === 0">
+						<td colspan="5" class="empty-state-cell">
+							<div class="empty-state">
+								<i class="bi bi-calendar-x empty-state-icon"></i>
+								<h4 class="empty-state-title">لا توجد فصول دراسية</h4>
+								<p class="empty-state-text">ابدأ بإضافة فصل دراسي جديد</p>
+								<button class="btn btn-add mt-3" ng-click="toAddSemester()" data-bs-toggle="modal" data-bs-target="#semesterModal">
+									<i class="bi bi-plus-lg"></i>
+									إضافة أول فصل
+								</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="card-footer">
+			<small class="text-muted">
+				<i class="bi bi-info-circle"></i>
+				يمكن تفعيل فصل واحد فقط في أي وقت
+			</small>
+		</div>
+	</div>
+	
+	<div id="semesterModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-calendar-plus"></i>
+						معلومات الفصل الدراسي
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="alert d-flex align-items-center" ng-class="alert.class" ng-show="alert.message">
+						<i class="bi alert-icon ms-3" ng-class="alert.icon"></i>
+						<div>
+							<strong class="ms-2">{{alert.title}}</strong> {{alert.message}}
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="name" class="form-label">
+							<i class="bi bi-calendar3"></i>
+							اسم الفصل الدراسي
+						</label>
+						<input id="name" ng-model="semester.name" type="text" class="form-control" placeholder="مثال: الفصل الأول 2024" maxlength="100" autocomplete="off" required="required" ng-disabled="submitted">
+						<div class="help-text-enhanced">
+							<small>
+								<i class="bi bi-info-circle"></i>
+								أدخل اسماً واضحاً ومميزاً للفصل الدراسي
+							</small>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="semester" class="form-label">
+							<i class="bi bi-calendar-event"></i>
+							يتبع فصل سابق
+						</label>
+						<select id="dependent" ng-model="semester.dependent" class="form-select is-valid" placeholder="الفصل الدراسي السابق" ng-options="semester.id as semester.name for semester in semesters">
+							<option value="">الفصل الدراسي السابق</option>
+						</select>
+					</div>
+					
+					<div class="form-group">
+						<label for="fees" class="form-label">
+							<i class="bi bi-currency-dollar"></i>
+							رسوم الفصل (بالدينار البحريني)
+						</label>
+						<div class="input-group">
+							<span class="input-group-text field-label">د.ب</span>
+							<input id="fees" ng-model="semester.fees" type="number" class="form-control" placeholder="0.000" min="0" step="0.001" required="required" ng-disabled="submitted">
+						</div>
+						<div class="help-text-enhanced">
+							<small>
+								<i class="bi bi-info-circle"></i>
+								حدد المبلغ المطلوب دفعه لهذا الفصل
+							</small>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="limit" class="form-label">
+							<i class="bi bi-align-top"></i>
+							الحد الأقصى لكل {{labels.level}}
+						</label>
+						<input id="limit" ng-model="semester.limit" type="tel" class="form-control" placeholder="الحد الأقصى لكل {{labels.level}}" maxlength="2" autocomplete="off" required="required" ng-disabled="submitted">
+						<div class="help-text-enhanced">
+							<small>
+								<i class="bi bi-info-circle"></i>
+								أكبر عدد ممكن من الطلاب لكل {{labels.level}}
+							</small>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="form-check form-switch">
+							<input class="form-check-input form-check-input-lg" type="checkbox" ng-model="semester.current" ng-disabled="submitted">
+							<label class="form-check-label" for="setCurrent">
+								<strong>تعيين كفصل حالي</strong>
+							</label>
+						</div>
+						<div class="help-text-enhanced">
+							<small>
+								<i class="bi bi-info-circle"></i>
+								سيتم إلغاء تفعيل أي فصل آخر تلقائياً
+							</small>
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<button class="btn btn-add" ng-click="saveSemester()">
+						<i class="bi bi-floppy"></i>
+						حفظ الفصل
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="deleteModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-exclamation-triangle"></i>
+						حذف الفصل
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+				</div>
+				<div class="modal-body">
+					<div class="text-center">
+						<h3 class="mb-3">
+							هل أنت متأكد من حذف فصل "{{semester.name}}"؟
+						</h3>
+						<p class="text-muted">
+							هذا الإجراء لا يمكن التراجع عنه وسيتم حذف جميع البيانات المرتبطة بهذه الفصل.
+						</p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-delete" data-bs-dismiss="modal" ng-click="deleteSemester()">
+						<i class="bi bi-check-lg"></i>
+						تأكيد الحذف
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+			
+</div>

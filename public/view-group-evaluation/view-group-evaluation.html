@@ -1,0 +1,198 @@
+<div ng-controller="view-group-evaluation">
+
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="group" class="form-label">
+						<i class="bi bi-people"></i>
+						التقسيم
+					</label>
+					<select id="group" ng-model="group" class="form-select" placeholder="التقسيم" ng-options="group.id as group.name for group in groups" required="required" ng-disabled="submitted" ng-change="updateGroup(true)">
+						<option disabled="disabled" value="">اختر التقسيم</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="partition" class="form-label">
+						<i class="bi bi-collection"></i>
+						المجموعة
+					</label>
+					<select id="partition" ng-model="partition" class="form-select" placeholder="المجموعة" ng-options="partition.id as partition.name for partition in partitions | orderBy : 'index'" required="required" ng-disabled="submitted" ng-change="updatePartition()">
+						<option disabled="disabled" value="">اختر المجموعة</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="evaluation" class="form-label">
+						<i class="bi bi-clipboard-check"></i>
+						التقييم
+					</label>
+					<select id="evaluation" ng-model="evaluation.id" class="form-select" placeholder="التقييم" ng-options="evaluation.id as evaluation.name for evaluation in evaluations" required="required" ng-disabled="submitted" ng-change="updateEvaluation(true)">
+						<option disabled="disabled" value="">اختر التقييم</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	
+	<div class="table-responsive" ng-show="group != null && evaluation.id != null && cpr != null">
+		<table id="evaluations" class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						<i class="bi bi-hash"></i>
+						#
+					</th>
+					<th>
+						<i class="bi bi-credit-card-2-front"></i>
+						الرقم الشخصي
+					</th>
+					<th>
+						<i class="bi bi-person"></i>
+						الاسم
+					</th>
+					<th>
+						<i class="bi bi-person-check"></i>
+						المقيم
+					</th>
+					<th>
+						<i class="bi bi-clipboard-data"></i>
+						النتيجة
+					</th>
+					<th>
+						<i class="bi bi-journal-text"></i>
+						الملاحظة
+					</th>
+					<th>
+						<i class="bi bi-clock"></i>
+						الوقت
+					</th>
+					<th class="text-center no-export">
+						<i class="bi bi-list"></i>
+						التفاصيل
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="student in partitionStudents | orderBy : 'name' track by $index">
+					<td>
+						<div class="counter-badge counter-badge-sm">
+							{{$index + 1}}
+						</div>
+					</td>
+					<td>
+						{{student.cpr}}
+					</td>
+					<td>
+						{{student.name}}
+					</td>
+					<td>
+						{{result[student.cpr].evaluator}}
+					</td>
+					<td>
+						<ng-container ng-if="evaluation.type == 'درجات'">
+							{{result[student.cpr] != null && result[student.cpr].mark != null ? result[student.cpr].mark : 0}}/{{evaluation.total}}
+						</ng-container>
+						<ng-container ng-if="evaluation.type == 'اجتياز'">
+							{{result[student.cpr] != null && result[student.cpr].passed != null ? result[student.cpr].passed : 0}}/{{evaluation.count}}
+						</ng-container>
+					</td>
+					<td>
+						<div class="info-panel">
+							<small class="text-helper">
+								<i class="bi bi-chat-text"></i>
+								{{result[student.cpr].comment}}
+							</small>
+						</div>
+					</td>
+					<td class="ltr">
+						{{result[student.cpr].time}}
+					</td>
+					<td class="text-center no-export">
+						<a class="btn btn-action-secondary" href="#" data-bs-toggle="modal" data-bs-target="#evaluationModal" ng-show="result[student.cpr] != null" ng-click="selectStudent(student)">
+							<i class="bi bi-list"></i>
+							نتيجة التقييم
+						</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+	
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
+			<i class="bi bi-download"></i>
+			حفظ التقييمات
+		</button>
+	</div>
+	
+	<div id="evaluationModal" class="modal fade">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						<i class="bi bi-bar-chart-fill"></i>
+						تقييم الطالب : {{student.name}}
+					</h4>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										#
+									</th>
+									<th>
+										الكفاية
+									</th>
+									<th>
+										النتيجة
+									</th>
+									<th ng-if="evaluation.type == 'درجات'">
+										الدرجة
+									</th>
+									<th>
+										الملاحظة
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="criteria in criterias track by $index">
+									<td>
+										{{$index + 1}}
+									</td>
+									<td>
+										{{criteria.name}}
+									</td>
+									<td>
+										{{result[student.cpr].criterias[criteria.id].mark}}
+									</td>
+									<td ng-if="evaluation.type == 'درجات'">
+										{{criteria.mark}}
+									</td>
+									<td>
+										<div class="info-panel">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												{{result[student.cpr].criterias[criteria.id].comment}}
+											</small>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

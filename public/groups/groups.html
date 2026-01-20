@@ -1,0 +1,382 @@
+<div ng-controller="groups">
+	
+	<div class="card">
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<div class="d-flex align-items-center">
+				<i class="bi bi-diagram-2"></i>
+				قائمة التقسيمات
+			</div>
+			<button class="btn btn-add" ng-click="toAddGroup()" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#groupModal">
+				<i class="bi bi-plus-lg"></i>
+				إضافة تقسيم
+			</button>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							<i class="bi bi-hash"></i>
+						</th>
+						<th>
+							<i class="bi bi-people"></i>
+							اسم التقسيم
+						</th>
+						<th>
+							<i class="bi bi-book"></i>
+							{{labels.course}}
+						</th>
+						<th>
+							<i class="bi bi-layers"></i>
+							{{labels.levels}}
+						</th>
+						<th>
+							<i class="bi bi-clock"></i>
+							تاريخ الإنشاء
+						</th>
+						<th class="text-center">
+							<i class="bi bi-gear-fill"></i>
+							الإجراءات
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="group in groups track by $index">
+						<td>
+							<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+						</td>
+						<td>
+							{{group.name}}
+						</td>
+						<td>
+							{{courses[group.course].name}}
+						</td>
+						<td>
+							<div class="status-badge status-badge-active mt-1" ng-repeat="level in group.levels track by $index">
+								{{levels[level].name}}
+							</div>
+						</td>
+						<td>
+							{{group.time}}
+						</td>
+						<td class="text-center">
+							<button class="btn-action-secondary" ng-click="toEditGroup(group)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#groupModal">
+								<i class="bi bi-pencil-square"></i>
+								تعديل
+							</button>
+							<button class="btn btn-delete" ng-click="selectGroup(group)" data-bs-toggle="modal" data-bs-target="#deleteModal" ng-hide="submitted" title="حذف التقسيم" ng-if="isStringNotEmpty(group.id)">
+								<i class="bi bi-trash"></i>
+								حذف
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div id="groupModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-people-fill"></i>
+						</div>
+						إدارة التقسيمات والمجموعات
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class" ng-show="alert.message">
+						<i class="bi alert-icon" ng-class="alert.icon"></i>
+						<div>
+							<strong class="ms-2">{{alert.title}}</strong> {{alert.message}}
+						</div>
+					</div>
+					
+					<div class="card">
+						<div class="card-header">
+							<div class="header-title">
+								<i class="bi bi-info-circle-fill"></i>
+								معلومات التقسيم الأساسية
+							</div>
+						</div>
+						<div class="card-body">
+						
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="name" class="form-label">
+											<i class="bi bi-people"></i>
+											اسم التقسيم
+										</label>
+										<input id="name" ng-model="group.name" type="text" class="form-control" placeholder="أدخل اسم التقسيم" maxlength="100" autocomplete="off" required="required" ng-disabled="submitted">
+									</div>
+								</div>
+								
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="course" class="form-label">
+											<i class="bi bi-book"></i>
+											{{labels.course}}
+										</label>
+										<select id="course" ng-model="group.course" class="form-select" placeholder="{{labels.course}}" ng-options="course.id as course.name for course in values(courses) | orderBy:'index'" required="required" ng-disabled="submitted">
+											<option disabled="disabled" value="">اختر {{labels.course}}</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-collection"></i>
+									المجموعات الفرعية
+								</label>
+								<div class="input-group mt-1" ng-repeat="partition in partitions track by $index">
+									<button class="btn-action-primary" ng-click="addPartition($index + 1)" ng-if="!submitted" title="إضافة مجموعة جديدة">
+										<i class="bi bi-plus-lg m-0"></i>
+									</button>
+									<button class="btn-action-secondary" ng-click="upPartition($index)" ng-if="$index != 0 && !submitted" title="رفع المجموعة">
+										<i class="bi bi-chevron-double-up m-0"></i>
+									</button>
+									<button class="btn-action-secondary" ng-click="downPartition($index)" ng-if="$index != length(group.partitions) - 1 && !submitted" title="خفض المجموعة">
+										<i class="bi bi-chevron-double-down m-0"></i>
+									</button>
+									<button class="btn-action-warning" ng-click="deletePartition($index)" ng-if="$index != 0 && partition.students.length == 0 && !submitted" title="حذف المجموعة">
+										<i class="bi bi-trash m-0"></i>
+									</button>
+									<button class="btn-action-primary" ng-click="addPartition($index)" ng-if="!submitted" title="إضافة مجموعة جديدة">
+										<i class="bi bi-plus-lg m-0"></i>
+									</button>
+									<input id="partitions{{$index}}" ng-model="partition.name" type="text" class="form-control" placeholder="اسم المجموعة" maxlength="100" autocomplete="off" ng-disabled="submitted">
+									<div class="input-group-text">{{$index + 1}}</div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-layers"></i>
+									{{labels.levels}} المشمولة
+								</label>
+								<div class="input-group mt-1" role="button" ng-repeat="level in values(levels) | orderBy : 'index' track by $index">
+									<div class="input-group-text">
+										<div class="form-check form-switch">
+											<input id="level{{$index}}" checklist-model="group.levels" checklist-value="level.id" type="checkbox" class="form-check-input form-check-input-lg" ng-disabled="submitted">
+										</div>
+									</div>
+									<label for="level{{$index}}" class="form-control">
+										{{level.name}}
+									</label>
+									<div class="input-group-text">
+										{{$index + 1}}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="card">
+						<div class="card-header">
+							<div class="header-title">
+								<i class="bi bi-people-fill"></i>
+								الطلاب المتاحون للتوزيع
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th>
+												<i class="bi bi-hash"></i>
+											</th>
+											<th>
+												<i class="bi bi-person-vcard"></i>
+												الرقم الشخصي
+											</th>
+											<th>
+												<i class="bi bi-person-fill"></i>
+												الاسم
+											</th>
+											<th>
+												<i class="bi bi-layers"></i>
+												{{labels.level}}
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="student in students track by $index" ng-click="student.selected = !student.selected" ng-if="group.levels.includes(student.level) && group.students[student.cpr] == null" role="button">
+											<td class="text-center">
+												<div class="form-check form-switch">
+													<input ng-model="student.selected" type="checkbox" class="form-check-input form-check-input-lg" ng-disabled="submitted">
+												</div>
+											</td>
+											<td>
+												<div>{{student.cpr}}</div>
+											</td>
+											<td>
+												<div>{{student.name}}</div>
+											</td>
+											<td>
+												<div>
+													{{levels[student.level].name}}
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					
+					<div class="card" ng-repeat="partition in partitions track by $index">
+						<div class="card-header">
+							<div class="header-content">
+								<div class="header-title">
+									<i class="bi bi-collection-fill"></i>
+									{{partition.name}}
+								</div>
+								<div class="header-count">
+									<span class="status-badge status-badge-linked">{{partition.students.length}} طالب</span>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="teacher{{$index + 1}}" class="form-label">
+											<i class="bi bi-person-badge"></i>
+											المعلم
+										</label>
+										<select id="teacher{{$index + 1}}" ng-model="partition.teacher" class="form-select" placeholder="المعلم" ng-options="teacher.id as teacher.name for teacher in teachers | orderBy:'index'" ng-disabled="submitted">
+											<option disabled="disabled" value="">اختر المعلم</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="room{{$index + 1}}" class="form-label">
+											<i class="bi bi-house"></i>
+											الغرفة
+										</label>
+										<select id="room{{$index + 1}}" ng-model="partition.room" class="form-select" placeholder="الغرفة" ng-options="room.id as room.name for room in rooms | orderBy:'index'" ng-disabled="submitted">
+											<option disabled="disabled" value="">اختر الغرفة</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="form-label">طلاب المجموعة</label>
+								<div class="table-responsive">
+									<table class="table students-table">
+										<thead>
+											<tr>
+												<th>#</th>
+												<th>
+													<div class="table-header-content">
+														<i class="bi bi-person-vcard"></i>
+														الرقم الشخصي
+													</div>
+												</th>
+												<th>
+													<div class="table-header-content">
+														<i class="bi bi-person-fill"></i>
+														الاسم
+													</div>
+												</th>
+												<th>
+													<div class="table-header-content">
+														<i class="bi bi-layers"></i>
+														{{labels.level}}
+													</div>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="student in students track by $index" ng-click="student.selected = !student.selected" ng-if="partition.students.includes(student.cpr)" role="button">
+												<td class="text-center">
+													<div class="form-check form-switch">
+														<input ng-model="student.selected" type="checkbox" class="form-check-input form-check-input-lg" ng-disabled="submitted">
+													</div>
+												</td>
+												<td>
+													{{student.cpr}}
+												</td>
+												<td>
+													{{student.name}}
+												</td>
+												<td>
+													{{levels[student.level].name}}
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div class="card-footer">
+							<button class="btn-action-primary" ng-click="addToPartition(partition)" ng-disabled="submitted">
+								<i class="bi bi-person-plus"></i>
+								إضافة طلاب
+							</button>
+							<button class="btn-action-warning" ng-click="removeFromPartition(partition)" ng-disabled="submitted">
+								<i class="bi bi-person-dash"></i>
+								إزالة المحددين
+							</button>
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<button class="btn-action-primary" ng-click="saveGroup()">
+						<i class="bi bi-floppy"></i>
+						حفظ التقسيم
+					</button>
+					<button type="button" class="btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="deleteModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-exclamation-triangle"></i>
+						حذف التقسيم
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+				</div>
+				<div class="modal-body">
+					<div class="text-center">
+						<h3 class="mb-3">
+							هل أنت متأكد من حذف تقسيم "{{group.name}}"؟
+						</h3>
+						<p class="text-muted">
+							هذا الإجراء لا يمكن التراجع عنه وسيتم حذف جميع البيانات المرتبطة بهذه التقسيم.
+						</p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-delete" data-bs-dismiss="modal" ng-click="deleteGroup()">
+						<i class="bi bi-check-lg"></i>
+						تأكيد الحذف
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

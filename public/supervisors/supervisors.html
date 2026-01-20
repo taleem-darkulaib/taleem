@@ -1,0 +1,79 @@
+<div ng-controller="supervisors">
+	
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h3>إدارة المشرفين</h3>
+		<button class="btn btn-add" ng-click="addSupervisor(supervisorList.length)" ng-hide="submitted">
+			<i class="bi bi-plus-lg"></i>
+			إضافة مشرف جديد
+		</button>
+	</div>
+	
+	<div class="list-item-complex list-fade-in" ng-repeat="supervisor in supervisorList track by $index">
+		
+		<div class="list-item-header">
+			<div class="list-title-section">
+				<div class="list-item-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="list-item-title">
+					<i class="bi bi-person-gear list-icon-md"></i>
+					مشرف رقم {{$index + 1}}
+				</div>
+			</div>
+			<div class="list-item-actions" ng-hide="submitted">
+				<button type="button" class="btn btn-sm" ng-click="addSupervisor($index)" title="إضافة مشرف جديد بعد هذا">
+					<i class="bi bi-plus-lg"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="upSupervisor($index)" ng-if="$index != 0 && supervisorList.length != 1" title="نقل المشرف لأعلى">
+					<i class="bi bi-chevron-double-up"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="downSupervisor($index)" ng-if="$index != supervisorList.length - 1 && supervisorList.length != 1" title="نقل المشرف لأسفل">
+					<i class="bi bi-chevron-double-down"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="deleteSupervisor($index)" ng-if="supervisorList.length != 1" title="حذف المشرف">
+					<i class="bi bi-trash"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="addSupervisor($index + 1)" title="إضافة مشرف جديد قبل هذا">
+					<i class="bi bi-plus-lg"></i>
+				</button>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+			<div class="input-group list-input-group">
+				<span class="input-group-text list-switch-container">
+					<div class="text-center">
+						<i class="bi bi-shield-check"></i>
+						<div class="list-switch-label">مشرف</div>
+					</div>
+				</span>
+				<input id="supervisor{{$index}}" name="supervisors" ng-model="supervisor.name" type="text" class="form-control" required="required" maxlength="100" placeholder="مثال: محمد أحمد، نور الدين" autocomplete="off" ng-disabled="submitted">
+				<span class="input-group-text list-order">
+					<i class="bi bi-sort-numeric-down"></i>
+					{{$index + 1}}
+				</span>
+			</div>
+			
+			<div class="list-help-text">
+				<small class="list-text-helper">
+					<i class="bi bi-info-circle list-icon-sm"></i>
+					أدخل الاسم الكامل للمشرف
+				</small>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-add" ng-click="saveSupervisors()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ جميع المشرفين
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border ms-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+		</div>
+	</div>
+	
+</div>

@@ -1,0 +1,144 @@
+<div ng-controller="plan">
+
+	<div class="list-item-complex list-fade-in" ng-repeat="level in levels | orderBy : 'index' track by $index">
+		
+		<div class="table-header">
+			<div class="table-title-section">
+				<div class="table-number">
+					<span class="counter-badge">{{$index + 1}}</span>
+				</div>
+				<div class="table-title-content">
+					<i class="bi bi-bookmark-star"></i>
+					{{level.name}}
+				</div>
+			</div>
+		</div>
+
+		<div class="table-responsive d-none d-lg-block">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							<i class="bi bi-hash"></i>
+						</th>
+						<th>
+							<i class="bi bi-moon-stars"></i>
+							{{config.period}}
+						</th>
+						<th>
+							<i class="bi bi-book"></i>
+							{{labels.course}}
+						</th>
+						<th>
+							<i class="bi bi-person-badge"></i>
+							المعلم
+						</th>
+						<th>
+							<i class="bi bi-door-open"></i>
+							الغرفة
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="night in nights track by $index" class="list-item-simple">
+						<th>
+							<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+						</th>
+						<td>
+							<div class="table-data-row">
+								<div class="table-data-icon">
+									<i class="bi bi-moon-stars"></i>
+								</div>
+								<div class="table-data-content">
+									<div class="table-data-title">{{night.name}}</div>
+									<div class="table-data-subtitle">ليلة دراسية</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="plan[level.id][night.id].course" class="form-select" ng-options="course.id as course.name for course in level.courses | orderBy : 'index'" placeholder="{{labels.course}}" ng-disabled="submitted">
+								<option value="">-- اختر {{labels.course}} --</option>
+							</select>
+						</td>
+						<td>
+							<select ng-model="plan[level.id][night.id].teacher" class="form-select" ng-options="teacher.id as teacher.name for teacher in teachers | orderBy : 'index'" placeholder="المعلم" ng-disabled="submitted">
+								<option value="">-- اختر المعلم --</option>
+							</select>
+						</td>
+						<td>
+							<select ng-model="plan[level.id][night.id].room" class="form-select" ng-options="room.id as room.name for room in rooms | orderBy : 'index'" placeholder="الغرفة" ng-disabled="submitted">
+								<option value="">-- اختر الغرفة --</option>
+							</select>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="list-item-content d-block d-lg-none">
+		
+			<div class="list-item-complex list-fade-in" ng-repeat="night in nights track by $index">
+				
+				<div class="list-item-header">
+					<div class="list-title-section">
+						<div class="list-item-number">
+							<span class="list-item-counter">{{$index + 1}}</span>
+						</div>
+						<div class="list-item-title">
+							<i class="bi bi-moon-stars"></i>
+							{{night.name}}
+						</div>
+					</div>
+				</div>
+
+				<div class="list-item-content">
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-book"></i>
+							{{labels.course}}
+						</label>
+						<select ng-model="plan[level.id][night.id].course" class="form-select" ng-options="course.id as course.name for course in level.courses | orderBy : 'index'" placeholder="{{labels.course}}" ng-disabled="submitted">
+							<option value="">-- اختر {{labels.course}} --</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-person-badge"></i>
+							المعلم
+						</label>
+						<select ng-model="plan[level.id][night.id].teacher" class="form-select" ng-options="teacher.id as teacher.name for teacher in teachers | orderBy : 'index'" placeholder="المعلم" ng-disabled="submitted">
+							<option value="">-- اختر المعلم --</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-door-open"></i>
+							الغرفة
+						</label>
+						<select ng-model="plan[level.id][night.id].room" class="form-select" ng-options="room.id as room.name for room in rooms | orderBy : 'index'" placeholder="الغرفة" ng-disabled="submitted">
+							<option value="">-- اختر الغرفة --</option>
+						</select>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-add" ng-click="savePlan()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ الخطة
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border ms-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+		</div>
+	</div>
+
+</div>

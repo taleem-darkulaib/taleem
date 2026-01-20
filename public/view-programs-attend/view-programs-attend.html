@@ -1,0 +1,216 @@
+<div ng-controller="view-programs-attend">
+
+	<div class="info-panel">
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-mortarboard-fill"></i>
+				البرنامج
+			</label>
+			<select id="program" ng-model="program.id" class="form-select" placeholder="البرنامج" ng-options="program.id as program.name for program in programs" ng-disabled="programs.length == 1 || submitted" ng-change="updateProgram()">
+				<option disabled="disabled" ng-value="0">اختر البرنامج</option>
+			</select>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				اختر البرنامج لإدارة المدفوعات
+			</small>
+		</div>
+	</div>
+	
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						<i class="bi bi-hash"></i>
+						#
+					</th>
+					<th>
+						<i class="bi bi-person"></i>
+						الطالب
+					</th>
+					<th>
+						<i class="bi bi-tags"></i>
+						النوع
+					</th>
+					<th>
+						<i class="bi bi-123"></i>
+						العدد
+					</th>
+					<th class="text-center">
+						<i class="bi bi-list"></i>
+						العمليات
+					</th>
+				</tr>
+			</thead>
+			<tbody ng-repeat="student in students track by $index">
+				<tr>
+					<td rowspan="6" class="text-center">
+						<div class="counter-badge">
+							{{$index + 1}}
+						</div>
+					</td>
+					<td rowspan="6">
+						{{student.name}}
+					</td>
+					<td>
+						<span class="status-badge status-badge-completed">
+							<i class="bi bi-check-circle-fill"></i>
+							حاضر
+						</span>
+					</td>
+					<td>
+						<span class="status-badge status-badge-completed">{{attendance[student.cpr]['حاضر'] || 0}}</span>
+					</td>
+					<td rowspan="6" class="text-center">
+						<button class="btn-action-primary" ng-click="selectStudent(student)" data-bs-toggle="modal" data-bs-target="#studentModal">
+							<i class="bi bi-list"></i>
+							التفاصيل
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span class="status-badge status-badge-warning">
+							<i class="bi bi-check-circle-fill"></i>
+							متأخر
+						</span>
+					</td>
+					<td>
+						<span class="status-badge status-badge-warning">{{attendance[student.cpr]['متأخر'] || 0}}</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span class="status-badge status-badge-linked">
+							<i class="bi bi-info-circle-fill"></i>
+							معتذر
+						</span>
+					</td>
+					<td>
+						<span class="status-badge status-badge-linked">{{attendance[student.cpr]['معتذر'] || 0}}</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span class="status-badge status-badge-pending">
+							<i class="bi bi-x-circle-fill"></i>
+							غائب
+						</span>
+					</td>
+					<td>
+						<span class="status-badge status-badge-pending">{{attendance[student.cpr]['غائب'] || 0}}</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span class="status-badge status-badge-linked">
+							<i class="bi bi-calculator-fill"></i>
+							المجموع
+						</span>
+					</td>
+					<td>
+						<span class="status-badge status-badge-linked">{{attendance[student.cpr]['المجموع'] || 0}}</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span class="status-badge status-badge-linked">
+							<i class="bi bi-percent"></i>
+							النسبة
+						</span>
+					</td>
+					<td>
+						<span class="status-badge status-badge-linked">{{attendance[student.cpr]['النسبة'] || 0}}</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div id="studentModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-person-lines-fill"></i>
+						</div>
+						حضور الطالب : {{student.name}}
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>
+									<i class="bi bi-calendar-week"></i>
+									{{config.period}}
+								</th>
+								<th>
+									<i class="bi bi-calendar-date"></i>
+									التاريخ
+								</th>
+								<th>
+									<i class="bi bi-clipboard-check"></i>
+									حالة الحضور
+								</th>
+								<th>
+									<i class="bi bi-chat-text"></i>
+									الملاحظات
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="(date, attend) in studentsAttend[student.cpr] track by $index">
+								<td>
+									<div class="counter-badge counter-badge-sm">
+										{{$index + 1}}
+									</div>
+								</td>
+								<td>
+									{{attend.night}}
+								</td>
+								<td>
+									{{attend.date}}
+								</td>
+								<td>
+									<div class="status-badge" ng-class="{
+											'status-badge-completed': attend.status == 'حاضر',
+											'status-badge-warning': attend.status == 'متأخر',
+											'status-badge-linked': attend.status == 'معتذر',
+											'status-badge-error': attend.status == 'غائب'}">
+										<i class="bi" ng-class="{
+											'bi-check-circle-fill': attend.status == 'حاضر',
+											'bi-clock-fill': attend.status == 'متأخر',
+											'bi-info-circle-fill': attend.status == 'معتذر',
+											'bi-x-circle-fill': attend.status == 'غائب'}"></i>
+										{{attend.status}}
+									</div>
+								</td>
+								<td>
+									<div class="info-panel">
+										<small class="text-helper">
+											<i class="bi bi-chat-text"></i>
+											{{attend.comment}}
+										</small>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إغلاق
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

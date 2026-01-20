@@ -1,0 +1,382 @@
+<div ng-controller="trips">
+	
+	<div class="card">
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<div class="d-flex align-items-center">
+				<i class="bi bi-airplane"></i>
+				قائمة الرحلات
+			</div>
+			<button class="btn btn-add" ng-click="toAddTrip()" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#tripModal">
+				<i class="bi bi-plus-lg"></i>
+				إضافة رحلة جديدة
+			</button>
+		</div>	
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							<i class="bi bi-hash"></i>
+							#
+						</th>
+						<th>
+							<i class="bi bi-airplane"></i>
+							الرحلة
+						</th>
+						<th>
+							<i class="bi bi-layer-forward"></i>
+							{{labels.levels}}
+						</th>
+						<th>
+							<i class="bi bi-info-circle"></i>
+							التفاصيل
+						</th>
+						<th>
+							<i class="bi bi-calendar-clock"></i>
+							التاريخ والوقت
+						</th>
+						<th>
+							<i class="bi bi-cash-coin"></i>
+							الرسوم
+						</th>
+						<th class="text-center">
+							<i class="bi bi-gear-fill"></i>
+							الإجراءات
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="trip in trips track by $index">
+						<td>
+							<div class="counter-badge counter-badge-sm">
+								{{$index + 1}}
+							</div>
+						</td>
+						<td>
+							<i class="bi bi-airplane-fill"></i>
+							{{trip.name}}
+							<br>
+							<span ng-if="trip.available" class="status-badge status-badge-active">
+								<i class="bi bi-unlock-fill"></i>
+								مفتوح للتسجيل
+							</span>
+							<span ng-if="!trip.available" class="status-badge status-badge-inactive">
+								<i class="bi bi-lock-fill"></i>
+								مغلق للتسجيل
+							</span>
+						</td>
+						<td>
+							<div class="info-panel">
+								<span class="list-badge-primary d-block mt-1" ng-repeat="level in trip.levels track by $index">{{levels[level].name}}</span>
+							</div>
+						</td>
+						<td>
+							<div class="info-panel info-panel-success">
+								<div class="trip-location">
+									<i class="bi bi-geo-alt-fill"></i>
+									<strong>المكان:</strong> {{trip.location}}
+								</div>
+								<div>
+									<i class="bi bi-person-check-fill"></i>
+									<strong>نسبة الحضور:</strong> 
+									{{trip.percent}}
+								</div>
+								<div class="trip-responsible" ng-if="trip.responsible">
+									<i class="bi bi-person-badge"></i>
+									<strong>المسؤول:</strong> {{trip.responsible}}
+								</div>
+							</div>
+						</td>
+						<td>
+							<div><strong>التاريخ:</strong> {{trip.date}}</div>
+							<div><strong>الوقت:</strong> {{trip.startTime}} - {{trip.endTime}}</div>
+						</td>
+						<td>
+							<div class="student-data-item">
+								<div class="student-data-icon">
+									<i class="bi bi-credit-card-fill"></i>
+								</div>
+								<div class="student-data-text">
+									<div class="fees-badge">{{trip.feesAmount}} د.ب</div>
+									<div class="text-helper" ng-if="trip.fees">{{trip.fees}}</div>
+								</div>
+							</div>
+						</td>
+						<td class="text-center">
+							<button class="btn-action-secondary" ng-click="toEditTrip(trip)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#tripModal">
+								<i class="bi bi-pencil-square"></i>
+								تعديل
+							</button>
+							<button class="btn btn-delete" ng-click="selectTrip(trip)" data-bs-toggle="modal" data-bs-target="#deleteModal" ng-hide="submitted" title="حذف الرحلة" ng-if="isStringNotEmpty(trip.id)">
+								<i class="bi bi-trash"></i>
+								حذف
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div id="tripModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-airplane-fill"></i>
+						</div>
+						معلومات الرحلة
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class">
+						<i class="bi alert-icon" ng-class="alert.icon"></i>
+						<div>{{alert.message}}</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-airplane-fill"></i>
+							اسم الرحلة
+						</label>
+						<input id="name" ng-model="trip.name" type="text" class="form-control" placeholder="اسم الرحلة" maxlength="100" autocomplete="off" required="required" ng-disabled="submitted">
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-layers"></i>
+							{{labels.levels}}
+						</label>
+						<div class="input-group mt-1" ng-repeat="level in levels track by $index">
+							<div class="input-group-text">
+								<div class="form-check form-switch">
+									<input id="level{{$index}}" checklist-model="trip.levels" checklist-value="level.id" type="checkbox" class="form-check-input" ng-disabled="submitted">
+								</div>
+							</div>
+							<label for="level{{$index}}" class="form-control">
+								{{level.name}}
+								<i class="bi bi-diagram-3"></i>
+							</label>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-percent"></i>
+									نسبة الحضور
+								</label>
+								<select id="percent" ng-model="trip.percent" class="form-select" placeholder="نسبة الحضور" ng-options="percentage for percentage in percentages" ng-disabled="submitted">
+									<option value="">اختر نسبة الحضور</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-tag"></i>
+									نوع الرحلة
+								</label>
+								<select id="type" ng-model="trip.type" class="form-select" placeholder="نوع الرحلة" ng-disabled="submitted">
+									<option value="">نوع الرحلة</option>
+									<option value="ترفيهي">ترفيهي</option>
+									<option value="تعليمي">تعليمي</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-geo-alt-fill"></i>
+							مكان الرحلة
+						</label>
+						<input id="location" ng-model="trip.location" class="form-control" placeholder="مكان الرحلة" maxlength="100" autocomplete="off" required="required" ng-disabled="submitted">
+					</div>
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-calendar-week"></i>
+									يوم الرحلة
+								</label>
+								<select id="day" ng-model="trip.day" class="form-select" placeholder="يوم الرحلة" ng-options="day for day in days" ng-disabled="submitted">
+									<option value="">اختر يوم الرحلة</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-calendar-date"></i>
+									تاريخ الرحلة
+								</label>
+								<input id="date" ng-model="trip.date" class="form-control" placeholder="تاريخ الرحلة" maxlength="10" autocomplete="off" required="required" ng-disabled="submitted">
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-clock"></i>
+									من الساعة
+								</label>
+								<select id="startTime" ng-model="trip.startTime" class="form-select" placeholder="من الساعة" ng-options="time for time in times" ng-disabled="submitted">
+									<option value="">من الساعة</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-clock-fill"></i>
+									إلى الساعة
+								</label>
+								<select id="endTime" ng-model="trip.endTime" class="form-select" placeholder="إلى الساعة" ng-options="time for time in times" ng-disabled="submitted">
+									<option value="">إلى الساعة</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-currency-dollar"></i>
+									رسوم الرحلة
+								</label>
+								<input id="fees" ng-model="trip.fees" class="form-control" placeholder="رسوم الرحلة" maxlength="100" autocomplete="off" ng-disabled="submitted">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-calculator"></i>
+									رسوم الرحلة بالأرقام
+								</label>
+								<input id="feesAmount" ng-model="trip.feesAmount" type="number" class="form-control" placeholder="رسوم الرحلة بالأرقام" maxlength="5" autocomplete="off" ng-disabled="submitted">
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-credit-card"></i>
+							حساب بنفت
+						</label>
+						<input id="benefit" ng-model="trip.benefit" class="form-control" placeholder="حساب بنفت" maxlength="22" autocomplete="off" required="required" ng-disabled="submitted">
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-list-check"></i>
+							الرحلة تشمل
+						</label>
+						<input id="covered" ng-model="trip.covered" class="form-control" placeholder="الرحلة تشمل" maxlength="100" autocomplete="off" ng-disabled="submitted">
+					</div>
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-person-badge"></i>
+									مسؤول الرحلة
+								</label>
+								<input id="responsible" ng-model="trip.responsible" class="form-control name" placeholder="مسؤول الرحلة" maxlength="100" autocomplete="off" ng-disabled="submitted">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-telephone"></i>
+									رقم التواصل
+								</label>
+								<input id="contact" ng-model="trip.contact" class="form-control mobile" placeholder="رقم التواصل" maxlength="8" autocomplete="off" ng-disabled="submitted">
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-chat-text"></i>
+							الملاحظة
+						</label>
+						<textarea id="comment" rows="5" ng-model="trip.comment" class="form-control" placeholder="الملاحظة" maxlength="200" autocomplete="off" ng-disabled="submitted"></textarea>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-toggle-on"></i>
+							حالة التسجيل
+						</label>
+						<div class="btn-group" role="group">
+							<input id="available-no" name="available" ng-model="trip.available" type="radio" ng-value="false" class="btn-check" ng-disabled="submitted">
+							<label for="available-no" type="button" class="btn btn-outline-dark">
+								<i class="bi bi-lock-fill"></i>
+								مغلق
+							</label>
+							<input id="available-yes" name="available" ng-model="trip.available" type="radio" ng-value="true" class="btn-check" ng-disabled="submitted">
+							<label for="available-yes" type="button" class="btn btn-outline-dark">
+								<i class="bi bi-unlock-fill"></i>
+								مفتوح
+							</label>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<button class="btn btn-action-primary" ng-click="saveTrip()">
+						<i class="bi bi-floppy"></i>
+						حفظ الرحلة
+					</button>
+					<button type="button" class="btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إغلاق
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="deleteModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-airplane-fill"></i>
+						حذف الرحلة
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+				</div>
+				<div class="modal-body">
+					<div class="text-center">
+						<h3 class="mb-3">
+							هل أنت متأكد من حذف رحلة "{{trip.name}}"؟
+						</h3>
+						<p class="text-muted">
+							هذا الإجراء لا يمكن التراجع عنه وسيتم حذف جميع البيانات المرتبطة بهذه الرحلة.
+						</p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-delete" data-bs-dismiss="modal" ng-click="deleteTrip()">
+						<i class="bi bi-check-lg"></i>
+						تأكيد الحذف
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

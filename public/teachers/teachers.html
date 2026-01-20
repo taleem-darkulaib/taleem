@@ -1,0 +1,79 @@
+<div ng-controller="teachers">
+	
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h3>إدارة المعلمين</h3>
+		<button class="btn btn-add" ng-click="addTeacher(teacherList.length)" ng-hide="submitted">
+			<i class="bi bi-plus-lg"></i>
+			إضافة معلم جديد
+		</button>
+	</div>
+	
+	<div class="list-item-complex list-fade-in" ng-repeat="teacher in teacherList track by $index">
+		
+		<div class="list-item-header">
+			<div class="list-title-section">
+				<div class="list-item-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="list-item-title">
+					<i class="bi bi-person-badge list-icon-md"></i>
+					معلم رقم {{$index + 1}}
+				</div>
+			</div>
+			<div class="list-item-actions" ng-hide="submitted">
+				<button type="button" class="btn btn-sm" ng-click="addTeacher($index)" title="إضافة معلم جديد بعد هذا">
+					<i class="bi bi-plus-lg"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="upTeacher($index)" ng-if="$index != 0 && teacherList.length != 1" title="نقل المعلم لأعلى">
+					<i class="bi bi-chevron-double-up"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="downTeacher($index)" ng-if="$index != teacherList.length - 1 && teacherList.length != 1" title="نقل المعلم لأسفل">
+					<i class="bi bi-chevron-double-down"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="deleteTeacher($index)" ng-if="teacherList.length != 1" title="حذف المعلم">
+					<i class="bi bi-trash"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="addTeacher($index + 1)" title="إضافة معلم جديد قبل هذا">
+					<i class="bi bi-plus-lg"></i>
+				</button>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+			<div class="input-group list-input-group">
+				<span class="input-group-text list-switch-container">
+					<div class="text-center">
+						<i class="bi bi-person-check"></i>
+						<div class="list-switch-label">معلم</div>
+					</div>
+				</span>
+				<input id="teacher{{$index}}" name="teachers" ng-model="teacher.name" type="text" class="form-control" required="required" maxlength="100" placeholder="مثال: أحمد محمد، فاطمة علي" autocomplete="off" ng-disabled="submitted">
+				<span class="input-group-text list-order">
+					<i class="bi bi-sort-numeric-down"></i>
+					{{$index + 1}}
+				</span>
+			</div>
+			
+			<div class="list-help-text">
+				<small class="list-text-helper">
+					<i class="bi bi-info-circle list-icon-sm"></i>
+					أدخل الاسم الكامل للمعلم
+				</small>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-add" ng-click="saveTeachers()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ جميع المعلمين
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border ms-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+		</div>
+	</div>
+	
+</div>

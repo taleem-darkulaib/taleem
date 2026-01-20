@@ -1,0 +1,155 @@
+<div ng-controller="view-books">
+	
+	<div class="info-panel">
+		
+		<div class="row">
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="cpr-search" class="form-label">
+						<i class="bi bi-person-badge"></i>
+						الرقم الشخصي
+					</label>
+					<div class="input-group">
+						<span class="input-group-text">
+							<i class="bi bi-person-badge"></i>
+						</span>
+						<input id="cpr-search" ng-model="search.cpr" type="tel" class="form-control cpr" placeholder="الرقم الشخصي" maxlength="9" autocomplete="off" ng-change="searchStudents()">
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="name-search" class="form-label">
+						<i class="bi bi-person"></i>
+						اسم الطالب
+					</label>
+					<div class="input-group">
+						<span class="input-group-text">
+							<i class="bi bi-person"></i>
+						</span>
+						<input id="name-search" ng-model="search.name" type="text" class="form-control name" placeholder="اسم الطالب" maxlength="50" autocomplete="off" ng-change="searchStudents()">
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="mobile-search" class="form-label">
+						<i class="bi bi-phone"></i>
+						رقم الهاتف
+					</label>
+					<div class="input-group">
+						<span class="input-group-text">
+							<i class="bi bi-phone"></i>
+						</span>
+						<input id="mobile-search" ng-model="search.mobile" type="tel" class="form-control mobile" placeholder="رقم الهاتف" maxlength="8" autocomplete="off" ng-change="searchStudents()">
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="grade-search" class="form-label">
+						<i class="bi bi-mortarboard"></i>
+						الصف الدراسي
+					</label>
+					<select id="grade-search" ng-model="search.grade" class="form-select" placeholder="الصف الدراسي" ng-options="grade.id as grade.name for grade in grades" ng-change="searchStudents()">
+						<option value="">جميع الصفوف</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="level-search" class="form-label">
+						<i class="bi bi-mortarboard-fill"></i>
+						{{labels.level}}
+					</label>
+					<select id="level-search" ng-model="search.level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in values(levels) | orderBy:'index'" ng-change="searchStudents()">
+						<option value="">{{labels.level}}</option>
+					</select>
+				</div>
+			</div>
+			
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="course-search" class="form-label">
+						<i class="bi bi-book"></i>
+						{{labels.course}}
+					</label>
+					<select 
+						id="course-search" ng-model="search.course" class="form-select" placeholder="{{labels.course}}" ng-options="course.id as course.name for course in values(courses) | orderBy : 'index'" ng-change="searchStudents()">
+						<option value="">{{labels.courses}}</option>
+					</select>
+				</div>
+			</div>
+			
+		</div>
+
+	</div>
+	
+	<div class="table-responsive">
+		<table id="books" class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						#
+					</th>
+					<th>
+						<i class="bi bi-person-vcard"></i>
+						الرقم الشخصي
+					</th>
+					<th>
+						<i class="bi bi-person-fill"></i>
+						الاسم
+					</th>
+					<th>
+						<i class="bi bi-layers"></i>
+						{{labels.level}}
+					</th>
+					<th>
+						<i class="bi bi-book"></i>
+						{{labels.course}}
+					</th>
+					<th>
+						<i class="bi bi-clock"></i>
+						تاريخ التسليم
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="book in matchedBooks | orderBy : 'id' track by $index">
+					<td>
+						<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+					</td>
+					<td>
+						{{book.cpr}}
+					</td>
+					<td>
+						{{students[book.cpr].name}}
+					</td>
+					<td>
+						{{levels[students[book.cpr].level].name}}
+					</td>
+					<td>
+						{{courses[book.course].name}}
+					</td>
+					<td>
+						{{book.time}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+	
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
+			<i class="bi bi-download"></i>
+			حفظ استلام الكتب
+		</button>
+	</div>
+
+</div>

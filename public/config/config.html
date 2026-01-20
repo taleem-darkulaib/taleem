@@ -1,0 +1,491 @@
+<div ng-controller="config">
+	
+	<div class="section-divider">
+		<span class="section-divider-text">المعلومات الأساسية</span>
+	</div>
+	
+	<div class="form-group">
+		<label for="title" class="form-label">
+			<i class="bi bi-mortarboard"></i>
+			اسم التعليم
+		</label>
+		<input id="title" ng-model="config.title" class="form-control is-valid" autofocus="autofocus" placeholder="اسم التعليم" maxlength="100" required="required" ng-disabled="submitted">
+	</div>
+	
+	<div class="form-group">
+		<label for="department" class="form-label">
+			<i class="bi bi-building"></i>
+			اسم الإدارة
+		</label>
+		<input id="department" ng-model="config.department" class="form-control is-valid" placeholder="اسم الإدارة" maxlength="100" required="required" ng-disabled="submitted">
+	</div>
+	
+	<div class="form-group">
+		<label for="committee" class="form-label">
+			<i class="bi bi-people"></i>
+			اسم اللجنة
+		</label>
+		<textarea id="committee" rows="4" ng-model="config.committee" class="form-control is-valid" placeholder="اسم اللجنة" maxlength="100" required="required" ng-disabled="submitted"></textarea>
+	</div>
+	
+	<div class="form-group">
+		<label for="contact" class="form-label">
+			<i class="bi bi-telephone"></i>
+			رقم التواصل
+		</label>
+		<input id="contact" ng-model="config.contact" class="form-control is-valid mobile" placeholder="رقم التواصل" maxlength="8" required="required" ng-disabled="submitted">
+	</div>
+
+	<div class="section-divider">
+		<span class="section-divider-text">إعدادات التدريس</span>
+	</div>
+	
+	<div class="form-group">
+		<label for="period" class="form-label">
+			<i class="bi bi-clock"></i>
+			فترة التدريس
+		</label>
+		<select id="period" ng-model="config.period" class="form-control is-valid" ng-disabled="submitted">
+			<option value="">اختر فترة التدريس</option>
+			<option value="اليوم">اليوم</option>
+			<option value="الليلة">الليلة</option>
+		</select>
+	</div>
+
+	<div class="section-divider">
+		<span class="section-divider-text">إعدادات الدفع</span>
+	</div>
+	
+	<div class="form-group">
+		<label for="transfer" class="form-label">
+			<i class="bi bi-credit-card"></i>
+			الدفع عن طريق بنفت
+		</label>
+		<div class="btn-group" role="group">
+			<input id="transfer-no" name="transfer" ng-model="config.transfer" type="radio" ng-value="false" class="btn-check" ng-disabled="submitted">
+			<label for="transfer-no" type="button" class="btn btn-outline-dark">
+				لا
+				<i class="bi bi-x-square me-1"></i>
+			</label>
+			<input id="transfer-yes" name="transfer" ng-model="config.transfer" type="radio" ng-value="true" class="btn-check" ng-disabled="submitted">
+			<label for="transfer-yes" type="button" class="btn btn-outline-dark">
+				نعم
+				<i class="bi bi-check-square me-1"></i>
+			</label>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="benefit" class="form-label">
+			<i class="bi bi-bank"></i>
+			رقم أو حساب بنفت
+		</label>
+		<input id="benefit" ng-model="config.benefit" class="form-control is-valid" placeholder="رقم أو حساب بنفت" maxlength="22" required="required" ng-disabled="submitted">
+	</div>
+
+	<div class="section-divider">
+		<span class="section-divider-text">تخصيص المسميات</span>
+	</div>
+	
+	<div class="form-group">
+		<label for="labels" class="form-label">
+			<i class="bi bi-tags"></i>
+			تعديل المسميات
+		</label>
+		<input id="label-level" ng-model="labels.level" class="form-control" placeholder="المستوى" maxlength="50" ng-disabled="submitted">
+		<input id="label-levels" ng-model="labels.levels" class="form-control mt-3" placeholder="المستويات" maxlength="50" ng-disabled="submitted">
+		<input id="label-course" ng-model="labels.course" class="form-control mt-3" placeholder="المادة" maxlength="50" ng-disabled="submitted">
+		<input id="label-courses" ng-model="labels.courses" class="form-control mt-3" placeholder="المواد" maxlength="50" ng-disabled="submitted">
+		<input id="label-mobile" ng-model="labels.mobile" class="form-control mt-3" placeholder="الهاتف الأول" maxlength="50" ng-disabled="submitted">
+		<input id="label-phone" ng-model="labels.phone" class="form-control mt-3" placeholder="الهاتف الثاني" maxlength="50" ng-disabled="submitted">
+		<input id="label-contact" ng-model="labels.contact" class="form-control mt-3" placeholder="الهاتف الثالث" maxlength="50" ng-disabled="submitted">
+	</div>
+
+	<div class="form-group">
+		<label for="employees" class="form-label">
+			<i class="bi bi-list-check"></i>
+			البيانات الثانوية
+		</label>
+		<div class="input-group mt-3" ng-repeat="field in fields track by $index">
+			<label for="field{{$index}}" class="form-control field-label">
+				{{field.title}}
+			</label>
+			<label for="field{{$index}}" class="input-group-text">
+				<div class="form-check form-switch">
+					<input id="field{{$index}}" ng-model="config.fields[field.property]" type="checkbox" class="form-check-input form-check-input-lg" ng-value="true" ng-true-value="true" ng-false-value="false" ng-disabled="submitted">
+				</div>
+			</label>
+		</div>
+	</div>
+
+	<div class="section-divider">
+		<span class="section-divider-text">إعدادات التسجيل</span>
+	</div>
+	
+	<div class="form-group">
+		<label for="registration" class="form-label">
+			<i class="bi bi-door-open"></i>
+			فتح التسجيل
+		</label>
+		<div class="btn-group" role="group">
+			<input id="close" name="registration" ng-model="config.registration" type="radio" ng-value="false" class="btn-check" ng-disabled="submitted">
+			<label for="close" type="button" class="btn btn-outline-dark">
+				مغلق
+				<i class="bi bi-lock-fill me-1"></i>
+			</label>
+			<input id="open" name="registration" ng-model="config.registration" type="radio" ng-value="true" class="btn-check" ng-disabled="submitted">
+			<label for="open" type="button" class="btn btn-outline-dark">
+				مفتوح
+				<i class="bi bi-unlock-fill me-1"></i>
+			</label>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="autoLevel" class="form-label">
+			<i class="bi bi-gear"></i>
+			طريقة التسجيل
+		</label>
+		<div class="btn-group" role="group">
+			<input id="manualLevel" name="autoLevel" ng-model="config.autoLevel" type="radio" ng-value="false" class="btn-check" ng-disabled="submitted">
+			<label for="manualLevel" type="button" class="btn btn-outline-dark">
+				اختيار الطالب
+				<i class="bi bi-person-gear me-1"></i>
+			</label>
+			<input id="autoLevel-btn" name="autoLevel" ng-model="config.autoLevel" type="radio" ng-value="true" class="btn-check" ng-disabled="submitted">
+			<label for="autoLevel-btn" type="button" class="btn btn-outline-dark">
+				اختيار النظام
+				<i class="bi bi-terminal me-1"></i>
+			</label>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="allowEdit" class="form-label">
+			<i class="bi bi-pencil-square"></i>
+			تعديل التسجيل
+		</label>
+		<div class="btn-group" role="group">
+			<input id="denyEdit" name="allowEdit" ng-model="config.allowEdit" type="radio" ng-value="false" class="btn-check" ng-disabled="submitted">
+			<label for="denyEdit" type="button" class="btn btn-outline-dark">
+				ممنوع
+				<i class="bi bi-x-square me-1"></i>
+			</label>
+			<input id="allowEdit" name="allowEdit" ng-model="config.allowEdit" type="radio" ng-value="true" class="btn-check" ng-disabled="submitted">
+			<label for="allowEdit" type="button" class="btn btn-outline-dark">
+				مسموح
+				<i class="bi bi-check-square me-1"></i>
+			</label>
+		</div>
+	</div>
+
+	<div class="form-group comments-section">
+		<label for="comments" class="form-label">
+			<i class="bi bi-chat-left-text"></i>
+			ملاحظات التسجيل
+		</label>
+		<div class="input-group mb-3" ng-repeat="comment in config.comments track by $index">
+			<button class="btn btn-success" ng-click="addComment($index + 1)" ng-if="!submitted" title="إضافة ملاحظة">
+				<i class="bi bi-plus-lg m-0"></i>
+			</button>
+			<button class="btn btn-danger" ng-click="deleteComment($index)" ng-if="$index != 0 && !submitted" title="حذف الملاحظة">
+				<i class="bi bi-x-lg m-0"></i>
+			</button>
+			<input id="comments{{$index}}" name="comments" ng-model="comment.content" type="text" class="form-control is-valid" maxlength="100" placeholder="الملاحظة" autocomplete="off" ng-disabled="submitted">
+			<span class="input-group-text">{{$index + 1}}</span>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="allowEdit" class="form-label">
+			<i class="bi bi-pencil-square"></i>
+			تغير الحضور عند الاعتذار
+		</label>
+		<div class="btn-group" role="group">
+			<input id="acceptReasonNo" name="acceptReason" ng-model="config.acceptReason" type="radio" ng-value="false" class="btn-check" ng-disabled="submitted">
+			<label for="acceptReasonNo" type="button" class="btn btn-outline-dark">
+				لا
+				<i class="bi bi-x-square me-1"></i>
+			</label>
+			<input id="acceptReasonYes" name="acceptReason" ng-model="config.acceptReason" type="radio" ng-value="true" class="btn-check" ng-disabled="submitted">
+			<label for="acceptReasonYes" type="button" class="btn btn-outline-dark">
+				نعم
+				<i class="bi bi-check-square me-1"></i>
+			</label>
+		</div>
+	</div>
+
+	<div class="section-divider">
+		<span class="section-divider-text">الإعدادات المرئية</span>
+	</div>
+	
+	<div class="form-group">
+		<label for="requestPhoto" class="form-label">
+			<i class="bi bi-camera"></i>
+			الصورة الشخصية
+		</label>
+		<div class="btn-group" role="group">
+			<input id="noPhoto" name="requestPhoto" ng-model="config.requestPhoto" type="radio" ng-value="false" class="btn-check" ng-disabled="submitted">
+			<label for="noPhoto" type="button" class="btn btn-outline-dark">غير مطلوب</label>
+			<input id="requestPhoto-btn" name="requestPhoto" ng-model="config.requestPhoto" type="radio" ng-value="true" class="btn-check" ng-disabled="submitted">
+			<label for="requestPhoto-btn" type="button" class="btn btn-outline-dark">مطلوب</label>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="logo" class="form-label">
+			<i class="bi bi-image"></i>
+			شعار اللجنة
+		</label>
+		<input id="logo" ng-model="config.logo" type="file" class="form-control is-valid" placeholder="شعار اللجنة" ng-disabled="submitted">
+	</div>
+	
+	<img ng-src="{{config.logo}}" class="form-image img-fluid rounded shadow" role="button" ng-click="previewImage()" alt="شعار اللجنة" ng-if="config.logo != null">
+
+	<div class="section-divider">
+		<span class="section-divider-text">إعدادات التواصل</span>
+	</div>
+	
+	<div class="form-group">
+		<label for="textMeBot" class="form-label">
+			<i class="bi bi-robot"></i>
+			رمز TextMeBot
+		</label>
+		<input id="textMeBot" ng-model="config.textMeBot" class="form-control is-valid" placeholder="رمز TextMeBot" maxlength="50" ng-disabled="submitted">
+	</div>
+	
+	<div class="form-group">
+		<label for="registerLetter" class="form-label">
+			<i class="bi bi-envelope"></i>
+			رسالة التسجيل
+		</label>
+		<textarea id="registerLetter" rows="10" ng-model="config.registerLetter" class="form-control is-valid" placeholder="رسالة التسجيل" maxlength="500" ng-disabled="submitted"></textarea>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "اسم الطالب" لاستبداله بالاسم الرباعي للطالب المتعلق برسالة الغياب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "{{labels.level}}" لاستبداله ب{{labels.level}} الذي سجل فيه الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "التاريخ" لاستبداله بتاريخ تسجيل حضور الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "الوقت" لاستبداله بوقت تسجيل حضور الطالب
+			</small>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="paymentLetter" class="form-label">
+			<i class="bi bi-envelope"></i>
+			رسالة الدفع
+		</label>
+		<textarea id="paymentLetter" rows="10" ng-model="config.paymentLetter" class="form-control is-valid" placeholder="رسالة الدفع" maxlength="500" ng-disabled="submitted"></textarea>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "اسم الطالب" لاستبداله بالاسم الرباعي للطالب المتعلق برسالة الغياب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "{{labels.level}}" لاستبداله ب{{labels.level}} الذي سجل فيه الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "المبلغ" لاستبداله بمبلغ رسوم تسجيل الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "التاريخ" لاستبداله بتاريخ تسجيل حضور الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "الوقت" لاستبداله بوقت تسجيل حضور الطالب
+			</small>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="absentLetter" class="form-label">
+			<i class="bi bi-envelope"></i>
+			رسالة الغياب
+		</label>
+		<textarea id="absentLetter" rows="10" ng-model="config.absentLetter" class="form-control is-valid" placeholder="رسالة الغياب" maxlength="500" ng-disabled="submitted"></textarea>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "اسم الطالب" لاستبداله بالاسم الرباعي للطالب المتعلق برسالة الغياب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "{{labels.level}}" لاستبداله ب{{labels.level}} الذي ينتمي له الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "المادة" لاستبداله بالمادة الخاصة بتسجيل حضور الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "التاريخ" لاستبداله بتاريخ تسجيل حضور الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "الوقت" لاستبداله بوقت تسجيل حضور الطالب
+			</small>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="lateLetter" class="form-label">
+			<i class="bi bi-envelope"></i>
+			رسالة التأخير
+		</label>
+		<textarea id="lateLetter" rows="10" ng-model="config.lateLetter" class="form-control is-valid" placeholder="رسالة التأخير" maxlength="500" ng-disabled="submitted"></textarea>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "اسم الطالب" لاستبداله بالاسم الرباعي للطالب المتعلق برسالة التأخير
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "{{labels.level}}" لاستبداله ب{{labels.level}} الذي ينتمي له الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "المادة" لاستبداله بالمادة الخاصة بتسجيل حضور الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "التاريخ" لاستبداله بتاريخ تسجيل حضور الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "الوقت" لاستبداله بوقت تسجيل حضور الطالب
+			</small>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="commentLetter" class="form-label">
+			<i class="bi bi-envelope"></i>
+			رسالة الملاحظة
+		</label>
+		<textarea id="commentLetter" rows="10" ng-model="config.commentLetter" class="form-control is-valid" placeholder="رسالة الملاحظة" maxlength="500" ng-disabled="submitted"></textarea>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "اسم الطالب" لاستبداله بالاسم الرباعي للطالب المتعلق بالرسالة
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "نوع الملاحظة" لاستبداله بنوع الملاحظة المسجلة على الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "محتوى الملاحظة" لاستبداله بنص الملاحظة المسجلة على الطالب
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "التاريخ" لاستبداله بتاريخ تسجيل الملاحظة
+			</small>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة "الوقت" لاستبداله بوقت تسجيل الملاحظة
+			</small>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="absentContact" class="form-label">
+			<i class="bi bi-person-check"></i>
+			رقم استلام رسائل الواتسب
+		</label>
+		<select id="absentContact" ng-model="config.absentContact" class="form-select is-valid" ng-disabled="submitted">
+			<option value="">اختر رقم الاستلام</option>
+			<option value="mobile">{{labels.mobile}}</option>
+			<option value="phone">{{labels.phone}}</option>
+			<option value="contact">{{labels.contact}}</option>
+		</select>
+	</div>
+
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<div class="spinner-border loading-spinner" role="status" ng-show="loading">
+			<span class="visually-hidden">جاري التحميل...</span>
+		</div>
+		<button class="btn btn-primary" ng-click="saveConfigurations()" ng-hide="loading">
+			<i class="bi bi-floppy"></i>
+			حفظ الإعدادات
+		</button>
+	</div>
+	
+	<div class="toast-container position-fixed top-50 start-50 translate-middle">
+		<div id="wait" class="toast" role="alert" data-bs-autohide="false">
+			<div class="toast-header bg-warning text-light">
+				<span><i class="bi bi-cloud-upload"></i> جاري رفع الملف</span>
+				<button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+			</div>
+			<div class="toast-body">
+				<div class="spinner-border text-warning" role="status">
+					<span class="visually-hidden">جاري التحميل...</span>
+				</div>
+				<p class="mt-2 mb-0">يرجى الانتظار...</p>
+			</div>
+		</div>
+	</div>
+	
+	<div class="toast-container position-fixed top-50 start-50 translate-middle">
+		<div id="preview" class="toast" role="alert">
+			<div class="toast-header bg-info text-white">
+				<span><i class="bi bi-eye"></i>معاينة الصورة</span>
+				<button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+			</div>
+			<div class="toast-body">
+				<img class="preview-image" ng-src="{{config.logo}}" class="img-fluid rounded shadow" role="button" data-bs-dismiss="toast" alt="معاينة الشعار">
+			</div>
+		</div>
+	</div>
+
+</div>

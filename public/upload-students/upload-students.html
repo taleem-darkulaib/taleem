@@ -1,0 +1,642 @@
+<div ng-controller="upload-students">
+
+	<div class="card">
+		<div class="card-header">
+			<i class="bi bi-cloud-upload"></i>
+			ملف المسجلين
+		</div>
+		<div class="card-body">
+		
+			<div class="form-group">
+				<label class="form-label">
+					<i class="bi bi-file-earmark-excel"></i>
+					ملف المسجلين
+				</label>
+				<input id="file" type="file" class="form-control" accept=".xlsx" placeholder="ملف المسجلين" ng-disabled="submitted">
+				<div class="help-text-enhanced">
+					<small class="text-helper">
+						<i class="bi bi-info-circle"></i>
+						يدعم ملفات Excel (.xlsx)
+					</small>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="add-replace" class="form-label">
+					<i class="bi bi-activity"></i>
+					نوع التغيير
+				</label>
+				<div class="btn-group" role="group">
+					<input id="replace" name="add-replace" ng-model="action" type="radio" value="replace" class="btn-check" ng-disabled="submitted">
+					<label for="replace" type="button" class="btn btn-outline-dark">
+						استبدال
+						<i class="bi bi-person-fill-gear me-1"></i>
+					</label>
+					<input id="add" name="add-replace" ng-model="action" type="radio" value="add" class="btn-check" ng-disabled="submitted">
+					<label for="add" type="button" class="btn btn-outline-dark">
+						إضافة
+						<i class="bi bi-person-add me-1"></i>
+					</label>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="upgrade" class="form-label">
+					<i class="bi bi-arrow-up-circle"></i>
+					تقديم المرحلة
+				</label>
+				<div class="btn-group" role="group">
+					<input id="noUpgrade" name="upgrade" ng-model="upgrade" type="radio" ng-value="false" class="btn-check" ng-disabled="submitted" ng-change="updateStudents()">
+					<label for="noUpgrade" class="btn btn-outline-primary">
+						بدون تقديم المرحلة
+						<i class="bi bi-x-circle me-2"></i>
+					</label>
+					<input id="upgradeYes" name="upgrade" ng-model="upgrade" type="radio" ng-value="true" class="btn-check" ng-disabled="submitted" ng-change="updateStudents()">
+					<label for="upgradeYes" class="btn btn-outline-primary">
+						مع تقديم المرحلة
+						<i class="bi bi-check-circle me-2"></i>
+					</label>
+				</div>
+				<div class="help-text-enhanced">
+					<small class="text-helper">
+						<i class="bi bi-lightbulb"></i>
+						تقديم المرحلة يعني ترقية الطلبة للمستوى التالي تلقائياً
+					</small>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-header">
+			<a class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#studentsPreview" aria-expanded="false">
+				<i class="bi bi-eye"></i>
+				معاينة قائمة الطلبة
+			</a>
+		</div>
+		<div id="studentsPreview" class="collapse">
+			<div class="table-responsive">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>
+								<i class="bi bi-hash"></i>
+							</th>
+							<th>
+								<i class="bi bi-person-vcard"></i>
+								الرقم الشخصي
+							</th>
+							<th>
+								<i class="bi bi-person"></i>
+								اسم الطالب
+							</th>
+							<th>
+								<i class="bi bi-layers"></i>
+								الصف الأكاديمي
+							</th>
+							<th>
+								<i class="bi bi-phone"></i>
+								{{labels.mobile}}
+							</th>
+							<th>
+								<i class="bi bi-telephone"></i>
+								{{labels.phone}}
+							</th>
+							<th ng-show="config.fields.contact">
+								<i class="bi bi-person-lines-fill"></i>
+								{{labels.contact}}
+							</th>
+							<th ng-show="config.fields.health">
+								<i class="bi bi-heart-pulse"></i>
+								الحالة الصحية
+							</th>
+							<th ng-show="config.fields.city">
+								<i class="bi bi-geo-alt"></i>
+								منطقة السكن
+							</th>
+							<th ng-show="config.fields.block">
+								<i class="bi bi-geo-alt"></i>
+								رقم المجمع
+							</th>
+							<th ng-show="config.fields.dateOfBirth">
+								<i class="bi bi-calendar-date"></i>
+								تاريخ الميلاد
+							</th>
+							<th ng-show="config.fields.mother">
+								<i class="bi bi-geo-alt"></i>
+								اسم الأم
+							</th>
+							<th ng-show="config.fields.photo">
+								<i class="bi bi-camera"></i>
+								الصورة
+							</th>
+							<th>
+								<i class="bi bi-mortarboard-fill"></i>
+								{{labels.level}}
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="student in students track by $index">
+							<th>
+								<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+							</th>
+							<td>
+								{{student.cpr}}
+							</td>
+							<td>
+								{{student.name}}
+							</td>
+							<td>
+								{{grades[student.grade].name}}
+							</td>
+							<td>
+								{{student.mobile}}
+							</td>
+							<td>
+								{{student.phone}}
+							</td>
+							<td ng-show="config.fields.contact">
+								{{student.contact}}
+							</td>
+							<td ng-show="config.fields.health">
+								{{student.health}}
+							</td>
+							<td ng-show="config.fields.city">
+								{{student.city}}
+							</td>
+							<td ng-show="config.fields.block">
+								{{student.block}}
+							</td>
+							<td ng-show="config.fields.dateOfBirth">
+								{{student.dateOfBirth}}
+							</td>
+							<td ng-show="config.fields.mother">
+								{{student.mother}}
+							</td>
+							<td ng-show="config.fields.photo">
+								<img width="200" ng-src="{{student.photo}}" ng-if="student.photo != null" class="img-fluid rounded" role="button" ng-click="previewImage(student.photo)">
+							</td>
+							<td>
+								{{levels[student.level].name}}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	
+	<div class="card">
+		<div class="card-header">
+			<i class="bi bi-diagram-3"></i>
+			ربط المعلومات بأعمدة الملف
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							<i class="bi bi-hash"></i>
+						</th>
+						<th>
+							<i class="bi bi-info-circle"></i>
+							المعلومة
+						</th>
+						<th>
+							<i class="bi bi-table"></i>
+							العمود المقترن
+						</th>
+						<th class="text-center">
+							<i class="bi bi-check-circle"></i>
+							حالة الربط
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="mapping-row">
+						<td class="text-center">
+							<div class="counter-badge-sm">1</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-person-badge"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">الرقم الشخصي</div>
+									<div class="mapping-field-subtitle">مطلوب - رقم فريد لكل طالب</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.cpr" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.cpr">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-pending" ng-hide="upload.cpr">
+								<i class="bi bi-clock"></i> مطلوب
+								</span>
+							</div>
+						</td>
+					</tr>
+					<tr class="mapping-row">
+						<td class="text-center">
+							<div class="counter-badge-sm">2</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-person"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">اسم الطالب</div>
+									<div class="mapping-field-subtitle">مطلوب - الاسم الكامل للطالب</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.name" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.name">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-pending" ng-hide="upload.name">
+								<i class="bi bi-clock"></i> مطلوب
+								</span>
+							</div>
+						</td>
+					</tr>
+					<tr class="mapping-row">
+						<td class="text-center">
+							<div class="counter-badge-sm">3</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-mortarboard"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">الصف الأكاديمي</div>
+									<div class="mapping-field-subtitle">مطلوب - الصف الدراسي الحالي</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.grade" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.grade">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-pending" ng-hide="upload.grade">
+								<i class="bi bi-clock"></i> مطلوب
+								</span>
+							</div>
+						</td>
+					</tr>
+					<tr class="mapping-row">
+						<td class="text-center">
+							<div class="counter-badge-sm">4</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-phone"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">{{labels.mobile}}</div>
+									<div class="mapping-field-subtitle">مطلوب - رقم الجوال للتواصل</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.mobile" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.mobile">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-pending" ng-hide="upload.mobile">
+								<i class="bi bi-clock"></i> مطلوب
+								</span>
+							</div>
+						</td>
+					</tr>
+					<tr class="mapping-row">
+						<td class="text-center">
+							<div class="counter-badge-sm">5</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-telephone"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">{{labels.phone}}</div>
+									<div class="mapping-field-subtitle">اختياري - رقم الهاتف الثابت</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.phone" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.phone">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-inactive" ng-hide="upload.phone">
+								<i class="bi bi-dash-circle"></i> اختياري
+								</span>
+							</div>
+						</td>
+					</tr>
+					<tr class="mapping-row" ng-show="config.fields.contact">
+						<td class="text-center">
+							<div class="counter-badge-sm">6</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-person-lines-fill"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">{{labels.contact}}</div>
+									<div class="mapping-field-subtitle">اختياري - جهة الاتصال</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.contact" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.contact">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-inactive" ng-hide="upload.contact">
+								<i class="bi bi-dash-circle"></i> اختياري
+								</span>
+							</div>
+						</td>
+					</tr>
+					<tr class="mapping-row">
+						<td class="text-center">
+							<div class="counter-badge-sm">7</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-mortarboard-fill"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">{{labels.level}}</div>
+									<div class="mapping-field-subtitle">{{labels.level}} - مطلوب</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.level" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.level">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-pending" ng-hide="upload.level">
+								<i class="bi bi-clock"></i> مطلوب
+								</span>
+							</div>
+						</td>
+					</tr>
+					
+					<tr class="mapping-row" ng-show="config.fields.health">
+						<td class="text-center">
+							<div class="counter-badge-sm">8</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-heart-pulse"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">الحالة الصحية</div>
+									<div class="mapping-field-subtitle">اختياري - الوضع الصحي للطالب</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.health" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.health">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-inactive" ng-hide="upload.health">
+								<i class="bi bi-dash-circle"></i> اختياري
+								</span>
+							</div>
+						</td>
+					</tr>
+					
+					<tr class="mapping-row" ng-show="config.fields.city">
+						<td class="text-center">
+							<div class="counter-badge-sm">9</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-heart-pulse"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">المدينة</div>
+									<div class="mapping-field-subtitle">اختياري - المدينة التي يسكنها الطالب</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.city" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.city">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-inactive" ng-hide="upload.city">
+								<i class="bi bi-dash-circle"></i> اختياري
+								</span>
+							</div>
+						</td>
+					</tr>
+					
+					<tr class="mapping-row" ng-show="config.fields.block">
+						<td class="text-center">
+							<div class="counter-badge-sm">10</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-heart-pulse"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">رقم المجمع</div>
+									<div class="mapping-field-subtitle">اختياري - رقم المجمع الذي يسكنه الطالب</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.block" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.block">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-inactive" ng-hide="upload.block">
+								<i class="bi bi-dash-circle"></i> اختياري
+								</span>
+							</div>
+						</td>
+					</tr>
+					<tr class="mapping-row" ng-show="config.fields.dateOfBirth">
+						<td class="text-center">
+							<div class="counter-badge-sm">10</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-calendar-date"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">تاريخ الميلاد</div>
+									<div class="mapping-field-subtitle">تاريخ ولادة الطالب</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.dateOfBirth" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.dateOfBirth">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-inactive" ng-hide="upload.dateOfBirth">
+								<i class="bi bi-dash-circle"></i> اختياري
+								</span>
+							</div>
+						</td>
+					</tr>
+					<tr class="mapping-row" ng-show="config.fields.mother">
+						<td class="text-center">
+							<div class="counter-badge-sm">11</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-heart-pulse"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">اسم الأم</div>
+									<div class="mapping-field-subtitle">اختياري - اسم والدة الطالب</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.mother" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.mother">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-inactive" ng-hide="upload.mother">
+								<i class="bi bi-dash-circle"></i> اختياري
+								</span>
+							</div>
+						</td>
+					</tr>
+					<tr class="mapping-row" ng-show="config.fields.photo">
+						<td class="text-center">
+							<div class="counter-badge-sm">12</div>
+						</td>
+						<td>
+							<div class="mapping-field-info">
+								<div class="mapping-field-icon">
+									<i class="bi bi-heart-pulse"></i>
+								</div>
+								<div class="mapping-field-content">
+									<div class="mapping-field-title">صورة الطالب</div>
+									<div class="mapping-field-subtitle">صورة شخصية واضحة للطالب</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							<select ng-model="upload.photo" ng-options="column for column in columns" class="form-select" ng-disabled="submitted">
+								<option value="">-- اختر العمود --</option>
+							</select>
+						</td>
+						<td class="text-center">
+							<div class="mapping-status">
+								<span class="status-badge status-badge-completed" ng-show="upload.photo">
+								<i class="bi bi-check-circle"></i> مكتمل
+								</span>
+								<span class="status-badge status-badge-inactive" ng-hide="upload.photo">
+								<i class="bi bi-dash-circle"></i> اختياري
+								</span>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-add" ng-click="saveStudents()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ قائمة الطلبة
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border me-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+		</div>
+	</div>
+	
+</div>

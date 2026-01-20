@@ -1,0 +1,464 @@
+<div ng-controller="student-register">
+	
+	<div class="help-text-enhanced" ng-show="admin">
+		<small>
+			<i class="bi bi-info-circle"></i>
+			الرابط المخصص للطلبة هو <a ng-href="{{studentUrl}}" class="badge text-bg-primary">{{studentUrl}}</a>
+		</small>
+	</div>
+		
+	<ng-container ng-if="!config.registration && isListNotEmpty(config.comments) && isStringNotEmpty(config.comments[0].content)">
+
+		<div class="section-divider">
+			<span class="section-divider-text">
+				<i class="bi bi-chat-text"></i>
+				ملاحظات مهمة
+			</span>
+		</div>
+
+		<div class="comments-list">
+			<div class="comment-item" ng-repeat="comment in config.comments track by $index">
+				<div class="comment-number">
+					<span class="counter-badge counter-badge-sm">{{$index + 1}}</span>
+				</div>
+				<div class="comment-content" ng-bind-html="comment.content">
+				</div>
+			</div>
+		</div>
+		
+	</ng-container>
+		
+	<ng-container ng-if="config.registration">
+		
+		<ng-container ng-if="isListNotEmpty(levelComments) && isStringNotEmpty(levelComments[0].content)">
+			
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-chat-text"></i>
+					ملاحظات {{labels.level}} {{levels[student.level].name}}
+				</span>
+			</div>
+
+			<div class="comments-list">
+				<div class="comment-item" ng-repeat="comment in levelComments track by $index">
+					<div class="comment-number">
+						<span class="counter-badge counter-badge-sm">{{$index + 1}}</span>
+					</div>
+					<div class="comment-content" ng-bind-html="comment.content">
+					</div>
+				</div>
+			</div>
+			
+		</ng-container>
+		
+		<div class="section-divider">
+			<span class="section-divider-text">
+				<i class="bi bi-person-vcard"></i>
+				المعلومات الشخصية
+			</span>
+		</div>
+		
+		<div class="form-group">
+			<label for="cpr" class="form-label">
+				<i class="bi bi-person-vcard"></i>
+				الرقم الشخصي
+			</label>
+			<div class="input-group">
+				<button class="btn btn-outline-dark" ng-click="clearCpr()" title="مسح الرقم">
+					<i class="bi bi-x-lg m-0"></i>
+				</button>
+				<input id="cpr" ng-model="student.cpr" type="tel" class="form-control cpr" placeholder="الرقم الشخصي" maxlength="9" required="required" autocomplete="off" autofocus="autofocus" ng-disabled="valid || submitted" ng-change="updateCpr()">
+			</div>
+			<div class="help-text-enhanced">
+				<small class="text-helper">
+					<i class="bi bi-info-circle"></i>
+					الرقم الشخصي مطلوب ويجب أن يكون مكوناً من 9 أرقام
+				</small>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label for="name" class="form-label">
+				<i class="bi bi-person"></i>
+				اسم الطالب
+			</label>
+			<input id="name" ng-model="student.name" class="form-control name" placeholder="الاسم الكامل للطالب" maxlength="50" required="required" autocomplete="off" ng-disabled="!valid || submitted">
+			<div class="help-text-enhanced">
+				<small class="text-helper">
+					<i class="bi bi-info-circle"></i>
+					أدخل الاسم الكامل كما هو في الوثائق الرسمية
+				</small>
+			</div>
+		</div>
+		
+		<div class="form-group" ng-if="config.fields.mother">
+			<label for="mother" class="form-label">
+				<i class="bi bi-person-hearts"></i>
+				اسم الأم
+			</label>
+			<input id="mother" ng-model="student.mother" type="text" class="form-control" placeholder="اسم الأم" maxlength="100" required="required" autocomplete="off" ng-disabled="!valid || submitted">
+		</div>
+		
+		<div class="form-group" ng-if="config.fields.dateOfBirth">
+			<label for="dateOfBirth" class="form-label">
+				<i class="bi bi-calendar-date"></i>
+				تاريخ الميلاد
+			</label>
+			<input id="dateOfBirth" ng-model="student.dateOfBirth" type="text" class="form-control date" placeholder="تاريخ الميلاد" maxlength="10" autocomplete="off" ng-disabled="submitted">
+		</div>
+	
+		<div class="section-divider">
+			<span class="section-divider-text">
+				<i class="bi bi-mortarboard"></i>
+				المعلومات الأكاديمية
+			</span>
+		</div>
+		
+		<div class="form-group">
+			<label for="grade" class="form-label">
+				<i class="bi bi-layers"></i>
+				الصف الأكاديمي
+			</label>
+			<select id="grade" ng-model="student.grade" class="form-select" required="required" placeholder="الصف الأكاديمي" ng-options="grade.id as grade.name for grade in grades" ng-disabled="!valid || submitted" ng-change="updateGrade(true)">
+				<option disabled="disabled" value="">-- اختر الصف --</option>
+			</select>
+		</div>
+		
+		<div class="form-group" ng-if="!config.autoLevel && student.grade != null">
+			<label class="form-label">
+				<i class="bi bi-bookmark-star"></i>
+				{{labels.level}}
+			</label>
+			<div class="panel panel-success">
+				<div class="input-group mt-1" ng-repeat="level in values(levels) | orderBy:'id' track by $index" ng-if="distributions[student.grade].includes(level.id)">
+					<button class="btn btn-action-secondary" data-bs-toggle="modal" data-bs-target="#planModal" ng-click="selectLevel(level)" ng-disabled="!valid || submitted">
+						عرض الجدول
+						<i class="bi bi-calendar-week"></i>
+					</button>
+					<label for="level{{$index}}" class="form-control">
+						{{level.name}}
+					</label>
+					<label for="level{{$index}}" class="input-group-text">
+						<div class="form-check form-switch">
+							<input id="level{{$index}}" name="level" ng-model="$parent.student.level" placeholder="{{labels.level}}" class="form-check-input form-check-input-lg" type="radio" required="required" ng-value="level.id" ng-disabled="!valid || submitted">
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="section-divider">
+			<span class="section-divider-text">
+				<i class="bi bi-telephone"></i>
+				معلومات الاتصال
+			</span>
+		</div>
+		
+		<div class="form-group">
+			<label for="mobile" class="form-label">
+				<i class="bi bi-phone"></i>
+				{{labels.mobile}}
+			</label>
+			<input id="mobile" ng-model="student.mobile" type="tel" class="form-control mobile" placeholder="{{labels.mobile}}" maxlength="8" required="required" autocomplete="off" ng-disabled="!valid || submitted">
+		</div>
+		
+		<div class="form-group">
+			<label for="phone" class="form-label">
+				<i class="bi bi-telephone"></i>
+				{{labels.phone}}
+			</label>
+			<input id="phone" ng-model="student.phone" type="tel" class="form-control mobile" placeholder="{{labels.phone}}" maxlength="8" required="required" autocomplete="off" ng-disabled="!valid || submitted">
+		</div>
+		
+		<div class="form-group" ng-if="config.fields.contact">
+			<label for="contact" class="form-label">
+				<i class="bi bi-person-lines-fill"></i>
+				{{labels.contact}}
+			</label>
+			<input id="contact" ng-model="student.contact" type="tel" class="form-control mobile-input" placeholder="{{labels.contact}}" maxlength="8" autocomplete="off" ng-disabled="!valid || submitted">
+		</div>
+		
+		<ng-container ng-if="config.fields.city || config.fields.block">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-geo-alt"></i>
+					معلومات السكن
+				</span>
+			</div>
+			
+			<div class="form-group" ng-if="config.fields.city">
+				<label for="city" class="form-label">
+					<i class="bi bi-geo-alt"></i>
+					منطقة السكن
+				</label>
+				<input id="city" ng-model="student.city" type="text" class="form-control" placeholder="منطقة السكن" maxlength="50" autocomplete="off" ng-disabled="!valid || submitted">
+			</div>
+			
+			<div class="form-group" ng-if="config.fields.block">
+				<label for="block" class="form-label">
+					<i class="bi bi-building"></i>
+					رقم المجمع
+				</label>
+				<input id="block" ng-model="student.block" type="tel" class="form-control" placeholder="رقم المجمع" maxlength="4" autocomplete="off" ng-disabled="!valid || submitted">
+			</div>
+		
+		</ng-container>
+		
+		<ng-container ng-if="config.fields.health">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-heart-pulse"></i>
+					المعلومات الصحية
+				</span>
+			</div>
+			
+			<div class="form-group" ng-if="config.fields.health">
+				<label for="health" class="form-label">
+					<i class="bi bi-heart-pulse"></i>
+					الحالة الصحية
+				</label>
+				<input id="health" ng-model="student.health" type="text" class="form-control" placeholder="الحالة الصحية" maxlength="100" autocomplete="off" ng-disabled="!valid || submitted">
+				<div class="help-text-enhanced">
+					<small class="text-helper">
+						<i class="bi bi-info-circle"></i>
+						اذكر أي حالة صحية خاصة أو حساسية أو أدوية
+					</small>
+				</div>
+			</div>
+			
+		</ng-container>
+		
+		<ng-container ng-if="config.transfer">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-currency-dollar"></i>
+					رسوم الفصل
+				</span>
+			</div>
+			
+			<div class="form-group">
+				<label for="fees" class="form-label">
+					<i class="bi bi-currency-dollar"></i>
+					قيمة الرسوم
+				</label>
+				<div class="input-group">
+					<span class="input-group-text">
+						<i class="bi bi-currency-dollar"></i>
+						د.ب
+					</span>
+					<input id="fees" ng-model="semester.fees" type="tel" class="form-control" placeholder="قيمة الرسوم" maxlength="5" autocomplete="off" readonly="readonly" ng-disabled="!valid || submitted">
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="benefit" class="form-label">
+					<i class="bi bi-credit-card"></i>
+					رقم بنفت
+				</label>
+				<div class="input-group">
+					<input id="benefit" type="text" class="form-control" placeholder="رقم بنفت" maxlength="22" ng-value="config.benefit" readonly="readonly" ng-disabled="!valid || submitted">
+					<button class="btn btn-action-secondary" ng-click="copyBenefitNumber()" title="نسخ الرقم">
+						<i class="bi bi-clipboard"></i>
+					</button>
+				</div>
+				<div class="help-text-enhanced">
+					<small class="text-helper">
+						<i class="bi bi-info-circle"></i>
+						استخدم هذا الرقم لتحويل رسوم التسجيل
+					</small>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="payment" class="form-label">
+					<i class="bi bi-image"></i>
+					صورة تحويل المبلغ
+				</label>
+				<input id="payment" ng-model="student.payment" type="file" class="form-control" placeholder="صورة الدفع" accept="image/*" ng-required="student.payment == null" ng-disabled="!valid || submitted">
+				<div class="help-text-enhanced">
+					<small class="text-helper">
+						<i class="bi bi-camera"></i>
+						يرجى رفع صورة واضحة لإيصال التحويل
+					</small>
+				</div>
+			</div>
+			
+			<img role="button" class="form-image" ng-src="{{student.payment}}" ng-click="previewImage(student.payment)" ng-if="student.payment != null">
+		
+		</ng-container>
+		
+		<ng-container ng-if="config.requestPhoto || config.fields.photo">
+			
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-camera"></i>
+					الصورة الشخصية
+				</span>
+			</div>
+			
+			<div class="form-group" ng-if="config.requestPhoto">
+				<label for="photo" class="form-label">
+					<i class="bi bi-camera"></i>
+					الصورة الشخصية
+				</label>
+				<input id="photo" ng-model="student.photo" placeholder="الصورة الشخصية" type="file" class="form-control" accept="image/*" ng-disabled="!valid || submitted">
+				<div class="help-text-enhanced">
+					<small class="text-helper">
+						<i class="bi bi-camera"></i>
+						صورة شخصية حديثة وواضحة
+					</small>
+				</div>
+				<img class="form-image" ng-src="{{student.photo}}" ng-click="previewImage(student.photo)" ng-if="student.photo != null">
+			</div>
+			
+			<div class="form-group" ng-if="config.fields.health">
+				<label for="health" class="form-label">
+					<i class="bi bi-camera"></i>
+					الصورة الشخصية
+				</label>
+				<input id="photo" ng-model="student.photo" type="text" class="form-control" placeholder="الصورة الشخصية" maxlength="1000" autocomplete="off" ng-disabled="!valid || submitted">
+			</div>
+
+		</ng-container>
+
+		<ng-container ng-if="isListNotEmpty(config.comments) && isStringNotEmpty(config.comments[0].content)">
+			
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-chat-text"></i>
+					ملاحظات مهمة
+				</span>
+			</div>
+
+			<div class="comments-list">
+				<div class="comment-item" ng-repeat="comment in config.comments track by $index">
+					<div class="comment-number">
+						<span class="counter-badge counter-badge-sm">{{$index + 1}}</span>
+					</div>
+					<div class="comment-content" ng-bind-html="comment.content">
+					</div>
+				</div>
+			</div>
+			
+		</ng-container>
+
+		<div class="form-controls" ng-hide="!valid || submitted">
+			<div class="d-flex justify-content-center align-items-center gap-3">
+				<button class="btn btn-add btn-lg" ng-click="saveStudent()" ng-hide="loading">
+					<i class="bi bi-person-plus"></i>
+					تسجيل الطالب
+				</button>
+				<div class="d-flex align-items-center" ng-show="loading">
+					<div class="spinner-border me-2"></div>
+					<span>جاري التسجيل...</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="toast-container position-fixed top-50 start-50 translate-middle">
+			<div id="copy" class="toast" role="alert">
+				<div class="toast-header bg-success text-light">
+					<span>
+						<i class="bi bi-clipboard-check"></i>
+						نسخ رقم بنفت
+					</span>
+					<button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+				</div>
+				<div class="toast-body">
+					تم نسخ رقم بنفت بنجاح
+				</div>
+			</div>
+		</div>
+		
+		<div class="toast-container position-fixed top-50 start-50 translate-middle">
+			<div id="wait" class="toast" role="alert" data-bs-autohide="false">
+				<div class="toast-header bg-warning text-light">
+					<span>
+						<i class="bi bi-upload"></i>
+						جاري ترفيع الملف
+					</span>
+				</div>
+				<div class="toast-body">
+					<div class="spinner-border text-warning"></div>
+					<p class="mt-2 mb-0">يرجى الانتظار...</p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="toast-container position-fixed top-50 start-50 translate-middle">
+			<div id="preview" class="toast" role="alert">
+				<div class="toast-header bg-info text-light">
+					<i class="bi bi-eye"></i>
+					معاينة الصورة
+					<button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+				</div>
+				<div class="toast-body">
+					<img class="preview-image" ng-src="{{image}}" data-bs-dismiss="toast">
+				</div>
+			</div>
+		</div>
+
+		<div id="planModal" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title ">
+							<div class="modal-logo">
+								<i class="bi bi-calendar-week m-0"></i>
+							</div>
+							جدول {{labels.level}} {{level.name}}
+						</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<div class="modal-body">
+						<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>
+											<i class="bi bi-hash"></i>
+										</th>
+										<th>
+											<i class="bi bi-moon-stars"></i>
+											{{config.period}}
+										</th>
+										<th>
+											<i class="bi bi-book"></i>
+											{{labels.course}}
+										</th>
+										<th>
+											<i class="bi bi-person-badge"></i>
+											المعلم
+										</th>
+										<th>
+											<i class="bi bi-door-open"></i>
+											الغرفة
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="night in nights track by $index" ng-if="plan[level.id] != null && plan[level.id][night.id] != null">
+										<th>
+											<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+										</th>
+										<td>
+											{{night.name}}
+										</td>
+										<td>{{courses[plan[level.id][night.id].course].name}}</td>
+										<td>{{teachers[plan[level.id][night.id].teacher].name}}</td>
+										<td>{{rooms[plan[level.id][night.id].room].name}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</ng-container>
+	
+</div>

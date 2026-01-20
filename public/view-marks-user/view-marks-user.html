@@ -1,0 +1,65 @@
+<div ng-controller="view-marks">
+
+	<div class="form-group">
+		<label for="level" class="form-label">{{labels.level}}</label>
+		<select id="level" ng-model="level" class="form-control is-invalid" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in levels" required="required" ng-disabled="submitted" ng-change="updateLevel()">
+			<option disabled="disabled" value="">{{labels.level}}</option>
+		</select>
+	</div>
+	
+	<div class="form-group">
+		<label for="course" class="form-label">{{labels.course}}</label>
+		<select id="course" ng-model="course" class="form-control is-invalid" placeholder="{{labels.course}}" ng-options="course.id as course.name for course in levelCourses" required="required" ng-disabled="submitted" ng-change="updateCourse()">
+			<option disabled="disabled" value="">{{labels.course}}</option>
+		</select>
+	</div>
+	
+	<div class="form-group">
+		<label for="teacher" class="form-label">المعلم</label>
+		<input id="teacher" ng-value="teachers[teacher].name" class="form-control is-valid" placeholder="المعلم" readonly="readonly" ng-disabled="submitted">
+	</div>
+	
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						#
+					</th>
+					<th>
+						الرقم الشخصي
+					</th>
+					<th>
+						الاسم
+					</th>
+					<th ng-repeat="distribution in marksDistribution track by $index">
+						{{distribution.title}} ({{distribution.mark}})
+					</th>
+					<th>
+						المجموع (100)
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="student in levelStudents | orderBy : 'id' track by $index">
+					<td>
+						{{$index + 1}}
+					</td>
+					<td>
+						{{student.cpr}}
+					</td>
+					<td>
+						{{student.name}}
+					</td>
+					<td ng-repeat="distribution in marksDistribution track by $index">
+						{{marks[student.cpr][distribution.id]}}
+					</td>
+					<td>
+						{{marks[student.cpr]['المجموع']}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+</div>

@@ -1,0 +1,126 @@
+<div ng-controller="update-level">
+
+	<div class="card">
+		<div class="card-header">
+			<i class="bi bi-mortarboard"></i>
+			اختيار الصف الدراسي
+		</div>
+		<div class="card-body">
+			<div class="form-group">
+				<label for="grade" class="form-label">
+					<i class="bi bi-book"></i>
+					الصف الدراسي
+				</label>
+				<select id="grade" ng-model="grade" class="form-select" placeholder="الصف الدراسي" ng-options="grade as grade.name for grade in grades" ng-change="updateGrade()" placeholder="الصف" required="required" ng-disabled="submitted">
+					<option disabled="disabled" value="">اختر الصف الدراسي</option>
+				</select>
+				<div class="help-text-enhanced">
+					<small class="text-helper">
+						<i class="bi bi-info-circle"></i>
+						اختر الصف لعرض قائمة الطلبة المسجلين به
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-header">
+			<div>
+				<i class="bi bi-people"></i>
+				قائمة طلبة {{grade.name}}
+			</div>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th class="text-center">
+							<i class="bi bi-hash"></i>
+						</th>
+						<th class="text-center">
+							<i class="bi bi-check-square"></i>
+						</th>
+						<th>
+							<i class="bi bi-person-badge"></i>
+							الرقم الشخصي
+						<th>
+							<i class="bi bi-person"></i>
+							اسم الطالب
+						</th>
+						<th>
+							<i class="bi bi-mortarboard"></i>
+							الصف الحالي
+						</th>
+						<th>
+							<i class="bi bi-mortarboard-fill"></i>
+							{{labels.level}} الحالي
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="student in grade.students | orderBy : 'id' track by $index" ng-hide="loading" ng-class="{'table-primary': student.selected}" ng-click="student.selected = !student.selected"  role="button">
+						<th>
+							<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+						</th>
+						<td class="text-center">
+							<div class="form-check form-switch">
+								<input ng-model="student.selected" type="checkbox" class="form-check-input form-check-input-lg" ng-value="true" ng-true-value="true" ng-false-value="false" ng-disabled="submitted">
+							</div>
+						</td>
+						<td>
+							{{student.cpr}}
+						</td>
+						<td>
+							{{student.name}}
+						</td>
+						<td>
+							{{grades[student.grade].name}}
+						</td>
+						<td>
+							{{levels[student.level].name}}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-header">
+			<i class="bi bi-mortarboard-fill"></i>
+			اختيار {{labels.level}} الجديد
+		</div>
+		<div class="card-body">
+			<div class="form-group">
+				<label for="level" class="form-label">
+					<i class="bi bi-arrow-up-circle"></i>
+					{{labels.level}} المطلوب
+				</label>
+				<select id="level" ng-model="level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in grade.levels | orderBy:'index'" placeholder="{{labels.level}}" required="required" ng-disabled="submitted">
+					<option disabled="disabled" value="">اختر {{labels.level}} الجديد</option>
+				</select>
+				<div class="help-text-enhanced">
+					<small class="text-helper">
+						<i class="bi bi-lightbulb"></i>
+						سيتم تحديث {{labels.level}} للطلبة المحددين إلى {{labels.level}} المختار
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-add" ng-click="updateLevel()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				تحديث {{labels.level}}
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border ms-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+		</div>
+	</div>
+	
+</div>

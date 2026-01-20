@@ -1,0 +1,141 @@
+<div ng-controller="payments">
+
+	<div class="card">
+		<div class="card-header">
+			<i class="bi bi-gear"></i>
+			إعدادات الدفع
+		</div>
+		<div class="card-body">
+			<div class="row">
+			
+				<div class="col-md-4">
+					<div class="form-group">
+						<label for="level" class="form-label">
+							<i class="bi bi-mortarboard-fill"></i>
+							{{labels.level}}
+						</label>
+						<select id="level" ng-model="level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in levels | orderBy : 'index'" required="required" ng-disabled="submitted" ng-change="updateLevel()">
+							<option disabled="disabled" value="">اختر {{labels.level}}</option>
+						</select>
+					</div>
+				</div>
+				
+				<div class="col-md-4">
+					<div class="form-group">
+						<label for="receiver" class="form-label">
+							<i class="bi bi-person-check"></i>
+							المستلم
+						</label>
+						<input id="receiver" ng-model="receiver" type="text" class="form-control name" placeholder="اسم المستلم" maxlength="100" autocomplete="off" ng-disabled="submitted" ng-change="updateReceiver()">
+					</div>
+				</div>
+				
+				<div class="col-md-4">
+					<div class="form-group">
+						<label for="fees" class="form-label">
+							<i class="bi bi-currency-exchange"></i>
+							الرسوم
+						</label>
+						<div class="input-group">
+							<div class="input-group-text">
+								د.ب
+							</div>
+							<input id="fees" ng-model="fees" class="form-control" placeholder="الرسوم" type="tel" placeholder="0" maxlength="4" autocomplete="off" required="required" ng-disabled="submitted">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="card" ng-show="level != null">
+		<div class="card-header">
+			<div>
+				<i class="bi bi-people"></i>
+				قائمة الطلبة
+			</div>
+		</div>
+		
+		<div id="students" class="accordion">
+			
+			<div class="card-body">
+			
+				<div class="payment-item" ng-repeat="student in levelStudents | orderBy : 'name' track by $index" ng-class="getPaymentItemClass(student)">
+					
+					<div id="student{{$index}}head" class="payment-item-header" ng-class="getPaymentHeaderClass(student)">
+						<button class="payment-toggle-btn w-100" type="button" data-bs-toggle="collapse" data-bs-target="#student{{$index}}" aria-expanded="false" aria-controls="student{{$index}}">
+							<div class="d-flex justify-content-between align-items-center">
+								<div class="student-info">
+									<div class="counter-badge">{{$index + 1}}</div>
+									<i class="bi bi-person-fill"></i>
+									{{student.name}}
+								</div>
+								<div class="payment-status">
+									<span class="status-badge status-badge-active" ng-show="student.payment.selected">
+										<i class="bi bi-check-circle-fill"></i>
+										تم الدفع
+									</span>
+									<span class="status-badge status-badge-inactive" ng-hide="student.payment.selected">
+										<i class="bi bi-clock-fill"></i>
+										لم يدفع
+									</span>
+									<i class="bi bi-chevron-down"></i>
+								</div>
+							</div>
+						</button>
+					</div>
+					
+					<div id="student{{$index}}" class="collapse" aria-labelledby="student{{$index}}head" data-bs-parent="#students">
+						<div class="payment-item-content">
+							<div class="payment-toggle-section">
+								<div class="input-group payment-input-group" role="button">
+									<label for="payments{{student.cpr}}" class="input-group-text" role="button">
+										<div class="form-check form-switch">
+											<input id="payments{{student.cpr}}" ng-model="student.payment.selected" type="checkbox" class="form-check-input form-check-input-lg" ng-value="true" ng-true-value="true" ng-false-value="false" ng-disabled="submitted" ng-change="updateStudentPayment(student)">
+										</div>
+									</label>
+									
+									<label for="payments{{student.cpr}}" class="form-control" role="button">إتمام عملية الدفع</label>
+									
+									<label for="payments{{student.cpr}}" class="status-badge status-badge-active" ng-show="student.payment.selected" role="button">
+										<i class="bi bi-check-circle-fill"></i>
+										مدفوع
+									</label>
+									<label for="payments{{student.cpr}}" class="status-badge status-badge-inactive" ng-hide="student.payment.selected" role="button">
+										<i class="bi bi-x-circle-fill"></i>
+										غير مدفوع
+									</label>
+								</div>
+							</div>
+							
+							<div class="payment-info-section mt-3" ng-show="student.payment.selected">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="info-panel info-panel-success">
+											<i class="bi bi-calendar-check me-2"></i>
+											<strong>تاريخ الدفع:</strong> {{student.payment.time}}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="info-panel info-panel-success">
+											<i class="bi bi-cash mt-0"></i>
+											<strong>المبلغ:</strong> {{fees}} د.ب
+										</div>
+									</div>
+									<div class="col-md-6" ng-show="receiver">
+										<div class="info-panel mt-0">
+											<i class="bi bi-person-check"></i>
+											<strong>المستلم:</strong> {{receiver}}
+										</div>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

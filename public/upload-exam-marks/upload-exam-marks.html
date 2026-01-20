@@ -1,0 +1,68 @@
+<div ng-controller="upload-exam-marks">
+
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="level" class="form-label">
+						<i class="bi bi-layers"></i>
+						{{labels.level}}
+					</label>
+					<select id="level" ng-model="level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in levels | orderBy:'index'" required="required" ng-disabled="submitted" ng-change="updateLevel(true)">
+						<option disabled="disabled" value="">اختر {{labels.level}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="course" class="form-label">
+						<i class="bi bi-book"></i>
+						{{labels.course}}
+					</label>
+					<select id="course" ng-model="course" class="form-select" placeholder="{{labels.course}}" ng-options="course.id as course.name for course in levelCourses" required="required" ng-disabled="submitted || !level" ng-change="updateCourse()">
+						<option disabled="disabled" value="">اختر {{labels.course}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="teacher" class="form-label">
+						<i class="bi bi-person-workspace"></i>
+						المعلم
+					</label>
+					<div class="input-group">
+						<span class="input-group-text">
+							<i class="bi bi-person-check"></i>
+							المعلم المسؤول
+						</span>
+						<input id="teacher" ng-value="teachers[teacher].name" class="form-control" placeholder="المعلم" readonly="readonly" ng-disabled="submitted">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="info-panel">
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-cloud-upload"></i>
+				ملف الدرجات
+			</label>
+			<input id="file" type="file" class="form-control" accept=".xlsx" placeholder="ملف الدرجات" required="required" ng-disabled="submitted">
+		</div>
+		<div class="help-text-enhanced">
+			<small><i class="bi bi-info-circle"></i>يجب أن يحتوي الملف على أعمدة: الاسم، الرقم المدني، الدرجة</small>
+		</div>
+	</div>
+	
+	<div class="form-controls" ng-hide="submitted">
+		<button class="btn btn-action-primary" ng-click="saveExamCourseMarks()" ng-hide="loading">
+			<i class="bi bi-cloud-upload"></i>
+			رفع درجات {{labels.course}}
+		</button>
+		<div class="loading-state" ng-show="loading">
+			<div class="loading-spinner mx-auto"></div>
+		</div>
+	</div>
+
+</div>

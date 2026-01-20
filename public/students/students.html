@@ -1,0 +1,810 @@
+<div ng-controller="students">
+			
+	<div class="card d-print-none">
+	
+		<div class="card-header">
+			<ul class="nav nav-tabs card-header-tabs">
+				<li class="nav-item" role="presentation">
+					<button id="students-tab" class="nav-link active" data-bs-toggle="tab" data-bs-target="#students-tab-pane" type="button" role="tab" aria-controls="students-tab-pane" aria-selected="true">
+						<i class="bi bi-people-fill"></i>
+						الطلبة المسجلين
+					</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button id="counts-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#counts-tab-pane" type="button" role="tab" aria-controls="counts-tab-pane" aria-selected="false">
+						<i class="bi bi-bar-chart-fill"></i>
+						أعداد {{labels.levels}}
+					</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button id="draft-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#draft-tab-pane" type="button" role="tab" aria-controls="draft-tab-pane" aria-selected="false">
+						<i class="bi bi-pencil-square"></i>
+						قيد التسجيل
+					</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button id="archive-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#archive-tab-pane" type="button" role="tab" aria-controls="archive-tab-pane" aria-selected="false">
+						<i class="bi bi-copy"></i>
+						نقل من فصل سابق
+					</button>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="card-body">
+			<div class="tab-content">
+				<div id="students-tab-pane" class="tab-pane fade show active" role="tabpanel" aria-labelledby="students-tab" tabindex="0">
+					
+					<div class="info-panel">
+						<div class="row">
+							<div class="col-md-6 col-lg-4">
+								<div class="mb-3">
+									<label for="cpr-search" class="form-label">
+										<i class="bi bi-person-vcard"></i>
+										الرقم الشخصي
+									</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="bi bi-card-text"></i>
+										</span>
+										<input id="cpr-search" ng-model="search.cpr" type="tel" class="form-control is-valid" placeholder="الرقم الشخصي" maxlength="9" autocomplete="off" ng-change="searchStudents()">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-lg-4">
+								<div class="mb-3">
+									<label for="name-search" class="form-label">
+										<i class="bi bi-person"></i>
+										اسم الطالب
+									</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="bi bi-person-fill"></i>
+										</span>
+										<input id="name-search" ng-model="search.name" type="text" class="form-control is-valid" placeholder="اسم الطالب" maxlength="50" autocomplete="off" ng-change="searchStudents()">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-lg-4">
+								<div class="mb-3">
+									<label for="mobile-search" class="form-label">
+										<i class="bi bi-telephone"></i>
+										رقم الهاتف
+									</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="bi bi-phone"></i>
+										</span>
+										<input id="mobile-search" ng-model="search.mobile" type="tel" class="form-control is-valid" placeholder="رقم الهاتف" maxlength="8" autocomplete="off" ng-change="searchStudents()">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-lg-4">
+								<div class="mb-3">
+									<label for="grade-search" class="form-label">
+										<i class="bi bi-mortarboard"></i>
+										الصف
+									</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="bi bi-bookmark-star"></i>
+										</span>
+										<select id="grade-search" ng-model="search.grade" class="form-select is-valid" placeholder="الصف" ng-options="grade.id as grade.name for grade in grades" ng-change="searchStudents()">
+											<option selected="selected" value="">الصف</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-lg-4">
+								<div class="mb-3">
+									<label for="level-search" class="form-label">
+										<i class="bi bi-bar-chart-steps"></i>
+										{{labels.level}}
+									</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="bi bi-graph-up"></i>
+										</span>
+										<select id="level-search" ng-model="search.level" class="form-select is-valid" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in levels" ng-change="searchStudents()">
+											<option selected="selected" value="">{{labels.level}}</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-lg-4">
+								<div class="mb-3">
+									<label for="payment-search" class="form-label">
+										<i class="bi bi-credit-card"></i>
+										حالة الدفع
+									</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="bi bi-currency-dollar"></i>
+										</span>
+										<select id="payment-search" ng-model="search.payment" class="form-select is-valid" placeholder="حالة الدفع" ng-change="searchStudents()">
+											<option selected="selected" value="">حالة الدفع</option>
+											<option value="لم يدفع">لم يدفع</option>
+											<option value="قيد المراجعة">قيد المراجعة</option>
+											<option value="تمت المراجعة">تمت المراجعة</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-lg-4">
+								<div class="mb-3">
+									<label for="attend-search" class="form-label">
+										<i class="bi bi-calendar-check"></i>
+										حالة الحضور
+									</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="bi bi-check-circle"></i>
+										</span>
+										<select id="attend-search" ng-model="search.attend" class="form-select is-valid" placeholder="حالة الحضور" ng-change="searchStudents()">
+											<option selected="selected" value="">حالة الحضور</option>
+											<option value="لم يحضر">لم يحضر</option>
+											<option value="حضر قليلا">حضر قليلا</option>
+											<option value="حضر كثيرا">حضر كثيرا</option>
+											<option value="حضر دائما">حضر دائما</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="table-responsive mt-3">
+						<table id="students" class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-person-vcard"></i>
+										الرقم الشخصي
+									</th>
+									<th>
+										<i class="bi bi-person-fill"></i>
+										الاسم
+									</th>
+									<th>
+										<i class="bi bi-mortarboard"></i>
+										الصف
+									</th>
+									<th>
+										<i class="bi bi-phone"></i>
+										{{labels.mobile}}
+									</th>
+									<th class="d-print-none">
+										<i class="bi bi-telephone"></i>
+										{{labels.phone}}
+									</th>
+									<th class="d-print-none" ng-show="config.fields.contact">
+										<i class="bi bi-person-lines-fill"></i>
+										{{labels.contact}}
+									</th>
+									<th ng-show="config.fields.health">
+										<i class="bi bi-heart-pulse"></i>
+										الحالة الصحية
+									</th>
+									<th ng-show="config.fields.city">
+										<i class="bi bi-geo-alt"></i>
+										منطقة السكن
+									</th>
+									<th ng-show="config.fields.block">
+										<i class="bi bi-building"></i>
+										رقم المجمع
+									</th>
+									<th ng-show="config.fields.dateOfBirth">
+										<i class="bi bi-calendar-date"></i>
+										تاريخ الميلاد
+									</th>
+									<th ng-show="config.fields.mother">
+										<i class="bi bi-person-heart"></i>
+										اسم الأم
+									</th>
+									<th>
+										<i class="bi bi-bar-chart-steps"></i>
+										{{labels.level}}
+									</th>
+									<th>
+										<i class="bi bi-credit-card"></i>
+										حالة الدفع
+									</th>
+									<th>
+										<i class="bi bi-calendar-check"></i>
+										حالة الحضور
+									</th>
+									<th class="d-print-none">
+										<i class="bi bi-clock"></i>
+										وقت التسجيل
+									</th>
+									<th class="no-export d-print-none">
+										<i class="bi bi-camera"></i>
+										الصورة
+									</th>
+									<th class="text-center no-export d-print-none">
+										<i class="bi bi-trash"></i>
+										حذف
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="student in studentsSearch | orderBy : 'id' track by $index" ng-hide="loading">
+									<td>
+										<span class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</span>
+									</td>
+									<td>
+										{{student.cpr}}
+									</td>
+									<td>
+										{{student.name}}
+									</td>
+									<td>
+										{{grades[student.grade].name}}
+									</td>
+									<td>
+										{{student.mobile}}
+										<a class="badge text-bg-success" ng-href="https://wa.me/973{{student.mobile}}" role="buttton">
+											<i class="bi bi-whatsapp m-0"></i>
+										</a>
+										<a class="badge text-bg-danger" ng-href="tel:{{student.mobile}}" role="buttton">
+											<i class="bi bi-telephone m-0"></i>
+										</a>
+									</td>
+									<td class="d-print-none">
+										{{student.phone}}
+										<a class="badge text-bg-success" ng-href="https://wa.me/973{{student.phone}}" role="buttton">
+											<i class="bi bi-whatsapp m-0"></i>
+										</a>
+										<a class="badge text-bg-danger" ng-href="tel:{{student.phone}}" role="buttton">
+											<i class="bi bi-telephone m-0"></i>
+										</a>
+									</td>
+									<td class="d-print-none" ng-show="config.fields.contact">
+										{{student.contact}}
+										<a class="badge text-bg-success" ng-href="https://wa.me/973{{student.contact}}" role="buttton">
+											<i class="bi bi-whatsapp m-0"></i>
+										</a>
+										<a class="badge text-bg-danger" ng-href="tel:{{student.contact}}" role="buttton">
+											<i class="bi bi-telephone m-0"></i>
+										</a>
+									</td>
+									<td ng-show="config.fields.health">
+										{{student.health}}
+									</td>
+									<td ng-show="config.fields.city">
+										{{student.city}}
+									</td>
+									<td ng-show="config.fields.block">
+										{{student.block}}
+									</td>
+									<td ng-show="config.fields.dateOfBirth">
+										{{student.dateOfBirth}}
+									</td>
+									<td ng-show="config.fields.mother">
+										{{student.mother}}
+									</td>
+									<td>
+										{{levels[student.level].name}}
+									</td>
+									<td>
+										<div class="status-badge" 
+											 ng-class="{
+												'status-badge-error': student.payment == 'لم يدفع',
+												'status-badge-warning': student.payment == 'قيد المراجعة',
+												'status-badge-completed': student.payment == 'تمت المراجعة'}">
+											<i class="bi" ng-class="{
+												'bi-x-circle-fill': student.payment == 'لم يدفع',
+												'bi-clock-fill': student.payment == 'قيد المراجعة',
+												'bi-check-circle-fill': student.payment == 'تمت المراجعة'}"></i>
+											{{student.payment}}
+										</div>
+									</td>
+									<td>
+										<div class="status-badge" 
+											 ng-class="{
+												'status-badge-error': student.attend == 'لم يحضر',
+												'status-badge-warning': student.attend == 'حضر قليلا',
+												'status-badge-linked': student.attend == 'حضر كثيرا',
+												'status-badge-completed': student.attend == 'حضر دائما'}">
+											<i class="bi" ng-class="{
+												'bi-person-x-fill': student.attend == 'لم يحضر',
+												'bi-person-dash-fill': student.attend == 'حضر قليلا',
+												'bi-person-plus-fill': student.attend == 'حضر كثيرا',
+												'bi-person-check-fill': student.attend == 'حضر دائما'}"></i>
+											{{student.attend}}
+											
+											({{student.attendCount}}/{{student.totalDays}})
+										</div>
+									</td>
+									<td class="ltr d-print-none">
+										{{student.time}}
+									</td>
+									<td class="no-export d-print-none">
+										<img width="200" ng-src="{{student.photo}}" ng-if="student.photo != null" class="img-fluid rounded" role="button" ng-click="previewImage(student.photo)">
+									</td>
+									<td class="text-center no-export d-print-none">
+										<a type="button" class="btn btn-delete" data-bs-toggle="modal" data-bs-target="#deleteStudentModal" ng-click="selectStudent(student)" ng-if="isStringNotEmpty(student.cpr)">
+											<i class="bi bi-x-lg"></i>
+											حذف
+										</a>
+									</td>
+								</tr>
+								<tr ng-show="loading">
+									<td class="text-center" colspan="16">
+										<div class="spinner-border" role="status">
+											<span class="visually-hidden"></span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+							<tfoot class="d-print-none">
+								<tr class="no-export">
+									<th colspan="11" class="text-center">
+										<a type="button" class="btn btn-action-primary" ng-click="print('students')">
+											<i class="bi bi-printer"></i>
+											طباعة
+										</a>
+										<a type="button" class="btn btn-action-secondary" ng-click="saveStudents()">
+											<i class="bi bi-download"></i>
+											حفظ الطلبة
+										</a>
+										<a type="button" class="btn btn-action-secondary" ng-click="saveLevelsStudents()">
+											<i class="bi bi-download"></i>
+											حفظ طلبة {{labels.levels}}
+										</a>
+										<a type="button" class="btn btn-action-warning" ng-href="{{contacts}}" download="contact.csv">
+											<i class="bi bi-phone"></i>
+											حفظ الأرقام
+										</a>
+									</th>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+				<div id="counts-tab-pane" class="tab-pane fade" role="tabpanel" aria-labelledby="counts-tab" tabindex="1">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										#
+									</th>
+									<th>
+										<i class="bi bi-bar-chart-steps"></i>
+										{{labels.level}}
+									</th>
+									<th>
+										<i class="bi bi-bar-chart-fill"></i>
+										العدد
+									</th>
+									<th>
+										<i class="bi bi-list"></i>
+										الطلبة
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="level in array(levels) | orderBy:'index' track by $index">
+									<td>
+										<span class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</span>
+									</td>
+									<td>
+										{{level.name}}
+									</td>
+									<td>
+										<span class="status-badge status-badge-active">{{level.students.length}}</span>
+									</td>
+									<td>
+										<button class="btn btn-action-secondary" data-bs-toggle="modal" data-bs-target="#studentsModal" ng-click="selectLevel(level)">
+											<i class="bi bi-list-ul"></i>
+											الطلبة
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div id="draft-tab-pane" class="tab-pane fade" role="tabpanel" aria-labelledby="draft-tab" tabindex="2">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-person-vcard"></i>
+										الرقم الشخصي
+									</th>
+									<th>
+										<i class="bi bi-person-fill"></i>
+										الاسم
+									</th>
+									<th>
+										<i class="bi bi-mortarboard"></i>
+										الصف
+									</th>
+									<th>
+										<i class="bi bi-phone"></i>
+										{{labels.mobile}}
+									</th>
+									<th>
+										<i class="bi bi-telephone"></i>
+										{{labels.phone}}
+									</th>
+									<th>
+										<i class="bi bi-person-lines-fill"></i>
+										{{labels.contact}}
+									</th>
+									<th>
+										<i class="bi bi-clock"></i>
+										وقت الوصول
+									</th>
+									<th>
+										<i class="bi bi-camera"></i>
+										الصورة
+									</th>
+									<th class="text-center">
+										<i class="bi bi-trash"></i>
+										حذف
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="student in draft track by $index">
+									<td>
+										<span class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</span>
+									</td>
+									<td>
+										{{student.cpr}}
+									</td>
+									<td>
+										{{student.name}}
+									</td>
+									<td>
+										{{grades[student.grade].name}}
+									</td>
+									<td>
+										<a ng-href="https://wa.me/973{{student.mobile}}" role="buttton">
+											{{student.mobile}}
+										</a>
+									</td>
+									<td>
+										<a ng-href="https://wa.me/973{{student.phone}}" role="buttton">
+											{{student.phone}}
+										</a>
+									</td>
+									<td>
+										<a ng-href="https://wa.me/973{{student.contact}}" role="buttton">
+											{{student.contact}}
+										</a>
+									</td>
+									<td class="ltr">
+										{{student.time}}
+									</td>
+									<td>
+										<img width="200" ng-src="{{student.payment}}" ng-if="student.payment != null && student.payment.startsWith('http')" class="img-fluid rounded" role="button" ng-click="previewImage(student.payment)">
+									</td>
+									<td>
+										<a type="button" class="btn btn-delete" data-bs-toggle="modal" data-bs-target="#deleteDraftModal" ng-click="selectStudent(student)" ng-if="isStringNotEmpty(student.cpr)">
+											<i class="bi bi-trash"></i>
+											حذف
+										</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div id="archive-tab-pane" class="tab-pane fade" role="tabpanel" aria-labelledby="archive-tab" tabindex="1">
+					
+					<div class="card mb-4">
+						<div class="card-header">
+							<i class="bi bi-copy"></i>
+							نسخ من فصل دراسي آخر
+						</div>
+						<div class="card-body">
+							<div class="form-group">
+								<label for="sourceSemester" class="form-label">
+									<i class="bi bi-calendar3"></i>
+									اختر الفصل الدراسي للنسخ منه
+								</label>
+								<select id="sourceSemester" ng-model="sourceSemester" class="form-control" ng-options="semester.id as semester.name for semester in semesters" ng-change="copyFromSemester()">
+									<option value="">-- اختر الفصل الدراسي --</option>
+								</select>
+								<div class="help-text-enhanced">
+									<small>
+										<i class="bi bi-info-circle"></i>
+										سيتم نسخ جميع الطلبة من الفصل المحدد
+									</small>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="table-responsive mt-3">
+						<table id="students" class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-person-vcard"></i>
+										الرقم الشخصي
+									</th>
+									<th>
+										<i class="bi bi-person-fill"></i>
+										الاسم
+									</th>
+									<th>
+										<i class="bi bi-mortarboard"></i>
+										الصف
+									</th>
+									<th>
+										<i class="bi bi-phone"></i>
+										{{labels.mobile}}
+									</th>
+									<th>
+										<i class="bi bi-telephone"></i>
+										{{labels.phone}}
+									</th>
+									<th ng-show="config.fields.contact">
+										<i class="bi bi-person-lines-fill"></i>
+										{{labels.contact}}
+									</th>
+									<th ng-show="config.fields.health">
+										<i class="bi bi-heart-pulse"></i>
+										الحالة الصحية
+									</th>
+									<th ng-show="config.fields.city">
+										<i class="bi bi-geo-alt"></i>
+										منطقة السكن
+									</th>
+									<th ng-show="config.fields.block">
+										<i class="bi bi-building"></i>
+										رقم المجمع
+									</th>
+									<th ng-show="config.fields.dateOfBirth">
+										<i class="bi bi-calendar-date"></i>
+										تاريخ الميلاد
+									</th>
+									<th ng-show="config.fields.mother">
+										<i class="bi bi-person-heart"></i>
+										اسم الأم
+									</th>
+									<th>
+										<i class="bi bi-bar-chart-steps"></i>
+										{{labels.level}}
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="student in values(archive) | orderBy : 'id' track by $index" ng-hide="loading">
+									<td>
+										<span class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</span>
+									</td>
+									<td>
+										{{student.cpr}}
+									</td>
+									<td>
+										{{student.name}}
+									</td>
+									<td>
+										{{grades[student.grade].name}}
+									</td>
+									<td>
+										{{student.mobile}}
+									</td>
+									<td>
+										{{student.phone}}
+									</td>
+									<td ng-show="config.fields.contact">
+										{{student.contact}}
+									</td>
+									<td ng-show="config.fields.health">
+										{{student.health}}
+									</td>
+									<td ng-show="config.fields.city">
+										{{student.city}}
+									</td>
+									<td ng-show="config.fields.block">
+										{{student.block}}
+									</td>
+									<td ng-show="config.fields.dateOfBirth">
+										{{student.dateOfBirth}}
+									</td>
+									<td ng-show="config.fields.mother">
+										{{student.mother}}
+									</td>
+									<td>
+										{{levels[student.level].name}}
+									</td>
+								</tr>
+								<tr ng-show="loading">
+									<td class="text-center" colspan="16">
+										<div class="spinner-border" role="status">
+											<span class="visually-hidden"></span>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+					<div class="form-controls" ng-hide="submitted">
+						<div class="d-flex justify-content-center align-items-center gap-3">
+							<button class="btn btn-add" ng-click="saveFromArchive()" ng-hide="loading">
+								<i class="bi bi-floppy"></i>
+								حفظ جميع الطلبة
+							</button>
+							<div class="d-flex align-items-center" ng-show="loading">
+								<div class="spinner-border ms-2"></div>
+								<span>جاري الحفظ...</span>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="toast-container position-fixed top-50 start-50 translate-middle">
+		<div id="preview" class="toast" role="alert">
+			<div class="toast-header d-block bg-warning text-light">
+				<i class="bi bi-image"></i>
+				معاينة الصورة
+				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+			<div class="toast-body">
+				<img width="700" ng-src="{{preview}}" class="preview-image img-fluid rounded" role="button" data-bs-dismiss="toast">
+			</div>
+		</div>
+	</div>
+	
+	<div id="deleteStudentModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-exclamation-triangle"></i>
+						حذف الطالب : {{student.name}}
+					</h5>
+					<button type="button" class="btn-close d-print-none" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<h3>
+						هل أنت متأكد من حذف الطالب {{student.name}}
+					</h3>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-delete" data-bs-dismiss="modal" ng-click="deleteStudent()">تأكيد</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">تراجع</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="deleteDraftModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-exclamation-triangle"></i>
+						حذف الطالب : {{student.name}}
+					</h5>
+					<button type="button" class="btn-close d-print-none" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<h3>
+						هل أنت متأكد من حذف الطالب {{student.name}}
+					</h3>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-delete" data-bs-dismiss="modal" ng-click="deleteDraft()">تأكيد</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">تراجع</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="studentsModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						{{level.name}}
+					</h5>
+					<button type="button" class="btn-close d-print-none" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										#
+									</th>
+									<th>
+										<i class="bi bi-person-vcard"></i>
+										الرقم الشخصي
+									</th>
+									<th>
+										<i class="bi bi-person-fill"></i>
+										الاسم
+									</th>
+									<th>
+										<i class="bi bi-phone"></i>
+										{{labels.mobile}}
+									</th>
+									<th class="d-print-none">
+										<i class="bi bi-telephone"></i>
+										{{labels.phone}}
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="student in level.students | orderBy : 'id' track by $index" ng-hide="loading">
+									<td>
+										<span class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</span>
+									</td>
+									<td>
+										{{student.cpr}}
+									</td>
+									<td>
+										{{student.name}}
+									</td>
+									<td>
+										<a ng-href="https://wa.me/973{{student.mobile}}" role="buttton">
+											{{student.mobile}}
+										</a>
+									</td>
+									<td>
+										<a ng-href="https://wa.me/973{{student.phone}}" role="buttton">
+											{{student.phone}}
+										</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer d-print-none">
+					<button type="button" class="btn btn-action-secondary" data-bs-dismiss="modal" ng-click="print('studentsModal')">
+						<i class="bi bi-printer"></i>
+						طباعة
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						غلق
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="print" class="d-none d-print-block w-100 m-0 p-0">
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+	
+</div>

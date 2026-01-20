@@ -1,0 +1,150 @@
+<div ng-controller="rooms">
+	
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h3>إدارة المناطق</h3>
+		<button class="btn btn-add" ng-click="addArea(areaList.length)" ng-hide="submitted">
+			<i class="bi bi-plus-lg"></i>
+			إضافة منطقة جديدة
+		</button>
+	</div>
+	
+	<div class="parent-item list-fade-in" ng-repeat="(areaIndex, area) in areaList track by $index">
+		
+		<div class="parent-header">
+			<div class="parent-title-section">
+				<div class="parent-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="parent-title-content">
+					<i class="bi bi-geo-alt list-icon-md"></i>
+					المنطقة رقم {{$index + 1}}
+				</div>
+			</div>
+			
+			<div class="parent-controls">
+				<div class="parent-actions" ng-hide="submitted">
+					<button type="button" class="btn parent-action-btn" ng-click="addArea($index)" title="إضافة منطقة جديدة بعد هذه">
+						<i class="bi bi-plus-lg m-0"></i>
+					</button>
+					<button type="button" class="btn parent-action-btn" ng-click="upArea($index)" ng-if="$index != 0 && areaList.length != 1" title="نقل المنطقة لأعلى">
+						<i class="bi bi-chevron-double-up m-0"></i>
+					</button>
+					<button type="button" class="btn parent-action-btn" ng-click="downArea($index)" ng-if="$index != areaList.length - 1 && areaList.length != 1" title="نقل المنطقة لأسفل">
+						<i class="bi bi-chevron-double-down m-0"></i>
+					</button>
+					<button type="button" class="btn parent-action-btn parent-delete-btn" ng-click="deleteArea($index)" ng-if="areaList.length != 1" title="حذف المنطقة">
+						<i class="bi bi-trash m-0"></i>
+					</button>
+					<button type="button" class="btn parent-action-btn" ng-click="addArea($index + 1)" title="إضافة منطقة جديدة قبل هذه">
+						<i class="bi bi-plus-lg m-0"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="parent-input-section">
+			<div class="input-group parent-input-group">
+				<span class="input-group-text parent-label">
+					<i class="bi bi-geo-alt"></i>
+					اسم المنطقة
+				</span>
+				<input id="area{{$index}}" name="areas" ng-model="area.name" type="text" class="form-control parent-input" required="required" maxlength="100" placeholder="مثال: الطابق الأول، القسم الإداري" autocomplete="off" ng-disabled="submitted">
+				<span class="input-group-text list-order">
+					<i class="bi bi-sort-numeric-down"></i>
+					{{$index + 1}}
+				</span>
+			</div>
+		</div>
+
+		<div class="childs-section">
+			
+			<div class="childs-header">
+				<h5 class="childs-title">
+					<i class="bi bi-door-open"></i>
+					غرف المنطقة ({{area.rooms.length}})
+				</h5>
+				<button class="btn btn-add btn-sm" ng-click="addRoom(area, area.rooms.length)" ng-hide="submitted">
+					<i class="bi bi-plus-lg"></i>
+					إضافة غرفة
+				</button>
+			</div>
+
+			<div ng-show="area.rooms.length === 0" class="childs-empty-state">
+				<i class="bi bi-door-closed childs-empty-icon"></i>
+				<p class="childs-empty-text">لا توجد غرف في هذه المنطقة</p>
+				<button class="btn btn-add btn-sm" ng-click="addRoom(area, 0)">
+					<i class="bi bi-plus-lg"></i>
+					إضافة أول غرفة
+				</button>
+			</div>
+
+			<div class="child-item" ng-repeat="room in area.rooms track by $index">
+				
+				<div class="child-header">
+					<div class="child-info">
+						<div class="child-number">
+							<span class="child-counter">{{$index + 1}}</span>
+						</div>
+						<div class="child-title">
+							<i class="bi bi-door-open list-icon-sm"></i>
+							غرفة رقم {{$index + 1}}
+						</div>
+					</div>
+					
+					<div class="child-actions" ng-hide="submitted">
+						<button type="button" class="btn child-action-btn" ng-click="addRoom(area, $index)" title="إضافة غرفة جديدة بعد هذه">
+							<i class="bi bi-plus-lg m-0"></i>
+						</button>
+						<button type="button" class="btn child-action-btn" ng-click="upRoom(area, $index)" ng-if="$index != 0 && area.rooms.length != 1" title="نقل الغرفة لأعلى">
+							<i class="bi bi-chevron-up m-0"></i>
+						</button>
+						<button type="button" class="btn child-action-btn" ng-click="downRoom(area, $index)" ng-if="$index != area.rooms.length - 1 && area.rooms.length != 1" title="نقل الغرفة لأسفل">
+							<i class="bi bi-chevron-down m-0"></i>
+						</button>
+						<button type="button" class="btn child-action-btn child-delete-btn" ng-click="deleteRoom(area, $index)" ng-if="area.rooms.length != 1" title="حذف الغرفة">
+							<i class="bi bi-trash m-0"></i>
+						</button>
+						<button type="button" class="btn child-action-btn" ng-click="addRoom(area, $index + 1)" title="إضافة غرفة جديدة قبل هذه">
+							<i class="bi bi-plus-lg m-0"></i>
+						</button>
+					</div>
+				</div>
+
+				<div class="child-input-section">
+					<div class="input-group child-input-group">
+						<span class="input-group-text child-label">
+							<i class="bi bi-door-open"></i>
+							اسم الغرفة
+						</span>
+						<input id="child-{{areaIndex}}-{{$index}}" name="childs-{{areaIndex}}" ng-model="room.name" type="text" class="form-control child-input" required="required" maxlength="100" placeholder="مثال: قاعة المؤتمرات، مكتب المدير" autocomplete="off" ng-disabled="submitted">
+						<span class="input-group-text child-order">
+							<i class="bi bi-hash"></i>
+							{{$index + 1}}
+						</span>
+					</div>
+					
+					<div class="child-help-text">
+						<small class="list-text-helper">
+							<i class="bi bi-info-circle list-icon-sm"></i>
+							أدخل اسماً واضحاً ومميزاً للغرفة
+						</small>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border ms-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+			<button class="btn btn-add" ng-click="saveAreas()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ جميع المناطق والغرف
+			</button>
+		</div>
+	</div>
+
+</div>

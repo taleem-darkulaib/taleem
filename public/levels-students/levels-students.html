@@ -1,0 +1,117 @@
+<div ng-controller="levels-students">
+	
+	<div class="form-group d-print-none">
+		<label for="level" class="form-label">{{labels.level}}</label>
+		<select id="level" ng-model="level" class="form-control is-invalid" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in values(levels) | orderBy:'index'" ng-disabled="submitted" ng-change="updateLevel(true)">
+			<option disabled="disabled" value="">{{labels.level}}</option>
+		</select>
+	</div>
+	
+	<div class="card">
+		<div class="card-header">
+			جدول {{labels.level}} {{levels[level].name}}
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							#
+						</th>
+						<th>
+							{{config.period}}
+						</th>
+						<th>
+							{{labels.course}}
+						</th>
+						<th>
+							المعلم
+						</th>
+						<th>
+							الغرفة
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="(night, nightPlan) in levelPlan track by $index">
+						<td>
+							{{$index + 1}}
+						</td>
+						<td>
+							{{nights[night].name}}
+						</td>
+						<td>
+							{{courses[nightPlan.course].name}}
+						</td>
+						<td>
+							{{teachers[nightPlan.teacher].name}}
+						</td>
+						<td>
+							{{rooms[nightPlan.room].name}}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-header">
+			طلبة {{labels.level}} {{levels[level].name}}
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							#
+						</th>
+						<th>
+							الرقم الشخصي
+						</th>
+						<th>
+							الاسم
+						</th>
+						<th>
+							{{labels.mobile}}
+						</th>
+						<th>
+							{{labels.phone}}
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="student in levelStudents | orderBy : 'id' track by $index" ng-hide="loading">
+						<td>
+							{{$index + 1}}
+						</td>
+						<td>
+							{{student.cpr}}
+						</td>
+						<td>
+							{{student.name}}
+						</td>
+						<td>
+							<a ng-href="https://wa.me/973{{student.mobile}}" role="buttton">
+								{{student.mobile}}
+							</a>
+						</td>
+						<td>
+							<a ng-href="https://wa.me/973{{student.phone}}" role="buttton">
+								{{student.phone}}
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div class="form-controls d-print-none">
+		<button class="btn btn-outline-dark" ng-click="print()">
+			<i class="bi bi-printer"></i>
+			طباعة
+		</button>
+	</div>
+	
+</div>

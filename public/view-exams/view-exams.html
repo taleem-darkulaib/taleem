@@ -1,0 +1,89 @@
+<div ng-controller="view-exams">
+
+	<div class="form-group d-print-none">
+		<label for="exam" class="form-label">الامتحان</label>
+		<select id="exam" ng-model="exam.id" class="form-control is-invalid" placeholder="الامتحان" ng-options="exam.id as exam.title for exam in exams" required="required" ng-disabled="submitted" ng-change="updateExam()">
+			<option disabled="disabled" value="">الامتحان</option>
+		</select>
+	</div>
+	
+	<div class="form-group d-print-none">
+		<label for="levels" class="form-label">{{labels.levels}}</label>
+		<div class="input-group mb-2" ng-repeat="level in levels | orderBy:'index' track by $index">
+			<label for="level{{$index}}" class="form-control">
+				{{level.name}}
+			</label>
+			<label for="level{{$index}}" class="input-group-text">
+				<input id="level{{$index}}" ng-model="level.selected" type="checkbox" class="form-check-input idm-check-input-lg" ng-value="true" ng-true-value="true" ng-false-value="false" ng-disabled="submitted">
+			</label>
+		</div>
+	</div>
+	
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<tbody>
+				<tr>
+					<th>
+						بدء الامتحانات
+					</th>
+					<td>
+						{{exam.startDate}}
+					</td>
+					<th>
+						انتهاء الامتحانات
+					</th>
+					<td>
+						{{exam.endDate}}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						من الساعة
+					</th>
+					<td>
+						{{exam.startTime}}
+					</td>
+					<th>
+						حتى الساعة
+					</th>
+					<td>
+						{{exam.endTime}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						{{labels.level}}
+					</th>
+					<th ng-repeat="date in exam.dates track by $index">
+						{{getNight(date)}} {{date}}
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="level in levels | orderBy:'index' track by $index" ng-if="level.selected">
+					<td>
+						{{level.name}}
+					</td>
+					<td ng-repeat="date in exam.dates track by $index">
+						{{courses[exam.plan[level.id][date]].name}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="form-controls d-print-none">
+		<button class="btn btn-outline-dark" ng-click="print()">
+			<i class="bi bi-printer"></i>
+			طباعة
+		</button>
+	</div>
+	
+</div>

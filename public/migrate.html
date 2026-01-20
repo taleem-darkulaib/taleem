@@ -1,0 +1,189 @@
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="scripts/firebase.js"></script>
+<script>
+	
+	firebase.database().ref("semesters").once("value").then(function(snapshot){
+
+		let semesters = Object.values(snapshot.val());
+		
+		semesters.forEach(function(semester){
+			
+			firebase.database().ref("semester-info/" + semester.id + "/levels-courses").once("value").then(function(snapshot){
+				
+				let levelsCourses = snapshot.val();
+				
+				//console.log(levelsCourses);
+				
+				if(levelsCourses != null){
+				
+					Object.entries(levelsCourses).forEach(function([level, courses]){
+						
+						if(Array.isArray(courses)){
+							courses.forEach(function(course, index){
+								if(course != null && typeof course === "object"){
+									courses[index] = course.id ?? 0;
+								}
+							});
+						}
+					});
+					
+					//console.log(levelsCourses);
+					
+					//firebase.database().ref("semester-info/" + semester.id + "/levels-courses").set(levelsCourses);
+				}
+			});
+			
+			firebase.database().ref("semester-info/" + semester.id + "/distributions").once("value").then(function(snapshot){
+				
+				let distributions = snapshot.val();
+				
+				//console.log(distributions);
+				
+				if(distributions != null){
+					
+					Object.entries(distributions).forEach(function([grade, levels]){
+						
+						if(Array.isArray(levels)){
+							levels.forEach(function(level, index){
+								if(level != null && typeof level === "object"){
+									levels[index] = level.id ?? 0;
+								}
+							});
+						}
+					});
+					
+					//console.log(distributions);
+					
+					//firebase.database().ref("semester-info/" + semester.id + "/distributions").set(distributions);
+				}
+			});
+			
+			firebase.database().ref("semester-info/" + semester.id + "/nights-supervisors").once("value").then(function(snapshot){
+				
+				let nightsSupervisors = snapshot.val();
+				
+				//console.log(nightsSupervisors);
+				
+				if(nightsSupervisors != null){
+					
+					Object.entries(nightsSupervisors).forEach(function([night, supervisors]){
+						
+						if(Array.isArray(supervisors)){
+							supervisors.forEach(function(supervisor, index){
+								if(supervisor != null && typeof supervisor === "object"){
+									supervisors[index] = supervisor.id ?? 0;
+								}
+							});
+						}
+					});
+					
+					//console.log(nightsSupervisors);
+					
+					//firebase.database().ref("semester-info/" + semester.id + "/nights-supervisors").set(nightsSupervisors);
+				}
+			});
+			
+			firebase.database().ref("semester-info/" + semester.id + "/evaluations").once("value").then(function(snapshot){
+				
+				let evaluations = snapshot.val();
+				
+				console.log(evaluations);
+				
+				if(evaluations != null){
+					
+					Object.entries(evaluations).forEach(function([id, evaluation]){
+						
+						evaluation.count = Object.keys(evaluation.criterias).length;
+						
+						if(evaluation.type == "درجات"){
+							evaluation.total = Object.values(evaluation.criterias).reduce((sum, criteria) => sum + Number(criteria.mark), 0);
+						}
+					});
+					
+					console.log(evaluations);
+					
+					firebase.database().ref("semester-info/" + semester.id + "/evaluations").set(evaluations);
+				}
+			});
+			
+			firebase.database().ref("semester-info/" + semester.id + "/evaluations-students").once("value").then(function(snapshot){
+				
+				let evaluations = snapshot.val();
+				
+				console.log(evaluations);
+				
+				if(evaluations != null){
+					
+					Object.entries(evaluations).forEach(function([id, students]){
+						
+						Object.entries(students).forEach(function([cpr, result]){
+						
+							if(result.criterias == null){
+								
+								result.criterias = new Object();
+								
+								Object.entries(result).forEach(function([criteria, mark]){
+									
+									if(!isNaN(criteria)){
+										
+										result.criterias[criteria] = mark;
+										
+										delete result[criteria];
+									}
+								});
+							}
+							
+							result.mark = Object.values(result.criterias).reduce((sum, criteria) => sum + (!isNaN(criteria.mark) ? Number(criteria.mark) : 0), 0);
+							result.passed = Object.values(result.criterias).filter(criteria => criteria.mark == "اجتاز").length;
+							result.failed = Object.values(result.criterias).filter(criteria => criteria.mark == "لم يجتز").length;
+						});
+					});
+					
+					console.log(evaluations);
+					
+					firebase.database().ref("semester-info/" + semester.id + "/evaluations-students").set(evaluations);
+				}
+			});
+			
+			firebase.database().ref("semester-info/" + semester.id + "/students-evaluations").once("value").then(function(snapshot){
+				
+				let students = snapshot.val();
+				
+				console.log(students);
+				
+				if(students != null){
+					
+					Object.entries(students).forEach(function([cpr, evaluations]){
+						
+						Object.entries(evaluations).forEach(function([id, result]){
+						
+							if(result.criterias == null){
+								
+								result.criterias = new Object();
+								
+								Object.entries(result).forEach(function([criteria, mark]){
+									
+									if(!isNaN(criteria)){
+										
+										result.criterias[criteria] = mark;
+										
+										delete result[criteria];
+									}
+								});
+							}
+							
+							result.mark = Object.values(result.criterias).reduce((sum, criteria) => sum + (!isNaN(criteria.mark) ? Number(criteria.mark) : 0), 0);
+							result.passed = Object.values(result.criterias).filter(criteria => criteria.mark == "اجتاز").length;
+							result.failed = Object.values(result.criterias).filter(criteria => criteria.mark == "لم يجتز").length;
+						});
+					});
+					
+					console.log(evaluations);
+					
+					firebase.database().ref("semester-info/" + semester.id + "/students-evaluations").set(evaluations);
+				}
+			});
+		});
+	});
+</script>

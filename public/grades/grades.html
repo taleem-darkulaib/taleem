@@ -1,0 +1,57 @@
+<div ng-controller="grades">
+
+	<div class="list-item-complex list-fade-in" ng-repeat="grade in grades track by $index">
+		
+		<div class="list-item-header">
+			<div class="list-title-section">
+				<div class="list-item-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="list-item-title">
+					<i class="bi bi-layers list-icon-md"></i>
+					صف رقم {{$index + 1}}
+				</div>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+			<div class="input-group list-input-group">
+				<span class="input-group-text list-switch-container">
+					<div class="form-check form-switch">
+						<input ng-model="grade.active" type="checkbox" class="form-check-input form-check-input-lg" ng-value="true" ng-true-value="true" ng-false-value="false" ng-disabled="submitted" id="switch_{{$index}}">
+						<label class="form-check-label list-switch-label" for="switch_{{$index}}">
+							<span ng-if="grade.active" class="status-badge status-badge-active">مفعل</span>
+							<span ng-if="!grade.active" class="status-badge status-badge-inactive">معطل</span>
+						</label>
+					</div>
+				</span>
+				<input id="grade{{$index}}" name="grades" ng-model="grade.name" type="text" class="form-control" required="required" maxlength="100" placeholder="مثال: {{labels.level || 'الصف الأول، الصف الثاني'}}" autocomplete="off" ng-disabled="submitted">
+				<span class="input-group-text list-order">
+					<i class="bi bi-sort-numeric-down"></i>
+					{{$index + 1}}
+				</span>
+			</div>
+			
+			<div class="list-help-text">
+				<small class="list-text-helper">
+					<i class="bi bi-info-circle list-icon-sm"></i>
+					أدخل اسماً واضحاً ومميزاً لهذا الصف
+				</small>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-add" ng-click="saveGrades()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ جميع الصفوف
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border ms-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+		</div>
+	</div>
+	
+</div>

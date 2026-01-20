@@ -1,0 +1,103 @@
+<div ng-controller="levels">
+
+	<div class="card mb-4" ng-show="levelList.length == 0 || (levelList.length == 1 && isStringEmpty(levelList[0].name))">
+		<div class="card-header">
+			<i class="bi bi-copy"></i>
+			نسخ من فصل دراسي آخر
+		</div>
+		<div class="card-body">
+			<div class="form-group">
+				<label for="sourceSemester" class="form-label">
+					<i class="bi bi-calendar3"></i>
+					اختر الفصل الدراسي للنسخ منه
+				</label>
+				<select id="sourceSemester" ng-model="sourceSemester" class="form-control" ng-options="semester.id as semester.name for semester in semesters" ng-change="copyFromSemester()">
+					<option value="">-- اختر الفصل الدراسي --</option>
+				</select>
+				<div class="help-text-enhanced">
+					<small>
+						<i class="bi bi-info-circle"></i>
+						سيتم نسخ جميع {{labels.levels}} من الفصل المحدد
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h3>إدارة {{labels.levels}}</h3>
+		<button class="btn btn-add" ng-click="addLevel(levelList.length)" ng-hide="submitted">
+			<i class="bi bi-plus-lg"></i>
+			إضافة {{labels.level}} جديد
+		</button>
+	</div>
+
+	<div class="list-item-complex list-fade-in" ng-repeat="level in levelList track by $index">
+		
+		<div class="list-item-header">
+			<div class="list-title-section">
+				<div class="list-item-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="list-item-title">
+					<i class="bi bi-stack list-icon-md"></i>
+					{{labels.level}} رقم {{$index + 1}}
+				</div>
+			</div>
+			<div class="list-item-actions" ng-hide="submitted">
+				<button type="button" class="btn btn-sm" ng-click="addLevel($index)" title="إضافة {{labels.level}} جديد بعد هذا">
+					<i class="bi bi-plus-lg"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="upLevel($index)" ng-if="$index != 0 && levelList.length != 1" title="نقل {{labels.level}} لأعلى">
+					<i class="bi bi-chevron-double-up"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="downLevel($index)" ng-if="$index != levelList.length - 1 && levelList.length != 1" title="نقل {{labels.level}} لأسفل">
+					<i class="bi bi-chevron-double-down"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="deleteLevel($index)" ng-if="levelList.length != 1" title="حذف {{labels.level}}">
+					<i class="bi bi-trash"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="addLevel($index + 1)" title="إضافة {{labels.level}} جديد قبل هذا">
+					<i class="bi bi-plus-lg"></i>
+				</button>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+			<div class="input-group list-input-group">
+				<span class="input-group-text list-switch-container">
+					<div class="text-center">
+						<i class="bi bi-bookmark-star"></i>
+						<div class="list-switch-label">{{labels.level}}</div>
+					</div>
+				</span>
+				<input id="level{{$index}}" name="levels" ng-model="level.name" type="text" class="form-control" required="required" maxlength="100" placeholder="اسم {{labels.level}}" autocomplete="off" ng-disabled="submitted">
+				<span class="input-group-text list-order">
+					<i class="bi bi-sort-numeric-down"></i>
+					{{$index + 1}}
+				</span>
+			</div>
+			
+			<div class="list-help-text">
+				<small class="list-text-helper">
+					<i class="bi bi-info-circle list-icon-sm"></i>
+					أدخل اسماً واضحاً ومميزاً لهذا {{labels.level}}
+				</small>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-add" ng-click="saveLevels()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ جميع {{labels.levels}}
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border ms-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+		</div>
+	</div>
+	
+</div>

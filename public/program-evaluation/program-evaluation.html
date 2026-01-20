@@ -1,0 +1,166 @@
+<div ng-controller="program-evaluation">
+
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-mortarboard-fill"></i>
+						البرنامج
+					</label>
+					<select id="program" ng-model="program.id" class="form-select" placeholder="البرنامج" ng-options="program.id as program.name for program in programs" ng-disabled="programs.length == 1 || submitted" ng-change="updateProgram()">
+						<option disabled="disabled" ng-value="0">اختر البرنامج</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="cpr" class="form-label">
+						<i class="bi bi-person-fill"></i>
+						الطالب
+					</label>
+					<select id="cpr" ng-model="cpr" class="form-select" placeholder="الطالب" ng-options="student.cpr as student.name for student in students" required="required" ng-disabled="submitted" ng-change="updateStudent()">
+						<option disabled="disabled" value="">اختر الطالب</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="evaluation" class="form-label">
+						<i class="bi bi-clipboard-check"></i>
+						التقييم
+					</label>
+					<select id="evaluation" ng-model="evaluation.id" class="form-select" placeholder="التقييم" ng-options="evaluation.id as evaluation.name for evaluation in evaluations" required="required" ng-disabled="submitted" ng-change="updateEvaluation()">
+						<option disabled="disabled" value="">اختر التقييم</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="evaluator" class="form-label">
+						<i class="bi bi-person-badge"></i>
+						المقيم
+					</label>
+					<div class="input-group">
+						<span class="input-group-text">
+							<i class="bi bi-person-badge"></i>
+						</span>
+						<input id="evaluator" ng-model="evaluator" type="text" class="form-control" placeholder="اسم المقيم" maxlength="100" autocomplete="off" ng-disabled="submitted" ng-change="updateEvaluator()">
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	
+	<div class="card mt-3" ng-show="program.id != null && evaluation.id != null && cpr != null">
+		<div class="card-header">
+			<div class="header-title">
+				<i class="bi bi-bar-chart-fill"></i>
+				ملخص التقييم
+			</div>
+		</div>
+		<div class="card-body">
+			
+			<div class="form-group" ng-show="evaluation.type == 'درجات'">
+				<label for="mark" class="form-label">
+					<i class="bi bi-calculator"></i>
+					المجموع الكلي
+				</label>
+				<div class="input-group">
+					<span class="input-group-text">
+						<i class="bi bi-123"></i>
+					</span>
+					<input id="mark" ng-model="result.mark" type="text" class="form-control total-mark-input" placeholder="المجموع" readonly="readonly" ng-disabled="submitted">
+					<span class="input-group-text">من {{evaluation.total}}</span>
+				</div>
+			</div>
+
+			<div class="form-group" ng-show="evaluation.type == 'اجتياز'">
+				<label class="form-label">
+					<i class="bi bi-check-circle"></i>
+					إحصائيات الاجتياز
+				</label>
+				<div class="input-group mb-2">
+					<span class="input-group-text">
+						<i class="bi bi-check-circle-fill"></i>
+					</span>
+					<input id="passed" ng-model="result.passed" type="text" class="form-control passed-input" placeholder="المجتاز" readonly="readonly" ng-disabled="submitted">
+					<span class="input-group-text">من {{evaluation.count}}</span>
+				</div>
+				<div class="input-group">
+					<span class="input-group-text">
+						<i class="bi bi-x-circle-fill"></i>
+					</span>
+					<input id="failed" ng-model="result.failed" type="text" class="form-control failed-input" placeholder="غير المجتاز" readonly="readonly" ng-disabled="submitted">
+					<span class="input-group-text">من {{evaluation.count}}</span>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="card mt-2" ng-repeat="(criteriaIndex, criteria) in criterias track by $index" ng-show="program.id != null && evaluation.id != null && cpr != null">
+		
+		<div class="card-header">
+			{{$index + 1}}. {{criteria.name}}
+			<span class="mark-indicator">({{criteria.mark}} درجة)</span>
+		</div>
+		
+		<div class="card-body">
+			
+			<div class="d-flex justify-content-around" role="group" ng-if="evaluation.type == 'درجات'">
+				<label role="button" for="mark_{{criteriaIndex}}_{{$index}}" ng-repeat="mark in ranges(criteria.mark) track by $index">
+					<input id="mark_{{criteriaIndex}}_{{$index}}" name="mark_{{criteriaIndex}}" ng-model="result.criterias[criteria.id].mark" type="radio" ng-value="mark" placeholder="الدرجة" class="btn-check" required="required" ng-disabled="submitted" ng-change="updateResult()">
+					<label for="mark_{{criteriaIndex}}_{{$index}}" type="button" class="btn btn-outline-dark">{{mark}}</label>
+				</label>
+			</div>
+			
+			<div class="btn-group" role="group" ng-if="evaluation.type == 'اجتياز'">
+				<input id="mark_{{criteriaIndex}}_fail" name="mark_{{criteriaIndex}}" ng-model="result.criterias[criteria.id].mark" type="radio" value="لم يجتز" placeholder="الاجتياز" class="btn-check" required="required" ng-disabled="submitted" ng-change="updateResult()">
+				<label for="mark_{{criteriaIndex}}_fail" type="button" class="btn btn-outline-dark">
+					لم يجتز
+					<i class="bi bi-x-circle me-1"></i>
+				</label>
+				<input id="mark_{{criteriaIndex}}_pass" name="mark_{{criteriaIndex}}" ng-model="result.criterias[criteria.id].mark" type="radio" value="اجتاز" placeholder="الاجتياز" class="btn-check" required="required" ng-disabled="submitted" ng-change="updateResult()">
+				<label for="mark_{{criteriaIndex}}_pass" type="button" class="btn btn-outline-dark">
+					اجتاز
+					<i class="bi bi-check-circle me-1"></i>
+				</label>
+			</div>
+			
+			<div class="form-group mt-2" ng-show="evaluation.comment">
+				<label for="comment" class="form-label">
+					<i class="bi bi-chat-text"></i>
+					ملاحظة على الكفاية
+				</label>
+				<textarea id="comment" rows="4" ng-model="result.criterias[criteria.id].comment" placeholder="ملاحظة على الكفاية" class="form-control" maxlength="200" ng-disabled="submitted"></textarea>
+			</div>
+		
+		</div>
+		
+	</div>
+	
+	<div class="form-group mt-3">
+		<label for="comment" class="form-label">
+			<i class="bi bi-chat-text"></i>
+			ملاحظات إضافية
+		</label>
+		<textarea id="comment" rows="4" ng-model="result.comment" placeholder="أضف أي ملاحظات أو تعليقات حول أداء الطالب..." class="form-control" maxlength="200" ng-disabled="submitted"></textarea>
+		<small class="text-muted">
+			<i class="bi bi-info-circle"></i>
+			الحد الأقصى: 200 حرف
+		</small>
+	</div>
+
+	<div class="form-controls" ng-hide="submitted">
+		<button class="btn btn-action-primary" ng-click="saveStudentEvaluation()" ng-hide="loading">
+			<i class="bi bi-floppy"></i>
+			حفظ تقييم الطالب
+		</button>
+		<button class="btn-action-primary" ng-show="loading">
+			<i class="bi bi-arrow-clockwise spinning"></i>
+		</button>
+	</div>
+	
+</div>

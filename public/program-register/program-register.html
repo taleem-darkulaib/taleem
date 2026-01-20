@@ -1,0 +1,313 @@
+<div ng-controller="program-register">
+	
+	<div class="help-text-enhanced mb-3" ng-show="admin">
+		<small>
+			<i class="bi bi-info-circle"></i>
+			الرابط المخصص للطلبة هو <a ng-href="{{studentUrl}}" class="badge text-bg-primary">{{studentUrl}}</a>
+		</small>
+	</div>
+	
+	<div class="info-panel">
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-mortarboard-fill"></i>
+				البرنامج
+			</label>
+			<select id="program" ng-model="program" class="form-select" placeholder="البرنامج" ng-options="program as program.name for program in programs" ng-disabled="programs.length == 1 || submitted" ng-change="updateProgram()">
+				<option disabled="disabled" value="">اختر البرنامج</option>
+			</select>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				اختر البرنامج للتسجيل فيه
+			</small>
+		</div>
+	</div>
+	
+	<ng-container ng-if="program != null && program.id != null">
+	
+		<div class="info-panel info-panel-success">
+			<h5>
+				<i class="bi bi-info-circle-fill"></i>
+				تفاصيل البرنامج
+			</h5>
+			<div class="table-responsive">
+				<table class="table table-striped">
+					<tbody>
+						<tr>
+							<th>
+								<i class="bi bi-mortarboard"></i>
+								الصفوف
+							</th>
+							<td>
+								<div class="d-flex flex-wrap gap-2">
+									<span class="list-badge-primary" ng-repeat="grade in program.grades track by $index">
+										{{grades[grade].name}}
+									</span>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<i class="bi bi-moon-stars"></i>
+								الليالي
+							</th>
+							<td>
+								<div class="d-flex flex-wrap gap-2">
+									<span class="list-badge-primary" ng-repeat="night in program.nights track by $index">
+										{{nights[night].name}}
+									</span>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<i class="bi bi-door-open"></i>
+								المكان
+							</th>
+							<td>
+								{{rooms[program.room].name}}
+							</td>
+						</tr>
+						<tr ng-if="program.feesAmount > 0">
+							<th>
+								<i class="bi bi-cash-coin"></i>
+								الرسوم
+							</th>
+							<td>
+								<span class="list-badge-primary">{{program.feesAmount}} د.ب</span>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<i class="bi bi-calendar-range"></i>
+								الفترة
+							</th>
+							<td>
+								<strong>من:</strong> {{program.startDate}} <strong>إلى:</strong> {{program.endDate}}
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<i class="bi bi-clock"></i>
+								التوقيت
+							</th>
+							<td>
+								{{program.startTime}} - {{program.endTime}}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<div class="section-divider">
+			<span class="section-divider-text">
+				<i class="bi bi-person-plus-fill"></i>
+				بيانات الطالب
+			</span>
+		</div>
+		
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-card-text"></i>
+				الرقم الشخصي
+			</label>
+			<div class="input-group">
+				<button class="btn btn-outline-dark" ng-click="clearCpr()" ng-if="!submitted" title="مسح">
+					<i class="bi bi-x-lg"></i>
+				</button>
+				<input id="cpr" ng-model="student.cpr" type="tel" class="form-control cpr" placeholder="الرقم الشخصي" maxlength="9" required="required" autocomplete="off" autofocus="autofocus" ng-disabled="valid || submitted" ng-change="updateCpr()">
+			</div>
+			<div class="help-text-enhanced">
+				<small>
+					<i class="bi bi-info-circle"></i>
+					أدخل الرقم الشخصي للطالب
+				</small>
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-person-fill"></i>
+				اسم الطالب
+			</label>
+			<input id="name" ng-model="student.name" class="form-control name" placeholder="اسم الطالب" maxlength="50" required="required" autocomplete="off" ng-disabled="!valid || submitted">
+		</div>
+		
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-mortarboard"></i>
+				الصف
+			</label>
+			<select id="grade" ng-model="student.grade" class="form-select" placeholder="الصف" ng-options="grade.id as grade.name for grade in programGrades" ng-disabled="!valid || submitted" ng-change="updateGrade()">
+				<option disabled="disabled" value="">اختر الصف</option>
+			</select>
+		</div>
+		
+		<div class="section-divider">
+			<span class="section-divider-text">
+				<i class="bi bi-telephone"></i>
+				معلومات الاتصال
+			</span>
+		</div>
+		
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-telephone-fill"></i>
+				رقم الهاتف 1
+			</label>
+			<input id="mobile" ng-model="student.mobile" type="tel" class="form-control mobile" placeholder="رقم الهاتف 1" maxlength="8" required="required" autocomplete="off" ng-disabled="!valid || submitted">
+		</div>
+		
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-telephone"></i>
+				رقم الهاتف 2
+			</label>
+			<input id="phone" ng-model="student.phone" type="tel" class="form-control mobile" placeholder="رقم الهاتف 2" maxlength="8" required="required" autocomplete="off" ng-disabled="!valid || submitted">
+		</div>
+		
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-phone"></i>
+				هاتف الطالب
+			</label>
+			<input id="contact" ng-model="student.contact" type="tel" class="form-control mobile" placeholder="هاتف الطالب" maxlength="8" autocomplete="off" ng-disabled="!valid || submitted">
+			<div class="help-text-enhanced">
+				<small>
+					<i class="bi bi-info-circle"></i>
+					رقم هاتف الطالب الشخصي (اختياري)
+				</small>
+			</div>
+		</div>
+		
+		<ng-container ng-if="config.transfer">
+			
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-currency-dollar"></i>
+					رسوم البرنامج
+				</span>
+			</div>
+		
+			<div class="form-group">
+				<label class="form-label">
+					<i class="bi bi-credit-card"></i>
+					رقم بنفت
+				</label>
+				<div class="input-group registration-input-group">
+					<button class="input-group-btn btn-action-warning" ng-click="copyBenefitNumber()" title="نسخ الرقم">
+						<i class="bi bi-clipboard"></i>
+					</button>
+					<input id="benefit" type="tel" class="form-control" placeholder="رقم بنفت" maxlength="8" ng-value="program.benefit" readonly="readonly">
+				</div>
+				<div class="help-text-enhanced">
+					<small>
+						<i class="bi bi-info-circle"></i>
+						انقر على أيقونة النسخ لنسخ الرقم
+					</small>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="form-label">
+					<i class="bi bi-currency-dollar"></i>
+					قيمة الرسوم
+				</label>
+				<input id="fees" ng-value="program.feesAmount + ' د.ب'" type="text" class="form-control" placeholder="قيمة الرسوم" readonly="readonly">
+			</div>
+			
+			<div class="form-group" ng-if="program.feesAmount > 0">
+				<label class="form-label">
+					<i class="bi bi-image"></i>
+					صورة تحويل المبلغ
+				</label>
+				<input id="payment" ng-model="student.payment" type="file" class="form-control" placeholder="صورة تحويل المبلغ" ng-required="student.payment == null" ng-disabled="!valid || submitted">
+				<div class="help-text-enhanced">
+					<small>
+						<i class="bi bi-info-circle"></i>
+						ارفع صورة إيصال التحويل
+					</small>
+				</div>
+			</div>
+		
+			<img role="button" class="form-image" ng-src="{{student.payment}}" ng-click="previewImage()">
+		
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(program.comments) && isStringNotEmpty(program.comments[0].content)">
+			
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-chat-text"></i>
+					ملاحظات مهمة
+				</span>
+			</div>
+
+			<div class="comments-list">
+				<div class="comment-item" ng-repeat="comment in program.comments track by $index">
+					<div class="comment-number">
+						<span class="counter-badge counter-badge-sm">{{$index + 1}}</span>
+					</div>
+					<div class="comment-content" ng-bind-html="comment.content">
+					</div>
+				</div>
+			</div>
+			
+		</ng-container>
+		
+		<div class="form-controls" ng-hide="!valid || submitted">
+			<div class="spinner-border" role="status" ng-show="loading">
+				<span class="sr-only"></span>
+			</div>
+			<button class="btn btn-action-primary" ng-click="saveStudent()" ng-hide="loading">
+				<i class="bi bi-person-plus"></i>
+				تسجيل الطالب
+			</button>
+		</div>
+	
+	</ng-container>
+	
+	<div class="toast-container position-fixed top-50 start-50 translate-middle">
+		<div id="copy" class="toast" role="alert">
+			<div class="toast-header bg-warning text-light">
+				<strong>نسخ رقم بنفت</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+			</div>
+			<div class="toast-body">
+				<i class="bi bi-check-circle-fill text-success me-2"></i>
+				تم نسخ رقم بنفت بنجاح
+			</div>
+		</div>
+	</div>
+	
+	<div class="toast-container position-fixed top-50 start-50 translate-middle">
+		<div id="wait" class="toast" role="alert" data-bs-autohide="false">
+			<div class="toast-header bg-warning text-light">
+				<span>
+					<i class="bi bi-upload"></i>
+					جاري ترفيع الملف
+				</span>
+			</div>
+			<div class="toast-body">
+				<div class="spinner-border text-warning"></div>
+				<p class="mt-2 mb-0">يرجى الانتظار...</p>
+			</div>
+		</div>
+	</div>
+	
+	<div class="toast-container position-fixed top-50 start-50 translate-middle">
+		<div id="preview" class="toast" role="alert">
+			<div class="toast-header bg-success text-light">
+				<strong>معاينة الصورة</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+			</div>
+			<div class="toast-body">
+				<img class="preview-image" ng-src="{{student.payment}}" data-bs-dismiss="toast">
+			</div>
+		</div>
+	</div>
+	
+</div>

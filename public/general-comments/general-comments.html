@@ -1,0 +1,298 @@
+<div ng-controller="general-comments">
+	
+	<div class="card mb-4" ng-show="isListEmpty(generalComments)">
+		<div class="card-header">
+			<i class="bi bi-copy"></i>
+			نسخ من ملاحظة دراسي آخر
+		</div>
+		<div class="card-body">
+			<div class="form-group">
+				<label for="sourceSemester" class="form-label">
+					<i class="bi bi-calendar3"></i>
+					اختر الملاحظة الدراسي للنسخ منه
+				</label>
+				<select id="sourceSemester" ng-model="sourceSemester" class="form-control" ng-options="semester.id as semester.name for semester in semesters" ng-change="copyFromSemester()">
+					<option value="">-- اختر الملاحظة الدراسي --</option>
+				</select>
+				<div class="help-text-enhanced">
+					<small>
+						<i class="bi bi-info-circle"></i>
+						سيتم نسخ جميع الملاحظات من الملاحظة المحدد
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="card">
+		<div class="card-header d-flex justify-content-between align-items-center py-3">
+			<div class="d-flex align-items-center">
+				<i class="bi bi-table"></i>
+				قائمة الملاحظات العامة
+			</div>
+			<button class="btn btn-add" ng-click="toAddGeneralComment()" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#generalCommentModal">
+				<i class="bi bi-plus-lg"></i>
+				إضافة ملاحظة جديدة
+			</button>
+		</div>
+		
+		<div class="table-responsive">
+			<table id="comments" class="table table-striped">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>
+							<i class="bi bi-chat-text"></i>
+							الملاحظة
+						</th>
+						<th>
+							<i class="bi bi-clock"></i>
+							تاريخ الإنشاء
+						</th>
+						<th class="text-center">
+							<i class="bi bi-toggle-on"></i>
+							الحالة
+						</th>
+						<th class="text-center no-export">
+							<i class="bi bi-gear-fill"></i>
+							الإجراءات
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="generalComment in generalComments track by $index">
+						<td>
+							<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+						</td>
+						<td>
+							<div class="info-panel">
+								<small class="text-helper">
+									<i class="bi bi-chat-text"></i>
+									<span ng-bind-html="generalComment.content"></span>
+								</small>
+							</div>
+						</td>
+						<td>
+							{{generalComment.time}}
+						</td>
+						<td class="text-center">
+							<div class="status-switch-container">
+								<div class="form-check form-switch">
+									<input id="active{{$index}}" ng-model="generalComment.active" ng-value="true" ng-true-value="true" ng-false-value="false" class="form-check-input form-check-input-lg" type="checkbox" role="switch" ng-change="updateActive(generalComment)" ng-disabled="submitted">
+									<label class="form-check-label" for="active{{$index}}">
+										<span class="status-badge status-badge-active" ng-if="generalComment.active">
+											<i class="bi bi-check-circle-fill"></i>
+											نشط
+										</span>
+										<span class="status-badge status-badge-inactive" ng-if="!generalComment.active">
+											<i class="bi bi-x-circle-fill"></i>
+											غير نشط
+										</span>
+									</label>
+								</div>
+							</div>
+						</td>
+						<td class="text-center no-export">
+							<button class="btn-action-secondary" ng-click="toEditGeneralComment(generalComment)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#generalCommentModal">
+								<i class="bi bi-pencil-square"></i>
+								تعديل
+							</button>
+							<button class="btn btn-delete" ng-click="selectGeneralComment(generalComment)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#deleteModal" ng-if="isStringNotEmpty(generalComment.id)">
+								<i class="bi bi-trash"></i>
+								حذف
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+	
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadGeneralCommentsModal" ng-hide="loading">
+			<i class="bi bi-upload"></i>
+			رفع الملاحظات
+		</button>
+		<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
+			<i class="bi bi-download"></i>
+			حفظ الملاحظات العامة
+		</button>
+	</div>
+	
+	<div id="generalCommentModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-chat-text-fill"></i>
+						</div>
+						تفاصيل الملاحظة العامة
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class" ng-show="alert.message">
+						<i class="bi alert-icon" ng-class="alert.icon"></i>
+						<div>
+							<strong class="ms-2">{{alert.title}}</strong> {{alert.message}}
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="content" class="form-label">
+							<i class="bi bi-chat-text"></i>
+							محتوى الملاحظة
+						</label>
+						<div class="textarea-container">
+							<textarea id="content" ng-model="generalComment.content" rows="6" class="form-control" placeholder="محتوى الملاحظة" required="required" ng-disabled="submitted"maxlength="500"></textarea>
+							<div class="textarea-footer">
+								<small class="text-muted">
+									<i class="bi bi-info-circle"></i>
+									الحد الأقصى: 500 حرف
+								</small>
+							</div>
+						</div>
+						<div class="help-text-enhanced">
+							<small>
+								<i class="bi bi-lightbulb"></i>
+								ستظهر هذه الملاحظة في جميع أنحاء النظام عند تفعيلها
+							</small>
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<div class="modal-actions">
+						<button class="btn-action-primary" ng-click="saveGeneralComment()">
+							<i class="bi bi-floppy"></i>
+							حفظ الملاحظة
+						</button>
+						<button type="button" class="btn-outline-dark" data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i>
+							إلغاء
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="uploadGeneralCommentsModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-upload"></i>
+						</div>
+						رفع الملاحظات العامة
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class" ng-show="alert.message">
+						<i class="bi alert-icon" ng-class="alert.icon"></i>
+						<div>
+							<strong class="ms-2">{{alert.title}}</strong> {{alert.message}}
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="type" class="form-label">
+							<i class="bi bi-cloud-upload"></i>
+							رفع الملاحظات
+						</label>
+						<input id="file" type="file" class="form-control" accept=".xlsx" placeholder="الملاحظات" ng-disabled="submitted">
+						<div class="help-text-enhanced">
+							<small class="text-helper">
+								<i class="bi bi-info-circle"></i>
+								يدعم ملفات Excel (.xlsx) بنفس ترتيب الأعمدة
+							</small>
+						</div>
+					</div>
+
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>
+										<i class="bi bi-chat-text"></i>
+										الملاحظة
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="generalComment in uploadedGeneralComments track by $index">
+									<td>
+										<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+									</td>
+									<td>
+										<div class="info-panel">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												<span ng-bind-html="generalComment.content"></span>
+											</small>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<div class="modal-actions">
+						<button class="btn-action-primary" ng-click="uploadGeneralComments()">
+							<i class="bi bi-floppy"></i>
+							حفظ الملاحظات
+						</button>
+						<button type="button" class="btn-outline-dark" data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i>
+							إلغاء
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="deleteModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-chat-text"></i>
+						حذف الملاحظة
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+				</div>
+				<div class="modal-body">
+					<div class="text-center">
+						<h3 class="mb-3">
+							هل أنت متأكد من حذف ملاحظة "{{generalComment.content}}"؟
+						</h3>
+						<p class="text-muted">
+							هذا الإجراء لا يمكن التراجع عنه وسيتم حذف جميع البيانات المرتبطة بهذه الملاحظة.
+						</p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-delete" data-bs-dismiss="modal" ng-click="deleteGeneralComment()">
+						<i class="bi bi-check-lg"></i>
+						تأكيد الحذف
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

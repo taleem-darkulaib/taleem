@@ -1,0 +1,128 @@
+<div ng-controller="levels-courses">
+
+	<div class="card mb-4" ng-show="noLevelsCourses">
+		<div class="card-header">
+			<i class="bi bi-copy"></i>
+			نسخ من فصل دراسي آخر
+		</div>
+		<div class="card-body">
+			<div class="form-group">
+				<label for="sourceSemester" class="form-label">
+					<i class="bi bi-calendar3"></i>
+					اختر الفصل الدراسي للنسخ منه
+				</label>
+				<select id="sourceSemester" ng-model="sourceSemester" class="form-select" ng-options="semester.id as semester.name for semester in semesters" ng-change="copyFromSemester()">
+					<option value="">-- اختر الفصل الدراسي --</option>
+				</select>
+				<div class="help-text-enhanced">
+					<small class="text-helper">
+						<i class="bi bi-info-circle"></i>
+						سيتم نسخ جميع مواد {{labels.levels}} من الفصل المحدد
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="parent-item list-fade-in" ng-repeat="(levelIndex, level) in levels | orderBy : 'index' track by $index">
+		
+		<div class="parent-header">
+			<div class="parent-title-section">
+				<div class="parent-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="parent-title-content">
+					<i class="bi bi-bookmark-star"></i>
+					{{level.name}}
+				</div>
+			</div>
+			
+			<div class="parent-item-actions" ng-hide="submitted">
+				<div class="progress-indicator" ng-class="{'progress-indicator-success': levelsCourses[level.id] && levelsCourses[level.id].length > 0, 'progress-indicator-warning': !levelsCourses[level.id] || levelsCourses[level.id].length === 0}">
+					<i class="bi" ng-class="levelsCourses[level.id] && levelsCourses[level.id].length > 0 ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'"></i>
+					{{(levelsCourses[level.id] && levelsCourses[level.id].length) || 0}} مادة
+				</div>
+				<button class="btn btn-action-secondary btn-sm" ng-click="addCourse(level, (levelsCourses[level.id] && levelsCourses[level.id].length) || 0)" ng-hide="submitted">
+					<i class="bi bi-plus-lg"></i>
+					إضافة مادة
+				</button>
+			</div>
+		</div>
+		<div class="list-item-content">
+		
+			<div class="list-item-complex list-fade-in" ng-repeat="levelCourse in levelsCourses[level.id] track by $index">
+				
+				<div class="list-item-header">
+					<div class="list-title-section">
+						<div class="list-item-number">
+							<span class="list-item-counter">{{$index + 1}}</span>
+						</div>
+						<div class="list-item-title">
+							<i class="bi bi-book"></i>
+							مادة رقم {{$index + 1}}
+						</div>
+					</div>
+					<div class="list-item-actions" ng-hide="submitted">
+						<div class="action-group">
+							<button type="button" class="btn btn-action-primary btn-sm" ng-click="addCourse(level, $index)">
+								<i class="bi bi-plus-lg"></i>
+							</button>
+							<button type="button" class="btn btn-action-secondary btn-sm" ng-click="upCourse(level, $index)" ng-if="$index != 0 && levelsCourses[level.id].length != 1" title="نقل {{labels.course}} لأعلى">
+								<i class="bi bi-chevron-up"></i>
+							</button>
+							<button type="button" class="btn btn-action-secondary btn-sm" ng-click="downCourse(level, $index)" ng-if="$index != levelsCourses[level.id].length - 1 && levelsCourses[level.id].length != 1" title="نقل {{labels.course}} لأسفل">
+								<i class="bi bi-chevron-down"></i>
+							</button>
+							<button type="button" class="btn btn-action-warning btn-sm" ng-click="deleteCourse(level, $index)" ng-if="levelsCourses[level.id].length != 1" title="حذف {{labels.course}}">
+								<i class="bi bi-trash"></i>
+							</button>
+							<button type="button" class="btn btn-action-primary btn-sm" ng-click="addCourse(level, $index + 1)">
+								<i class="bi bi-plus-lg"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="list-item-content">
+					<div class="course-select-section">
+						<div class="input-group">
+							<span class="input-group-text list-switch-container">
+								<div class="text-center">
+									<i class="bi bi-book"></i>
+									اختر {{labels.course}}
+								</div>
+							</span>
+							<select id="level{{levelIndex}}_course{{$index}}" name="level{{levelIndex}}_courses" placeholder="{{labels.course}}" ng-model="levelsCourses[level.id][$index]" class="form-select" required="required" ng-disabled="submitted" ng-options="course.id as course.name for course in courses | orderBy : 'index'">
+								<option value="" disabled="disabled">-- اختر {{labels.course}} --</option>
+							</select>
+							<span class="input-group-text list-order">
+								<i class="bi bi-sort-numeric-down"></i>
+								{{$index + 1}}
+							</span>
+						</div>
+						
+						<div class="help-text-enhanced">
+							<small class="text-helper">
+								<i class="bi bi-info-circle"></i>
+								اختر {{labels.course}} المناسبة لهذا {{labels.level}}
+							</small>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-primary" ng-click="saveLevelsCourses()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ مواد جميع {{labels.levels}}
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border ms-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+		</div>
+	</div>
+
+</div>

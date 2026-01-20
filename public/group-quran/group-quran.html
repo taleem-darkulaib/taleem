@@ -1,0 +1,299 @@
+<div ng-controller="group-quran">
+	
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="group" class="form-label">
+						<i class="bi bi-people"></i>
+						التقسيم
+					</label>
+					<select id="group" ng-model="group" class="form-select" placeholder="التقسيم" ng-options="group.id as group.name for group in groups" required="required" ng-disabled="submitted" ng-change="updateGroup()">
+						<option disabled="disabled" value="">اختر التقسيم</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="partition" class="form-label">
+						<i class="bi bi-collection"></i>
+						المجموعة
+					</label>
+					<select id="partition" ng-model="partition" class="form-select" placeholder="المجموعة" ng-options="partition.id as partition.name for partition in partitions" required="required" ng-disabled="submitted" ng-change="updatePartition()">
+						<option disabled="disabled" value="">اختر المجموعة</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى اختيار التقسيم أولاً، ثم المجموعة لعرض الطلاب ومتابعة التسميع
+			</small>
+		</div>
+	</div>
+
+	<div class="card mb-3">
+		<div class="card-header">
+			<div class="header-content">
+				<div class="header-title">
+					<i class="bi bi-book-half"></i>
+					متابعة تسميع القرآن الكريم
+				</div>
+				<div class="header-controls">
+					<div class="form-check form-switch">
+						<input id="attend" ng-model="attend" ng-value="true" ng-true-value="true" ng-false-value="false" class="form-check-input form-check-input-lg" type="checkbox" role="switch" ng-disabled="submitted">
+						<label class="form-check-label" for="attend">
+							<span class="progress-indicator progress-indicator-success">تسجيل الحضور</span>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="table-responsive">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>
+							<i class="bi bi-person-fill"></i>
+							اسم الطالب
+						</th>
+						<th ng-hide="attend">
+							<i class="bi bi-book"></i>
+							السورة
+						</th>
+						<th ng-hide="attend">
+							<i class="bi bi-list-ol"></i>
+							رقم الآية
+						</th>
+						<th ng-hide="attend">
+							<i class="bi bi-clock"></i>
+							آخر تسميع
+						</th>
+						<th ng-show="attend">
+							<i class="bi bi-check-circle"></i>
+							حالة الحضور
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="student in partitionStudents | orderBy : 'name' track by $index">
+						<td>
+							<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+						</td>
+						<td>
+							{{student.name}}
+						</td>
+						<td ng-hide="attend">
+							{{studentsQuran[student.cpr].part}}
+						</td>
+						<td ng-hide="attend">
+							آية {{studentsQuran[student.cpr].number}}
+						</td>
+						<td ng-hide="attend">
+							{{studentsQuran[student.cpr].time}}
+						</td>
+						<td ng-show="attend">
+							<div class="btn-group" role="group">
+								<input id="notify{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="معتذر" class="btn-check" ng-disabled="submitted" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'معتذر')">
+								<label for="notify{{student.cpr}}" class="btn">معتذر</label>
+								
+								<input id="late{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="متأخر" class="btn-check" ng-disabled="submitted" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'متأخر')">
+								<label for="late{{student.cpr}}" class="btn">متأخر</label>
+								
+								<input id="absent{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="غائب" class="btn-check" ng-disabled="submitted" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'غائب')">
+								<label for="absent{{student.cpr}}" class="btn">غائب</label>
+								
+								<input id="attend{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="حاضر" class="btn-check" ng-disabled="submitted" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'حاضر')">
+								<label for="attend{{student.cpr}}" class="btn">حاضر</label>
+							</div>
+							<input class="form-control" ng-model="attendance[student.cpr].comment" maxlength="100" type="text" placeholder="ملاحظات على الحضور..." ng-blur="updateStudentAttend(student)" ng-disabled="submitted">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="payment-item" ng-repeat="student in partitionStudents | orderBy : 'name' track by $index">
+		
+		<div id="student{{student.cpr}}head" class="payment-item-header">
+			<button class="payment-toggle-btn w-100" type="button" data-bs-toggle="collapse" data-bs-target="#student{{student.cpr}}" aria-expanded="false" aria-controls="student{{student.cpr}}">
+				<div class="d-flex justify-content-between align-items-center">
+					<div class="student-info">
+						<div class="counter-badge">{{$index + 1}}</div>
+						<i class="bi bi-person-fill"></i>
+						{{student.name}}
+					</div>
+				</div>
+			</button>
+		</div>
+		
+		<div id="student{{student.cpr}}" class="collapse" cpr="{{student.cpr}}">
+			
+			<div class="payment-item-content">
+				<div class="card">
+					<div class="card-header">
+						<i class="bi bi-clock-history"></i>
+						سجل التقييمات السابقة
+					</div>
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>
+										<i class="bi bi-clock"></i>
+										التاريخ
+									</th>
+									<th>
+										<i class="bi bi-book"></i>
+										السورة
+									</th>
+									<th>
+										<i class="bi bi-list-ol"></i>
+										الآية
+									</th>
+									<th>
+										<i class="bi bi-star"></i>
+										التقييم
+									</th>
+									<th>
+										<i class="bi bi-chat-text"></i>
+										الملاحظة
+									</th>
+									<th>
+										<i class="bi bi-pencil"></i>
+										تعديل
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="evaluation in evaluations track by $index">
+									<td class="text-center">
+										<div class="counter-badge-sm">{{$index + 1}}</div>
+									</td>
+									<td>
+										{{evaluation.time}}
+									</td>
+									<td>
+										{{evaluation.part}}
+									</td>
+									<td>
+										آية {{evaluation.number}}
+									</td>
+									<td>
+										{{evaluation.mark}}/5
+									</td>
+									<td>
+										<div class="info-panel">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												<span ng-bind-html="evaluation.comment"></span>
+											</small>
+										</div>
+									</td>
+									<td>
+										<button class="btn btn-edit" ng-click="toEditEvaluation(evaluation)" href="#student{{student.cpr}}" ng-hide="submitted">
+											<i class="bi bi-pencil-square m-0"></i>
+										</button>
+										<button class="btn btn-delete" ng-click="deleteEvaluation(evaluation)" ng-hide="submitted">
+											<i class="bi bi-trash m-0"></i>
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			
+				<div class="card mt-2">
+					
+					<div class="card-header">
+						<i class="bi bi-plus-circle-fill"></i>
+						{{evaluation.id == null ? 'تقييم جديد' : 'تحديث التقييم'}}
+					</div>
+					
+					<div class="card-body">
+						
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="part" class="form-label">
+										<i class="bi bi-book"></i>
+										السورة
+									</label>
+									<select id="part" ng-model="evaluation.part" class="form-select" placeholder="السورة" ng-options="key as key for (key, value) in quran" ng-disabled="submitted">
+										<option selected="selected" disabled="disabled" value="">اختر السورة</option>
+									</select>
+								</div>
+							</div>
+							
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="number" class="form-label">
+										<i class="bi bi-list-ol"></i>
+										رقم الآية
+									</label>
+									<select id="number" ng-model="evaluation.number" class="form-select" placeholder="رقم الآية" ng-options="number for number in numbers(quran[evaluation.part])" ng-disabled="submitted">
+										<option selected="selected" disabled="disabled" value="">اختر رقم الآية</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="mark" class="form-label">
+								<i class="bi bi-star"></i>
+								التقييم (من 1 إلى 5)
+							</label>
+							<div class="btn-group" role="group">
+								<input id="student{{student.cpr}}_mark1" name="student{{student.cpr}}_mark" ng-model="evaluation.mark" type="radio" value="1" class="btn-check" ng-disabled="submitted">
+								<label for="student{{student.cpr}}_mark1" class="btn btn-outline-dark">1</label>
+								
+								<input id="student{{student.cpr}}_mark2" name="student{{student.cpr}}_mark" ng-model="evaluation.mark" type="radio" value="2" class="btn-check" ng-disabled="submitted">
+								<label for="student{{student.cpr}}_mark2" class="btn btn-outline-dark">2</label>
+								
+								<input id="student{{student.cpr}}_mark3" name="student{{student.cpr}}_mark" ng-model="evaluation.mark" type="radio" value="3" class="btn-check" ng-disabled="submitted">
+								<label for="student{{student.cpr}}_mark3" class="btn btn-outline-dark">3</label>
+								
+								<input id="student{{student.cpr}}_mark4" name="student{{student.cpr}}_mark" ng-model="evaluation.mark" type="radio" value="4" class="btn-check" ng-disabled="submitted">
+								<label for="student{{student.cpr}}_mark4" class="btn btn-outline-dark">4</label>
+								
+								<input id="student{{student.cpr}}_mark5" name="student{{student.cpr}}_mark" ng-model="evaluation.mark" type="radio" value="5" class="btn-check" ng-disabled="submitted">
+								<label for="student{{student.cpr}}_mark5" class="btn btn-outline-dark">5</label>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="comment" class="form-label">
+								<i class="bi bi-chat-text"></i>
+								ملاحظات التقييم
+							</label>
+							<textarea id="comment" ng-model="evaluation.comment" class="form-control comment-textarea" rows="4" placeholder="أضف ملاحظاتك حول أداء الطالب في التسميع..." maxlength="500" ng-disabled="submitted"></textarea>
+							<small class="text-muted">
+								<i class="bi bi-info-circle"></i>
+								الحد الأقصى: 500 حرف
+							</small>
+						</div>
+						
+					</div>
+					<div class="card-footer" ng-hide="submitted">
+						<div class="form-controls">
+							<div class="loading-spinner mx-auto" ng-show="loading"></div>
+							<button ng-click="saveEvaluation()" class="btn btn-action-primary" ng-hide="loading">
+								<i class="bi bi-floppy"></i>
+								حفظ تقييم الطالب
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	
+</div>

@@ -1,0 +1,106 @@
+<div ng-controller="trips-attend">
+			
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-airplane-fill"></i>
+						الرحلة
+					</label>
+					<select id="trip" ng-model="trip" class="form-select" placeholder="الرحلة" ng-options="trip.id as trip.name for trip in trips" required="required" ng-disabled="submitted" ng-change="updateTrip(true)">
+						<option disabled="disabled" value="">اختر الرحلة</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-layers"></i>
+						{{labels.level}}
+					</label>
+					<select id="level" ng-model="level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in tripLevels" required="required" ng-disabled="submitted" ng-change="updateLevel()">
+						<option disabled="disabled" value="">اختر {{labels.level}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى اختيار الرحلة ثم {{labels.level}} لتسجيل الحضور
+			</small>
+		</div>
+	</div>
+	
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h3>قائمة الطلبة</h3>
+		<button class="btn btn-add" ng-click="attendAll()" ng-hide="submitted">
+			<i class="bi bi-check-circle"></i>
+			حضور الكل
+		</button>
+	</div>
+	
+	<div class="list-item-complex list-fade-in" ng-repeat="student in tripStudents | orderBy : 'name' track by $index" ng-if="payments[student.cpr] != null">
+		
+		<div class="list-item-header">
+			<div class="list-title-section">
+				<div class="list-item-number">
+					<div class="list-item-counter">{{$index + 1}}</div>
+					<div class="list-item-title">
+						<i class="bi bi-person list-icon-md"></i>
+						{{student.name}}
+					</div>
+				</div>
+			</div>
+			<div class="list-item-actions">
+				<div class="student-status" ng-if="attendance[student.cpr].status">
+					<span class="status-badge" ng-class="{
+						'status-badge-excuse': attendance[student.cpr].status == 'معتذر',
+						'status-badge-late': attendance[student.cpr].status == 'متأخر',
+						'status-badge-absent': attendance[student.cpr].status == 'غائب',
+						'status-badge-present': attendance[student.cpr].status == 'حاضر'}">
+						<i class="bi ms-1" ng-class="{
+						'bi-check-circle-fill': attendance[student.cpr].status == 'حاضر',
+						'bi-stopwatch-fill': attendance[student.cpr].status == 'متأخر',
+						'bi-clock-fill': attendance[student.cpr].status == 'معتذر',
+						'bi-x-circle-fill': attendance[student.cpr].status == 'غائب'}"></i>
+						{{attendance[student.cpr].status}}
+					</span>
+				</div>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+		
+			<div class="btn-group" role="group">
+				<input id="notify{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="معتذر" class="btn-check" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'معتذر')">
+				<label for="notify{{student.cpr}}" class="btn attend-btn">
+					معتذر
+					<i class="bi bi-clock me-1"></i>
+				</label>
+				
+				<input id="late{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="متأخر" class="btn-check" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'متأخر')">
+				<label for="late{{student.cpr}}" class="btn attend-btn">
+					متأخر
+					<i class="bi bi-stopwatch me-1"></i>
+				</label>
+				
+				<input id="absent{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="غائب" class="btn-check" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'غائب')">
+				<label for="absent{{student.cpr}}" class="btn attend-btn">
+					غائب
+					<i class="bi bi-x-circle me-1"></i>
+				</label>
+				
+				<input id="attend{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="حاضر" class="btn-check" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'حاضر')">
+				<label for="attend{{student.cpr}}" class="btn attend-btn">
+					حاضر
+					<i class="bi bi-check-circle me-1"></i>
+				</label>
+			</div>
+			<input class="form-control" ng-model="attendance[student.cpr].comment" maxlength="100" type="text" placeholder="ملاحظات على حضور الطالب..." ng-blur="updateStudentAttend(student)">
+		</div>
+		
+	</div>
+	
+</div>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar" manifest="offline.appcache">
+	<head>
+
+		<title>التعليم الديني</title>
+
+		<meta http-equiv="Expires" content="-1">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		
+		<link rel="manifest" href="/manifest.json">
+		<meta name="theme-color" content="#0078d7">
+		
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="viewport" content="width = device-width, initial-scale = 1, user-scalable = no">
+
+	    <link rel="shortcut icon" href="images/logo.jpg">
+		<link rel="apple-touch-icon" href="images/logo.jpg">
+		<link rel="apple-touch-startup-image" href="images/logo.jpg">
+		<link rel="apple-touch-icon-precomposed" href="images/logo.jpg">
+
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css" rel="stylesheet" />
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.css" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+		<link href="https://twitter.github.io/typeahead.js/css/examples.css" rel="stylesheet">
+		<link href="styles/style.css?version=20251208" rel="stylesheet">
+
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.3/typeahead.jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/checklist-model/1.0.0/checklist-model.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.8.3/angular-sanitize.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+		
+		<script src="scripts/firebase.js?version=20251208"></script>
+		<script src="scripts/common.js?version=20251208"></script>
+		<script src="scripts/guides.js?version=20251208"></script>
+		<script src="scripts/home.js?version=20251208"></script>
+		
+		<script src="welcome/welcome.js"></script>
+		
+	</head>
+	<body ng-app="application" ng-controller="controller">
+
+		<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+			<div class="container">
+
+				<a role="button" class="logo-container" href="#!/">
+					<img class="logo-icon" src="images/logo.jpg">
+					<h1 class="company-name">{{config.title}}</h1>
+				</a>
+				
+				<button class="menu-btn" data-bs-toggle="modal" data-bs-target="#menuModal" ng-if="function_ == null">
+					<i class="bi bi-grid-3x3-gap"></i>
+					القائمة
+				</button>
+
+				<button class="menu-btn" data-bs-toggle="modal" data-bs-target="#subMenuModal" ng-if="function_ != null">
+					<i class="bi bi-grid-3x3-gap"></i>
+					القائمة
+				</button>
+
+			</div>
+		</nav>
+
+		<div class="container-fluid py-5">
+
+			<div class="row">
+				<div class="col-lg-10 mx-auto">
+					<div class="form-card">
+						
+						<button class="guides-btn btn-sm" data-bs-toggle="modal" data-bs-target="#guidesModal" ng-if="function_ != null">
+							<i class="bi bi-info-circle ms-1"></i>
+							الارشادات
+						</button>
+							
+						<h3 class="form-title">
+							<i class="bi" ng-class="function_.icon"></i>
+							{{title}}
+						</h3>
+
+						<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class">
+							<i class="bi" ng-class="alert.icon"></i>
+							<div>
+								<strong class="ms-2">{{alert.title}}</strong> {{alert.message}}
+							</div>
+						</div>
+
+						<div ng-show="loading" class="list-loading-state">
+							<div class="loading-spinner mx-auto"></div>
+							<p class="list-loading-text">جاري تحميل البيانات...</p>
+						</div>
+
+						<div ng-hide="loading" ng-view></div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="menuModal" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">
+							<img class="modal-logo" src="images/logo.jpg">
+							التعليم الديني
+						</h5>
+						<button class="btn btn-delete" data-bs-dismiss="modal" ng-click="logout()">
+							<i class="bi bi-box-arrow-left m-0"></i>
+						</button>
+					</div>
+					<div class="modal-body main-categories">
+						
+						<div class="info-panel">
+							<div class="form-group">
+								<label for="semester" class="form-label">
+									<i class="bi bi-calendar-event"></i>
+									الفصل الدراسي
+								</label>
+								<select id="semester" ng-model="$root.currentSemester" class="form-select is-valid" placeholder="الفصل الدراسي" ng-options="semester.id as semester.name for semester in semesters" ng-change="selectSemester()">
+								</select>
+							</div>
+							<div class="help-text-enhanced">
+								<small>
+									<i class="bi bi-info-circle"></i>
+									يرجى اختيار الفصل الدراسي لعرض معلوماته
+								</small>
+							</div>
+						</div>
+	
+						<div class="row g-4">
+							<div class="col-sm-6 col-md-4 col-lg-3" ng-repeat="category in menu track by $index">
+								<div class="category-card" data-bs-toggle="modal" data-bs-target="#subMenuModal" ng-click="selectCategory(category)" ng-class="{'active':category.title == categoryTitle}">
+									<div class="category-icon">
+										<i class="bi m-0" ng-class="category.icon"></i>
+									</div>
+									<h4 class="category-title">{{category.title}}</h4>
+									<span class="category-count">{{category.functions.length}} خاصية</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="subMenuModal" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-body submenu-body">
+						<div class="submenu-header">
+							<h4 class="submenu-title">
+								<i class="bi" ng-class="category.icon"></i>
+								{{category.title}}
+							</h4>
+							<button class="back-btn" data-bs-toggle="modal" data-bs-target="#menuModal" ng-click="backToMenu()">
+								<i class="bi bi-arrow-left"></i>الرجوع إلى القائمة
+							</button>
+						</div>
+						<div class="submenu-grid">
+							<a href="#" class="submenu-item" ng-repeat="function in category.functions" ng-click="selectFunction(function)" data-bs-dismiss="modal" ng-class="{'active':function.title == functionTitle}">
+								<div class="submenu-icon">
+									<i class="bi m-0" ng-class="function.icon"></i>
+								</div>
+								<div class="submenu-text">
+									<div class="submenu-item-title">
+										{{function.title}}
+									</div>
+								</div>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="guidesModal" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">
+							<i class="bi" ng-class="function_.icon"></i>
+							{{function_.title}}
+						</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						
+						<div ng-repeat="action in guides[function_.url] track by $index">
+							<div class="section-divider">
+								<span class="section-divider-text">
+									<i class="bi bi-activity"></i>
+									{{action.title}}
+								</span>
+							</div>
+							<ul class="list-group">
+								<li class="list-group-item" ng-repeat="step in action.steps track by $index">
+									<div class="d-flex">
+										<span class="counter-badge counter-badge-sm ms-3">
+											{{$index + 1}}
+										</span>
+										<span>
+											{{step}}
+										</span>
+									</div>
+								</li>
+							</ul>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="passwordModal" class="modal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+			<div class="modal-dialog modal-sm modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title text-center">
+							<i class="bi bi-lock float-start"></i>
+							صلاحية الدخول
+							<i class="bi bi-lock float-end"></i>
+						</h5>
+					</div>
+					<div class="modal-body">
+						<input id="password" type="text" ng-model="password" class="form-control text-center is-invalid" placeholder="الرمز السري" maxlength="6" autocomplete="off" autofocus="autofocus" ng-change="updatePassword()">
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="toast-container position-fixed bottom-0 end-0 p-3">
+			<div id="installToast" class="toast w-auto" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+				<div class="toast-body">
+					<div class="d-grid">
+						<button id="installButton" class="btn btn-primary btn-sm" style="display:none">
+							<i class="bi bi-window-plus ms-2"></i>
+							تنصيب كتطبيق
+						</button>
+					</div>
+					<span id="installedBadge" class="badge text-bg-success" style="display:none">
+						<i class="bi bi-window-plus ms-2"></i>
+						تم التنصيب
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<script src="app.js" type="module"></script>
+		
+	</body>
+</html>

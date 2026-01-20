@@ -1,0 +1,129 @@
+<div ng-controller="distributions">
+
+	<div class="card mb-4" ng-show="noDistributions">
+		<div class="card-header">
+			<i class="bi bi-copy"></i>
+			نسخ من فصل دراسي آخر
+		</div>
+		<div class="card-body">
+			<div class="form-group">
+				<label for="sourceSemester" class="form-label">
+					<i class="bi bi-calendar3"></i>
+					اختر الفصل الدراسي للنسخ منه
+				</label>
+				<select id="sourceSemester" ng-model="sourceSemester" class="form-select" ng-options="semester.id as semester.name for semester in semesters" ng-change="copyFromSemester()">
+					<option value="">-- اختر الفصل الدراسي --</option>
+				</select>
+				<div class="help-text-enhanced">
+					<small class="text-helper">
+						<i class="bi bi-info-circle"></i>
+						سيتم نسخ جميع توزيعات {{labels.levels}} من الفصل المحدد
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="parent-item list-fade-in" ng-repeat="(gradeIndex, grade) in grades track by $index">
+		
+		<div class="parent-header">
+			<div class="parent-title-section">
+				<div class="parent-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="parent-title-content">
+					<i class="bi bi-bookmark-star"></i>
+					{{grade.name}}
+				</div>
+			</div>
+			
+			<div class="parent-controls">
+				<div class="progress-indicator progress-indicator-success">
+					<i class="bi bi-check-circle-fill"></i>
+					{{distributions[grade.id].length}} {{labels.level}}
+				</div>
+				<button class="btn btn-action-secondary btn-sm" ng-click="addLevel(grade, distributions[grade.id].length)" ng-hide="submitted">
+					<i class="bi bi-plus-lg"></i>
+					إضافة {{labels.level}}
+				</button>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+		
+			<div class="list-item-complex list-fade-in" ng-repeat="level in distributions[grade.id] track by $index">
+				
+				<div class="list-item-header">
+					<div class="list-title-section">
+						<div class="list-item-number">
+							<span class="list-item-counter">{{$index + 1}}</span>
+						</div>
+						<div class="list-item-title">
+							<i class="bi bi-stack"></i>
+							{{labels.level}} رقم {{$index + 1}}
+						</div>
+					</div>
+					<div class="list-item-actions" ng-hide="submitted">
+						<div class="action-group">
+							<button type="button" class="btn btn-action-primary btn-sm" ng-click="addLevel(grade, $index)">
+								<i class="bi bi-plus-lg"></i>
+							</button>
+							<button type="button" class="btn btn-action-secondary btn-sm" ng-click="upLevel(grade, $index)" ng-if="$index != 0 && distributions[grade.id].length != 1" title="نقل المستوى للأعلى">
+								<i class="bi bi-chevron-up"></i>
+							</button>
+							<button type="button" class="btn btn-action-secondary btn-sm" ng-click="downLevel(grade, $index)" ng-if="$index != distributions[grade.id].length - 1 && distributions[grade.id].length != 1" title="نقل المستوى للأسفل">
+								<i class="bi bi-chevron-down"></i>
+							</button>
+							<button type="button" class="btn btn-action-warning btn-sm" ng-click="deleteLevel(grade, $index)" ng-if="distributions[grade.id].length != 1" title="حذف المستوى">
+								<i class="bi bi-trash"></i>
+							</button>
+							<button type="button" class="btn btn-action-primary btn-sm" ng-click="addLevel(grade, $index + 1)">
+								<i class="bi bi-plus-lg"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="list-item-content">
+					<div class="course-select-section">
+						<div class="input-group list-input-group">
+							<span class="input-group-text list-switch-container">
+								<div class="text-center">
+									<i class="bi bi-book"></i>
+									اختر {{labels.level}}
+								</div>
+							</span>
+							<select id="grade{{gradeIndex}}_level{{$index}}" name="grade{{gradeIndex}}_levels" ng-model="distributions[grade.id][$index]" placeholder="{{labels.level}}" class="form-select" required="required" ng-disabled="submitted" ng-options="level.id as level.name for level in levels | orderBy : 'index'">
+								<option value="" disabled="disabled">-- اختر {{labels.level}} --</option>
+							</select>
+							<span class="input-group-text list-order">
+								<i class="bi bi-sort-numeric-down"></i>
+								{{$index + 1}}
+							</span>
+						</div>
+						
+						<div class="help-text-enhanced">
+							<small class="text-helper">
+								<i class="bi bi-info-circle"></i>
+								اختر {{labels.level}} المناسب لهذا الصف
+							</small>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-add" ng-click="saveDistributions()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ توزيع {{labels.levels}}
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border ms-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+		</div>
+	</div>
+
+</div>

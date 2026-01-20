@@ -1,0 +1,126 @@
+<div ng-controller="view-groups">
+	
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="group" class="form-label">
+						<i class="bi bi-people"></i>
+						التقسيم
+					</label>
+					<select id="group" ng-model="group" class="form-control is-invalid" placeholder="التقسيم" ng-options="group.id as group.name for group in groups" required="required" ng-disabled="submitted" ng-change="updateGroup()">
+						<option disabled="disabled" value="">التقسيم</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="partition" class="form-label">
+						<i class="bi bi-collection"></i>
+						المجموعة
+					</label>
+					<select id="partition" ng-model="partition" class="form-control is-invalid" placeholder="المجموعة" ng-options="partition.id as partition.name for partition in partitions | orderBy : 'index'" required="required" ng-disabled="submitted" ng-change="updatePartition()">
+						<option disabled="disabled" value="">المجموعة</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<tbody>
+				<tr>
+					<th>
+						<i class="bi bi-people"></i>
+						التقسيم
+					</th>
+					<td>
+						{{groupName}}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<i class="bi bi-collection"></i>
+						المجموعة
+					</th>
+					<td>
+						{{partitionName}}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<i class="bi bi-book"></i>
+						{{labels.course}}
+					</th>
+					<td>
+						{{courses[course].name}}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<i class="bi bi-person-badge"></i>
+						المعلم
+					</th>
+					<td>
+						{{teachers[teacher].name}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="table-responsive mt-3">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						#
+					</th>
+					<th>
+						<i class="bi bi-person-vcard"></i>
+						الرقم الشخصي
+					</th>
+					<th>
+						<i class="bi bi-person-fill"></i>
+						الاسم
+					</th>
+					<th>
+						<i class="bi bi-layers"></i>
+						{{labels.level}}
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="student in partitionStudents | orderBy : 'name' track by $index">
+					<td>
+						{{$index + 1}}
+					</td>
+					<td>
+						{{student.cpr}}
+					</td>
+					<td>
+						{{student.name}}
+					</td>
+					<td>
+						{{levels[student.level].name}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+	
+	<div class="form-controls d-print-none">
+		<button class="btn btn-outline-dark" ng-click="print()">
+			<i class="bi bi-printer"></i>
+			طباعة
+		</button>
+		<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
+			<i class="bi bi-download"></i>
+			حفظ المجموعات
+		</button>
+	</div>
+	
+</div>

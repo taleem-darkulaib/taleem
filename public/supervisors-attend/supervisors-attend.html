@@ -1,0 +1,203 @@
+<div ng-controller="supervisors-attend">
+
+	<div class="info-panel">
+	
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="date" class="form-label">
+						<i class="bi bi-calendar-check"></i>
+						تاريخ اليوم
+					</label>
+					<div class="input-group date-navigation">
+						<button class="btn-action-secondary date-nav-btn" ng-click="nextDate()" ng-hide="submitted" title="اليوم التالي">
+							<i class="bi bi-chevron-double-down"></i>
+						</button>
+						<select id="date" ng-model="date" class="form-select" placeholder="تاريخ اليوم" ng-options="date for date in dates" required="required" ng-disabled="submitted" ng-change="updateDate()">
+							<option disabled="disabled" value="">اختر التاريخ</option>
+						</select>
+						<button class="btn-action-secondary date-nav-btn" ng-click="previousDate()" ng-hide="submitted" title="اليوم السابق">
+							<i class="bi bi-chevron-double-up"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="night" class="form-label">
+						<i class="bi bi-sun"></i>
+						اليوم
+					</label>
+					<div class="input-group">
+						<span class="input-group-text">
+							<i class="bi bi-sun"></i>
+						</span>
+						<input id="night" ng-value="nights[night].name" class="form-control day-input" placeholder="اليوم" readonly="readonly">
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى اختيار التاريخ لبدء تسجيل حضور المشرفين
+			</small>
+		</div>
+	</div>
+
+	<div class="card mt-2" ng-repeat="(areaIndex, area) in areas | orderBy:'index' track by $index">
+		<div class="card-header">
+			<div class="header-content">
+				<div class="header-title">
+					<div class="area-icon">
+						<i class="bi bi-geo-alt-fill"></i>
+						{{area.name}}
+					</div>
+				</div>
+				<div class="header-actions">
+					<span class="status-badge status-badge-active">{{area.supervisors.length}} مشرف</span>
+				</div>
+			</div>
+		</div>
+		
+		<div class="card-body">
+
+			<div class="list-item-complex list-fade-in" ng-repeat="(supervisorIndex, supervisor) in area.supervisors | orderBy : 'name' track by $index">
+				<div class="list-item-header">
+					<div class="list-title-section">
+						<div class="list-item-number">
+							{{$index + 1}}
+						</div>
+						<div class="list-item-title">
+							<i class="bi bi-person list-icon-md"></i>
+							{{supervisor.name}}
+						</div>
+					</div>
+					<div class="list-item-actions">
+						<span class="status-badge" ng-class="{
+							'status-badge-excuse': attendance[supervisor.id].status == 'معتذر',
+							'status-badge-late': attendance[supervisor.id].status == 'متأخر',
+							'status-badge-absent': attendance[supervisor.id].status == 'غائب',
+							'status-badge-present': attendance[supervisor.id].status == 'حاضر'}">
+							<i class="bi ms-1" ng-class="{
+								'bi-check-circle-fill': attendance[supervisor.id].status == 'حاضر',
+								'bi-stopwatch-fill': attendance[supervisor.id].status == 'متأخر',
+								'bi-clock-fill': attendance[supervisor.id].status == 'معتذر',
+								'bi-x-circle-fill': attendance[supervisor.id].status == 'غائب'}"></i>
+							{{attendance[supervisor.id].status}}
+						</span>
+					</div>
+				</div>
+				<div class="list-item-content">
+
+					<div class="btn-group" role="group">
+						<input id="notify_{{areaIndex}}_{{supervisorIndex}}" name="attendance_{{areaIndex}}_{{supervisorIndex}}" ng-model="attendance[supervisor.id].status" type="radio" value="معتذر" class="btn-check" ng-change="updateSupervisorAttend(supervisor)" ng-click="clickSupervisorAttend(supervisor, 'معتذر')">
+						<label for="notify_{{areaIndex}}_{{supervisorIndex}}" class="btn attend-btn">
+							معتذر
+							<i class="bi bi-clock me-1"></i>
+						</label>
+						
+						<input id="late_{{areaIndex}}_{{supervisorIndex}}" name="attendance_{{areaIndex}}_{{supervisorIndex}}" ng-model="attendance[supervisor.id].status" type="radio" value="متأخر" class="btn-check" ng-change="updateSupervisorAttend(supervisor)" ng-click="clickSupervisorAttend(supervisor, 'متأخر')">
+						<label for="late_{{areaIndex}}_{{supervisorIndex}}" class="btn attend-btn">
+							متأخر
+							<i class="bi bi-stopwatch me-1"></i>
+						</label>
+						
+						<input id="absent_{{areaIndex}}_{{supervisorIndex}}" name="attendance_{{areaIndex}}_{{supervisorIndex}}" ng-model="attendance[supervisor.id].status" type="radio" value="غائب" class="btn-check" ng-change="updateSupervisorAttend(supervisor)" ng-click="clickSupervisorAttend(supervisor, 'غائب')">
+						<label for="absent_{{areaIndex}}_{{supervisorIndex}}" class="btn attend-btn">
+							غائب
+							<i class="bi bi-x-circle me-1"></i>
+						</label>
+						
+						<input id="attend_{{areaIndex}}_{{supervisorIndex}}" name="attendance_{{areaIndex}}_{{supervisorIndex}}" ng-model="attendance[supervisor.id].status" type="radio" value="حاضر" class="btn-check" ng-change="updateSupervisorAttend(supervisor)" ng-click="clickSupervisorAttend(supervisor, 'حاضر')">
+						<label for="attend_{{areaIndex}}_{{supervisorIndex}}" class="btn attend-btn">
+							حاضر
+							<i class="bi bi-check-circle me-1"></i>
+						</label>
+					</div>
+					
+					<input class="form-control" ng-model="attendance[supervisor.id].comment" maxlength="100" type="text" placeholder="ملاحظات على حضور المشرف..." ng-blur="updateSupervisorAttend(supervisor)">
+					
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	
+	<div class="card">
+		<div class="card-header">
+			<div class="header-content">
+				<div class="header-title">
+					<div class="area-icon">
+						<i class="bi bi-geo-alt-fill"></i>
+						بقية المشرفين
+					</div>
+				</div>
+				<div class="header-actions">
+					<span class="status-badge status-badge-active">{{otherSupervisors.length}} مشرف</span>
+				</div>
+			</div>
+		</div>
+		
+		<div class="card-body">
+		
+			<div class="list-item-complex list-fade-in" ng-repeat="(supervisorIndex, supervisor) in otherSupervisors | orderBy : 'name' track by $index">
+				<div class="list-item-header">
+					<div class="list-title-section">
+						<div class="list-item-number">
+							{{$index + 1}}
+						</div>
+						<div class="list-item-title">
+							<i class="bi bi-person list-icon-md"></i>
+							{{supervisor.name}}
+						</div>
+					</div>
+					<div class="list-item-actions">
+						<span class="status-badge" ng-class="{
+							'status-badge-excuse': attendance[supervisor.id].status == 'معتذر',
+							'status-badge-late': attendance[supervisor.id].status == 'متأخر',
+							'status-badge-absent': attendance[supervisor.id].status == 'غائب',
+							'status-badge-present': attendance[supervisor.id].status == 'حاضر'}">
+							<i class="bi ms-1" ng-class="{
+								'bi-check-circle-fill': attendance[supervisor.id].status == 'حاضر',
+								'bi-stopwatch-fill': attendance[supervisor.id].status == 'متأخر',
+								'bi-clock-fill': attendance[supervisor.id].status == 'معتذر',
+								'bi-x-circle-fill': attendance[supervisor.id].status == 'غائب'}"></i>
+							{{attendance[supervisor.id].status}}
+						</span>
+					</div>
+				</div>
+				<div class="list-item-content">
+
+					<div class="btn-group" role="group">
+						<input id="notify_{{areaIndex}}_{{supervisorIndex}}" name="attendance_{{areaIndex}}_{{supervisorIndex}}" ng-model="attendance[supervisor.id].status" type="radio" value="معتذر" class="btn-check" ng-change="updateSupervisorAttend(supervisor)" ng-click="clickSupervisorAttend(supervisor, 'معتذر')">
+						<label for="notify_{{areaIndex}}_{{supervisorIndex}}" class="btn attend-btn">
+							معتذر
+							<i class="bi bi-clock me-1"></i>
+						</label>
+						<input id="late_{{areaIndex}}_{{supervisorIndex}}" name="attendance_{{areaIndex}}_{{supervisorIndex}}" ng-model="attendance[supervisor.id].status" type="radio" value="متأخر" class="btn-check" ng-change="updateSupervisorAttend(supervisor)" ng-click="clickSupervisorAttend(supervisor, 'متأخر')">
+						<label for="late_{{areaIndex}}_{{supervisorIndex}}" class="btn attend-btn">
+							متأخر
+							<i class="bi bi-stopwatch me-1"></i>
+						</label>
+						<input id="absent_{{areaIndex}}_{{supervisorIndex}}" name="attendance_{{areaIndex}}_{{supervisorIndex}}" ng-model="attendance[supervisor.id].status" type="radio" value="غائب" class="btn-check" ng-change="updateSupervisorAttend(supervisor)" ng-click="clickSupervisorAttend(supervisor, 'غائب')">
+						<label for="absent_{{areaIndex}}_{{supervisorIndex}}" class="btn attend-btn">
+							غائب
+							<i class="bi bi-x-circle me-1"></i>
+						</label>
+						<input id="attend_{{areaIndex}}_{{supervisorIndex}}" name="attendance_{{areaIndex}}_{{supervisorIndex}}" ng-model="attendance[supervisor.id].status" type="radio" value="حاضر" class="btn-check" ng-change="updateSupervisorAttend(supervisor)" ng-click="clickSupervisorAttend(supervisor, 'حاضر')">
+						<label for="attend_{{areaIndex}}_{{supervisorIndex}}" class="btn attend-btn">
+							حاضر
+							<i class="bi bi-check-circle me-1"></i>
+						</label>
+					</div>
+					
+					<input class="form-control" ng-model="attendance[supervisor.id].comment" maxlength="100" type="text" placeholder="ملاحظات على حضور المشرف..." ng-blur="updateSupervisorAttend(supervisor)">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

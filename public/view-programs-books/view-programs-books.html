@@ -1,0 +1,120 @@
+<div ng-controller="view-programs-books">
+
+	<div class="info-panel">
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-mortarboard-fill"></i>
+				البرنامج
+			</label>
+			<select id="program" ng-model="program.id" class="form-select" placeholder="البرنامج" ng-options="program.id as program.name for program in programs" ng-disabled="programs.length == 1 || submitted" ng-change="updateProgram()">
+				<option disabled="disabled" ng-value="0">اختر البرنامج</option>
+			</select>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				اختر البرنامج لإدارة المدفوعات
+			</small>
+		</div>
+	</div>
+	
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-card-text"></i>
+						الرقم الشخصي
+					</label>
+					<input id="cpr-search" ng-model="search.cpr" type="tel" class="form-control cpr" placeholder="الرقم الشخصي" maxlength="9" autocomplete="off" ng-change="searchStudents()">
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-person-fill"></i>
+						اسم الطالب
+					</label>
+					<input id="name-search" ng-model="search.name" type="text" class="form-control name" placeholder="اسم الطالب" maxlength="50" autocomplete="off" ng-change="searchStudents()">
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-telephone-fill"></i>
+						رقم الهاتف
+					</label>
+					<input id="mobile-search" ng-model="search.mobile" type="tel" class="form-control mobile" placeholder="رقم الهاتف" maxlength="8" autocomplete="off" ng-change="searchStudents()">
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-mortarboard"></i>
+						الصف
+					</label>
+					<select id="grade-search" ng-model="search.grade" class="form-select" placeholder="الصف" ng-options="grade.id as grade.name for grade in grades" ng-change="searchStudents()">
+						<option value="">جميع الصفوف</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="table-responsive">
+		<table id="books" class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						<i class="bi bi-hash"></i>
+						#
+					</th>
+					<th>
+						<i class="bi bi-person-badge"></i>
+						بيانات الطالب
+					</th>
+					<th class="text-center">
+						<i class="bi bi-box-seam"></i>
+						حالة التسليم
+					</th>
+					<th>
+						<i class="bi bi-clock-history"></i>
+						وقت التسليم
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="book in matchedBooks | orderBy : 'id' track by $index">
+					<td class="text-center">
+						<div class="counter-badge">
+							{{$index + 1}}
+						</div>
+					</td>
+					<td>
+						{{students[book.cpr].name}}
+					</td>
+					<td class="text-center">
+						<span class="status-badge status-badge-completed">
+							<i class="bi bi-check-circle-fill"></i>
+							تم التسليم
+						</span>
+					</td>
+					<td>
+						<i class="bi bi-clock-history"></i>
+						{{book.time}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+	
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
+			<i class="bi bi-download"></i>
+			حفظ استلام كتاب البرنامج
+		</button>
+	</div>
+	
+</div>

@@ -1,0 +1,52 @@
+<div ng-controller="welcome">
+	
+	<div id="menu-guides" class="accordion">
+		<div class="accordion-item" ng-repeat="category in menu track by $index">
+			<h2 id="category{{$index}}-heading" class="accordion-header">
+				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#category{{$index}}" aria-expanded="false" aria-controls="category{{$index}}">
+					<i class="bi me-3" ng-class="category.icon"></i> {{category.title}}
+				</button>
+			</h2>
+			<div id="category{{$index}}" class="accordion-collapse collapse" aria-labelledby="category{{$index}}-heading" data-bs-parent="#menu-guides">
+				<div class="accordion-body">
+					
+					<div id="category{{$index}}-functions" class="accordion">
+						<div class="accordion-item" ng-repeat="function in category.functions track by $index">
+							<h2 id="category{{$parent.$index}}-function{{$index}}-heading" class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#category{{$parent.$index}}-function{{$index}}" aria-expanded="false" aria-controls="category{{$parent.$index}}-function{{$index}}">
+									<i class="bi me-3" ng-class="function.icon"></i> {{function.title}}
+								</button>
+							</h2>
+							<div id="category{{$parent.$index}}-function{{$index}}" class="accordion-collapse collapse" aria-labelledby="category{{$parent.$index}}-function{{$index}}-heading" data-bs-parent="#category{{$parent.$index}}-functions">
+								<div class="accordion-body">
+									<div ng-repeat="action in guides[function.url] track by $index">
+										<div class="section-divider">
+											<span class="section-divider-text">
+												<i class="bi bi-activity"></i>
+												{{action.title}}
+											</span>
+										</div>
+										<ul class="list-group">
+											<li class="list-group-item" ng-repeat="step in action.steps track by $index">
+												<div class="d-flex">
+													<span class="counter-badge counter-badge-sm ms-3">
+														{{$index + 1}}
+													</span>
+													<span>
+													{{step}}
+													</span>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

@@ -1,0 +1,240 @@
+<div ng-controller="evaluations">
+	
+	<div class="card">
+		<div class="card-header d-flex justify-content-between align-items-center py-3">
+			<div class="d-flex align-items-center">
+				<i class="bi bi-clipboard-data"></i>
+				قائمة التقييمات
+			</div>
+			<button class="btn btn-add" ng-click="toAddEvaluation()" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#evaluationModal">
+				<i class="bi bi-plus-lg"></i>
+				إضافة تقييم
+			</button>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							<i class="bi bi-hash"></i>
+						</th>
+						<th>
+							<i class="bi bi-clipboard-check"></i>
+							اسم التقييم
+						</th>
+						<th>
+							<i class="bi bi-list-check"></i>
+							المعايير والمتطلبات
+						</th>
+						<th>
+							<i class="bi bi-clock"></i>
+							تاريخ الإنشاء
+						</th>
+						<th class="text-center">
+							<i class="bi bi-gear-fill"></i>
+							الإجراءات
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="evaluation in evaluations track by $index">
+						<td>
+							<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+						</td>
+						<td>
+							{{evaluation.name}}
+						</td>
+						<td>
+							<div ng-repeat="criteria in evaluation.criterias track by $index">
+								<div class="status-badge status-badge-active mt-1">
+									{{$index + 1}}. {{criteria.name}}
+									<ng-container ng-if="evaluation.type == 'درجات'">
+										({{criteria.mark}})
+									</ng-container>
+								</div>
+							</div>
+						</td>
+						<td>
+							{{evaluation.time}}
+						</td>
+						<td class="text-center">
+							<button class="btn btn-edit" ng-click="toEditEvaluation(evaluation)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#evaluationModal">
+								<i class="bi bi-pencil-square"></i>
+								تعديل
+							</button>
+							<button class="btn btn-delete" ng-click="selectEvaluation(evaluation)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#deleteModal" ng-if="isStringNotEmpty(evaluation.id)">
+								<i class="bi bi-trash"></i>
+								حذف
+							</button>
+						</td>
+					</tr>
+					
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div id="evaluationModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-clipboard-check-fill"></i>
+						إدارة التقييمات والمعايير
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class" ng-show="alert.message">
+						<i class="bi alert-icon" ng-class="alert.icon"></i>
+						<div>
+							<strong class="ms-2">{{alert.title}}</strong> {{alert.message}}
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="name" class="form-label">
+									<i class="bi bi-clipboard-check"></i>
+									اسم التقييم
+								</label>
+								<input id="name" ng-model="evaluation.name" type="text" class="form-control" placeholder="أدخل اسم التقييم" maxlength="100" autocomplete="off" required="required" ng-disabled="submitted">
+							</div>
+						</div>
+						
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="type" class="form-label">
+									<i class="bi bi-gear"></i>
+									طريقة التقييم
+								</label>
+								<select id="type" ng-model="evaluation.type" class="form-select" placeholder="طريقة التقييم" required="required" ng-disabled="submitted">
+									<option value="درجات">تقييم بالدرجات</option>
+									<option value="اجتياز">تقييم بالاجتياز</option>
+								</select>
+							</div>
+						</div>
+						
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="type" class="form-label">
+									<i class="bi bi-chat-text"></i>
+									ملاحظة لكل كفاية
+								</label>
+								<div class="btn-group" role="group">
+									<input id="comment-no" name="comment" ng-model="evaluation.comment" type="radio" ng-value="false" class="btn-check" ng-disabled="submitted">
+									<label for="comment-no" type="button" class="btn btn-outline-dark">
+										لا
+										<i class="bi bi-x-square me-1"></i>
+									</label>
+									<input id="comment-yes" name="comment" ng-model="evaluation.comment" type="radio" ng-value="true" class="btn-check" ng-disabled="submitted">
+									<label for="comment-yes" type="button" class="btn btn-outline-dark">
+										نعم
+										<i class="bi bi-check-square me-1"></i>
+									</label>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="type" class="form-label">
+									<i class="bi bi-cloud-upload"></i>
+									رفع الكفايات
+								</label>
+								<input id="file" type="file" class="form-control" accept=".xlsx" placeholder="الكفايات" ng-disabled="submitted">
+								<div class="help-text-enhanced">
+									<small class="text-helper">
+										<i class="bi bi-info-circle"></i>
+										يدعم ملفات Excel (.xlsx)
+									</small>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-list-check"></i>
+							معايير التقييم والكفايات
+						</label>
+						<div class="input-group mt-1" ng-repeat="criteria in evaluation.criterias track by $index">
+							<button class="btn-action-primary" ng-click="addCriteria()" ng-if="$index == 0 && !submitted" title="إضافة معيار جديد">
+								<i class="bi bi-plus-lg"></i>
+							</button>
+							<button class="btn-action-warning" ng-click="deleteCriteria(criteria)" ng-if="$index != 0 && !submitted" title="حذف المعيار">
+								<i class="bi bi-trash"></i>
+							</button>
+							<select id="criteriaMark{{$index}}" ng-model="criteria.mark" class="form-select" ng-options="mark for mark in marks" ng-disabled="submitted" ng-if="evaluation.type == 'درجات'">
+								<option selected="selected" disabled="disabled" value="">اختر الدرجة</option>
+							</select>
+							<input id="criteriaName{{$index}}" ng-model="criteria.name" type="text" class="form-control" placeholder="اسم الكفاية أو المعيار" maxlength="100" autocomplete="off" ng-disabled="submitted">
+							<div class="input-group-text">{{$index + 1}}</div>
+						</div>
+					</div>
+					<div class="help-text-enhanced">
+						<small>
+							<i class="bi bi-info-circle"></i>
+							أضف المعايير والكفايات التي سيتم تقييم الطلاب عليها
+						</small>
+					</div>
+					
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<button class="btn-action-primary" ng-click="saveEvaluation()">
+						<i class="bi bi-floppy"></i>
+						حفظ التقييم
+					</button>
+					<button type="button" class="btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="deleteModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header bg-danger">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-exclamation-triangle-fill"></i>
+						</div>
+						تأكيد حذف التقييم
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body text-center">
+					<div class="delete-confirmation-content">
+						<div class="delete-icon">
+							<i class="bi bi-trash3-fill"></i>
+						</div>
+						<h4 class="delete-title">هل أنت متأكد من الحذف؟</h4>
+						<p class="delete-message">
+							سيتم حذف هذا التقييم نهائياً ولن يمكن استعادته
+						</p>
+						<div>
+							<strong>التقييم المحدد:</strong>
+							<div class="preview-text">{{evaluation.name}}</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<button class="btn btn-delete" data-bs-dismiss="modal" ng-click="deleteEvaluation()">
+						<i class="bi bi-trash"></i>
+						تأكيد الحذف
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

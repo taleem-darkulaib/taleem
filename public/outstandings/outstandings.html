@@ -1,0 +1,162 @@
+<div ng-controller="outstandings">
+
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="grade-search" class="form-label">
+						<i class="bi bi-mortarboard"></i>
+						الصف
+					</label>
+					<select id="grade-search" ng-model="search.grade" class="form-select" placeholder="الصف" ng-options="grade.id as grade.name for grade in grades" ng-disabled="submitted" ng-change="searchOutstandings()">
+						<option value="">الصف</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="level-search" class="form-label">
+						<i class="bi bi-layers"></i>
+						{{labels.level}}
+					</label>
+					<select id="level-search" ng-model="search.level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in levels | orderBy : 'index'" ng-disabled="submitted" ng-change="searchOutstandings()">
+						<option value="">{{labels.level}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="percentage-search" class="form-label">
+						<i class="bi bi-trophy"></i>
+						المعدل المطلوب
+					</label>
+					<select id="percentage-search" ng-model="search.percentage" class="form-select" placeholder="المعدل المطلوب" ng-disabled="submitted" ng-options="percentage for percentage in percentages" ng-change="searchOutstandings()">
+						<option value="">المعدل المطلوب</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="table-responsive mb-4">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						<i class="bi bi-hash"></i>
+						#
+					</th>
+					<th>
+						<i class="bi bi-person-badge"></i>
+						معلومات الطالب
+					</th>
+					<th>
+						<i class="bi bi-mortarboard"></i>
+						الصف
+					</th>
+					<th>
+						<i class="bi bi-layer-forward"></i>
+						{{labels.level}}
+					</th>
+					<th class="text-center">
+						<i class="bi bi-bar-chart"></i>
+						المعدل
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="student in outstandings | orderBy:'-percentage' track by $index">
+					<td>
+						<span class="counter-badge counter-badge-sm">{{$index + 1}}</span>
+					</td>
+					<td>
+						{{student.name}}
+					</td>
+					<td>
+						{{grades[student.grade].name}}
+					</td>
+					<td>
+						{{student.levelName}}
+					</td>
+					<td class="text-center">
+						<span class="status-badge status-badge-inactive">
+							{{student.percentage || 0}}%
+						</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="list-item-complex list-fade-in" ng-repeat="level in levels | orderBy:'index' track by $index">
+		
+		<div class="list-item-header">
+			<div class="list-title-section">
+				<div class="list-item-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="list-item-title">
+					<i class="bi bi-layers"></i>
+					{{level.name}}
+				</div>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+			<div class="table-responsive">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>
+								<i class="bi bi-hash"></i>
+								#
+							</th>
+							<th>
+								<i class="bi bi-person-badge"></i>
+								اسم الطالب
+							</th>
+							<th ng-repeat="course in level.courses track by $index" class="text-center">
+								<i class="bi bi-book"></i>
+								{{course.name}} (100)
+							</th>
+							<th class="text-center">
+								<i class="bi bi-bar-chart"></i>
+								المعدل (100)
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="student in level.students | orderBy:'-percentage' track by $index">
+							<td>
+								<span class="counter-badge counter-badge-sm">{{$index + 1}}</span>
+							</td>
+							<td>
+								{{student.name}}
+							</td>
+							<td ng-repeat="course in level.courses track by $index" class="text-center">
+								<span class="status-badge status-badge-present">
+									{{student.courses[course.id] || 0}}
+								</span>
+							</td>
+							<td class="text-center">
+								<span class="status-badge status-badge-linked">
+									%{{student.percentage || 0}}
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
+			<i class="bi bi-download"></i>
+			حفظ الدرجات
+		</button>
+	</div>
+	
+</div>

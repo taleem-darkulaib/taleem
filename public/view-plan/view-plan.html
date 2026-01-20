@@ -1,0 +1,125 @@
+<div ng-controller="view-plan">
+	
+	<div class="list-item-complex list-fade-in" ng-repeat="level in levels | orderBy : 'index' track by $index">
+		
+		<div class="table-header">
+			<div class="table-title-section">
+				<div class="table-number">
+					<span class="counter-badge">{{$index + 1}}</span>
+				</div>
+				<div class="table-title-content">
+					<i class="bi bi-bookmark-star"></i>
+					{{level.name}}
+				</div>
+			</div>
+		</div>
+
+		<div class="table-responsive d-none d-lg-block">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							<i class="bi bi-hash"></i>
+						</th>
+						<th>
+							<i class="bi bi-moon-stars"></i>
+							{{config.period}}
+						</th>
+						<th>
+							<i class="bi bi-book"></i>
+							{{labels.course}}
+						</th>
+						<th>
+							<i class="bi bi-person-badge"></i>
+							المعلم
+						</th>
+						<th>
+							<i class="bi bi-door-open"></i>
+							الغرفة
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="night in nights track by $index" class="list-item-simple" ng-if="plan[level.id] != null && plan[level.id][night.id] != null">
+						<th>
+							<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+						</th>
+						<td>
+							<div class="table-data-row">
+								<div class="table-data-icon">
+									<i class="bi bi-moon-stars"></i>
+								</div>
+								<div class="table-data-content">
+									<div class="table-data-title">{{night.name}}</div>
+									<div class="table-data-subtitle">ليلة دراسية</div>
+								</div>
+							</div>
+						</td>
+						<td>
+							{{courses[plan[level.id][night.id].course].name}}
+						</td>
+						<td>
+							{{teachers[plan[level.id][night.id].teacher].name}}
+						</td>
+						<td>
+							{{rooms[plan[level.id][night.id].room].name}}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="list-item-content d-block d-lg-none">
+		
+			<div class="list-item-complex list-fade-in" ng-repeat="night in nights track by $index" ng-if="plan[level.id] != null && plan[level.id][night.id] != null">
+				
+				<div class="list-item-header">
+					<div class="list-title-section">
+						<div class="list-item-number">
+							<span class="list-item-counter">{{$index + 1}}</span>
+						</div>
+						<div class="list-item-title">
+							<i class="bi bi-moon-stars"></i>
+							{{night.name}}
+						</div>
+					</div>
+				</div>
+
+				<div class="list-item-content">
+					
+					<div class="mobile-view-field">
+						<div class="mobile-view-label">
+							<i class="bi bi-book"></i>
+							{{labels.course}}
+						</div>
+						<div class="mobile-view-value">
+							{{courses[plan[level.id][night.id].course].name}}
+						</div>
+					</div>
+
+					<div class="mobile-view-field">
+						<div class="mobile-view-label">
+							<i class="bi bi-person-badge"></i>
+							المعلم
+						</div>
+						<div class="mobile-view-value">
+							{{teachers[plan[level.id][night.id].teacher].name}}
+						</div>
+					</div>
+
+					<div class="mobile-view-field">
+						<div class="mobile-view-label">
+							<i class="bi bi-door-open"></i>
+							الغرفة
+						</div>
+						<div class="mobile-view-value">
+							{{rooms[plan[level.id][night.id].room].name}}
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+</div>

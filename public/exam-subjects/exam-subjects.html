@@ -1,0 +1,105 @@
+<div ng-controller="exam-subjects">
+			
+	<div class="info-panel">
+		
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-clipboard-check-fill"></i>
+						الامتحان
+					</label>
+					<select id="exam" ng-model="exam" class="form-select" placeholder="الامتحان" ng-options="exam.id as exam.title for exam in exams" required="required" ng-disabled="submitted" ng-change="updateExam()">
+						<option disabled="disabled" value="">اختر الامتحان</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-layers"></i>
+						{{labels.level}}
+					</label>
+					<select id="level" ng-model="level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in levels | orderBy : 'index'" required="required" ng-disabled="submitted" ng-change="updateLevel(true)">
+						<option disabled="disabled" value="">اختر {{labels.level}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-book-fill"></i>
+						{{labels.course}}
+					</label>
+					<select id="course" ng-model="course" class="form-select" placeholder="{{labels.course}}" ng-options="course.id as course.name for course in levelCourses" required="required" ng-disabled="submitted" ng-change="updateCourse()">
+						<option disabled="disabled" value="">اختر {{labels.course}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-person-fill"></i>
+						المعلم
+					</label>
+					<input ng-model="teachers[teacher].name" placeholder="المعلم" class="form-control" readonly="readonly">
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label for="subjects" class="form-label">الدروس المطلوبة</label>
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="(unitIndex, unit) in units track by $index">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-collection"></i>
+						الوحدة
+					</label>
+					<div class="input-group">
+						<label for="unit{{unitIndex}}" class="form-control">
+							{{unit.name}} <i class="bi bi-collection"></i>
+						</label>
+						<label for="unit{{unitIndex}}" class="input-group-text">
+							<div class="form-check form-switch">
+								<input id="unit{{unitIndex}}" checklist-model="subjects" checklist-value="unit.id" type="checkbox" class="form-check-input form-check-input-lg" ng-value="true" ng-true-value="true" ng-false-value="false" ng-disabled="submitted" ng-change="selectUnit(unit)">
+							</div>
+						</label>
+					</div>
+				</div>
+				<div class="card card-body mt-2">
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-journal-text"></i>
+							الدروس
+						</label>
+						<div class="input-group mt-1" ng-repeat="(topicIndex, topic) in unit.topics track by $index">
+							<label for="unit{{unitIndex}}_topic{{topicIndex}}" class="form-control">
+								{{topic.name}} <i class="bi bi-journal-text"></i>
+							</label>
+							<label for="unit{{unitIndex}}_topic{{topicIndex}}" class="input-group-text">
+								<div class="form-check form-switch">
+									<input id="unit{{unitIndex}}_topic{{topicIndex}}" checklist-model="subjects" checklist-value="topic.id" type="checkbox" class="form-check-input form-check-input-lg" ng-value="true" ng-true-value="true" ng-false-value="false" ng-disabled="submitted">
+								</div>
+							</label>
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-action-primary" ng-click="saveExamSubjects()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ الدروس المطلوبة
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="loading-spinner"></div>
+			</div>
+		</div>
+	</div>
+	
+</div>

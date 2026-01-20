@@ -1,0 +1,152 @@
+<div ng-controller="view-trips-attend">
+			
+	<div class="info-panel">
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-airplane-fill"></i>
+				الرحلة
+			</label>
+			<select id="trip" ng-model="trip" class="form-select" placeholder="الرحلة" ng-options="trip.id as trip.name for trip in trips" required="required" placeholder="الرحلة" ng-disabled="submitted" ng-change="updateTrip(true)">
+				<option disabled="disabled" value="">اختر الرحلة</option>
+			</select>
+		</div>
+	</div>
+	
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-card-text"></i>
+						الرقم الشخصي
+					</label>
+					<input id="cpr-search" ng-model="search.cpr" type="tel" class="form-control cpr" placeholder="الرقم الشخصي" maxlength="9" autocomplete="off" ng-change="searchStudents()">
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-person-fill"></i>
+						اسم الطالب
+					</label>
+					<input id="name-search" ng-model="search.name" type="text" class="form-control name" placeholder="اسم الطالب" maxlength="50" autocomplete="off" ng-change="searchStudents()">
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-telephone-fill"></i>
+						رقم الهاتف
+					</label>
+					<input id="mobile-search" ng-model="search.mobile" type="tel" class="form-control mobile" placeholder="رقم الهاتف" maxlength="8" autocomplete="off" ng-change="searchStudents()">
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-mortarboard"></i>
+						الصف
+					</label>
+					<select id="grade-search" ng-model="search.grade" class="form-select" placeholder="الصف" ng-options="grade.id as grade.name for grade in grades" ng-change="searchStudents()">
+						<option value="">جميع الصفوف</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-layers"></i>
+						{{labels.level}}
+					</label>
+					<select id="level-search" ng-model="search.level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in values(levels) | orderBy:'index'" ng-change="searchStudents()">
+						<option value="">{{labels.level}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="table-responsive">
+		<table id="attendance" class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						<i class="bi bi-hash"></i>
+						#
+					</th>
+					<th>
+						<i class="bi bi-person-badge"></i>
+						بيانات الطالب
+					</th>
+					<th>
+						<i class="bi bi-layer-forward"></i>
+						{{labels.level}}
+					</th>
+					<th class="text-center">
+						<i class="bi bi-clipboard-check"></i>
+						حالة الحضور
+					</th>
+					<th>
+						<i class="bi bi-journal-text"></i>
+						الملاحظة
+					</th>
+					<th>
+						<i class="bi bi-clock-history"></i>
+						وقت التسجيل
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="student in matchedAttendance | orderBy : 'id' track by $index">
+					<td>
+						<div class="counter-badge counter-badge-sm">
+							{{$index + 1}}
+						</div>
+					</td>
+					<td>
+						{{students[student.cpr].name}}
+					</td>
+					<td>
+						<span class="list-badge-secondary">{{levels[student.level].name}}</span>
+					</td>
+					<td class="text-center">
+						<div class="status-badge" 
+							 ng-class="{
+								'status-badge-completed': student.status == 'حاضر',
+								'status-badge-warning': student.status == 'متأخر',
+								'status-badge-linked': student.status == 'معتذر',
+								'status-badge-error': student.status == 'غائب'}">
+							<i class="bi" ng-class="{
+								'bi-check-circle-fill': student.status == 'حاضر',
+								'bi-clock-fill': student.status == 'متأخر',
+								'bi-info-circle-fill': student.status == 'معتذر',
+								'bi-x-circle-fill': student.status == 'غائب'}"></i>
+							{{student.status}} في الرحلة
+						</div>
+					</td>
+					<td>
+						<div class="info-panel">
+							<small class="text-helper">
+								<i class="bi bi-chat-text"></i>
+								{{student.comment}}
+							</small>
+						</div>
+					</td>
+					<td>
+						{{student.time}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+	
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
+			<i class="bi bi-download"></i>
+			حضور الرحلة
+		</button>
+	</div>
+	
+</div>

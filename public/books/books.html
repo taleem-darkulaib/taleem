@@ -1,0 +1,86 @@
+<div ng-controller="books">
+	
+	<div class="info-panel">
+		<div class="form-group">
+			<label for="level" class="form-label">
+				<i class="bi bi-layers"></i>
+				{{labels.level}}
+			</label>
+			<select id="level" ng-model="level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in levels | orderBy : 'index'" ng-disabled="submitted" ng-change="updateLevel()">
+				<option disabled="disabled" value="">اختر {{labels.level}}</option>
+			</select>
+			<div class="help-text-enhanced">
+				<small>
+					<i class="bi bi-info-circle"></i>
+					يرجى اختيار {{labels.level}} لعرض الطلاب والكتب المتاحة
+				</small>
+			</div>
+		</div>
+	</div>
+	
+	<div class="card" ng-show="level != null">
+		<div class="card-header">
+			<div>
+				<i class="bi bi-people"></i>
+				قائمة الطلبة
+			</div>
+		</div>
+		
+		<div id="students" class="accordion">
+			
+			<div class="card-body">
+			
+				<div class="payment-item" ng-repeat="student in levelStudents | orderBy : 'name' track by $index">
+					
+					<div id="student{{$index}}head" class="payment-item-header">
+						<button class="payment-toggle-btn w-100" type="button" data-bs-toggle="collapse" data-bs-target="#student{{$index}}" aria-expanded="false" aria-controls="student{{$index}}">
+							<div class="d-flex justify-content-between align-items-center">
+								<div class="student-info">
+									<div class="counter-badge">{{$index + 1}}</div>
+									<i class="bi bi-person-fill"></i>
+									{{student.name}}
+								</div>
+								<div class="payment-status">
+									<span class="status-badge status-badge-active ms-2">
+										{{length(books[student.cpr])}} كتاب
+									</span>
+									<i class="bi bi-chevron-down"></i>
+								</div>
+							</div>
+						</button>
+					</div>
+					
+					<div id="student{{$index}}" class="collapse" aria-labelledby="student{{$index}}head" data-bs-parent="#students">
+						
+						<div class="payment-item-content">
+							
+							<div class="payment-toggle-section mt-1" ng-repeat="course in levelCourses track by $index">
+								<div class="input-group payment-input-group">
+									<div class="input-group-text">
+										<div class="form-check form-switch">
+											<input id="course{{student.cpr}}_{{course.id}}" ng-model="books[student.cpr][course.id].selected" type="checkbox" class="form-check-input form-check-input-lg" ng-value="true" ng-true-value="true" ng-false-value="false" ng-disabled="submitted" ng-change="updateStudentBook(student, course)">
+										</div>
+									</div>
+									<label for="course{{student.cpr}}_{{course.id}}" class="form-control">
+										{{course.name}}
+										<i class="bi bi-book-fill"></i>
+									</label>
+									<label for="course{{student.cpr}}_{{course.id}}" class="status-badge status-badge-active" ng-show="books[student.cpr][course.id] != null">
+										<i class="bi bi-check-circle-fill"></i>
+										مستلم
+									</label>
+									<label for="course{{student.cpr}}_{{course.id}}" class="status-badge status-badge-inactive" ng-show="books[student.cpr][course.id] == null">
+										<i class="bi bi-x-circle-fill"></i>
+										غير مستلم
+									</label>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</div>

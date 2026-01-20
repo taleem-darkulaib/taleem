@@ -1,0 +1,77 @@
+<div ng-controller="download-marks">
+	
+	<div class="list-item-complex list-fade-in" ng-repeat="level in levels | orderBy : 'index' track by $index">
+		
+		<div class="list-item-header">
+			<div class="list-title-section">
+				<div class="list-item-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="list-item-title">
+					<i class="bi bi-diagram-3-fill"></i>
+					{{level.name}}
+				</div>
+			</div>
+			<div class="list-item-actions" ng-hide="submitted">
+				<div class="progress-indicator progress-indicator-success">
+					<i class="bi bi-file-earmark-spreadsheet-fill"></i>
+					{{level.courses.length}} ملف
+				</div>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+			
+			<div class="table-responsive">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>
+								<i class="bi bi-hash"></i>
+								#
+							</th>
+							<th>
+								<i class="bi bi-book"></i>
+								{{labels.course}}
+							</th>
+							<th>
+								<i class="bi bi-person-workspace"></i>
+								المعلم
+							</th>
+							<th class="text-center">
+								<i class="bi bi-download"></i>
+								تحميل الملف
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="course in level.courses track by $index">
+							<td>
+								<div class="counter-badge counter-badge-sm">
+									{{$index + 1}}
+								</div>
+							</td>
+							<td>
+								{{course.name}}
+							</td>
+							<td>
+								{{teachers[coursesTeachers[level.id][course.id]].name}}
+							</td>
+							<td class="text-center">
+								<button class="btn-action-primary" ng-click="downloadMarks(level, course)">
+									<i class="bi bi-download"></i>
+									تحميل {{course.name}}
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			
+		</div>
+		
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+	
+</div>

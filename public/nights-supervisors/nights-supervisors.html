@@ -1,0 +1,121 @@
+<div ng-controller="nights-supervisors">
+	
+	<div class="info-panel">
+		<div class="form-group">
+			<label for="night" class="form-label">
+				<i class="bi bi-stack"></i>
+				{{config.period}}
+			</label>
+			<select id="night" ng-model="night" class="form-select" placeholder="{{config.period}}" ng-options="night.id as night.name for night in nights" placeholder="{{config.period}}" ng-disabled="submitted" ng-change="updateNight(true)">
+				<option disabled="disabled" value="">{{config.period}}</option>
+			</select>
+		</div>
+		<div class="help-text-enhanced">
+			<small class="text-helper">
+				<i class="bi bi-info-circle"></i>
+				يرجى اختيار {{config.period}} لتحديد المشرفين
+			</small>
+		</div>
+	</div>
+
+	<div class="parent-item list-fade-in" ng-repeat="(areaIndex, area) in areas | orderBy:'index' track by $index">
+
+		<div class="parent-header">
+			<div class="parent-title-section">
+				<div class="parent-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="parent-title-content">
+					<i class="bi bi-geo-alt"></i>
+					{{area.name}}
+				</div>
+			</div>
+			<div class="parent-controls">
+				<div class="progress-indicator progress-indicator-success">
+					<i class="bi bi-check-circle-fill"></i>
+					{{nightSupervisors[area.id].length}} مشرف
+				</div>
+				<button class="btn btn-action-secondary btn-sm" ng-click="addSupervisor(area, areaIndex, nightSupervisors[area.id].length)" ng-hide="submitted">
+					<i class="bi bi-plus-lg"></i>
+					إضافة مشرف
+				</button>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+			
+			<div class="list-item-complex list-fade-in" ng-repeat="nightSupervisor in nightSupervisors[area.id] track by $index">
+				
+				<div class="list-item-header">
+					<div class="list-title-section">
+						<div class="list-item-number">
+							<span class="list-item-counter">{{$index + 1}}</span>
+						</div>
+						<div class="list-item-title">
+							<i class="bi bi-person-gear"></i>
+							مشرف رقم {{$index + 1}}
+						</div>
+					</div>
+					<div class="list-item-actions" ng-hide="submitted">
+						<div class="action-group">
+							<button type="button" class="btn btn-action-primary btn-sm" ng-click="addSupervisor(area, areaIndex, $index)" title="إضافة مشرف جديد بعد هذا">
+								<i class="bi bi-plus-lg"></i>
+							</button>
+							<button type="button" class="btn btn-action-secondary btn-sm" ng-click="upSupervisor(area, $index)" ng-if="$index != 0 && nightSupervisors[area.id].length != 1" title="نقل المشرف لأعلى">
+								<i class="bi bi-chevron-up"></i>
+							</button>
+							<button type="button" class="btn btn-action-secondary btn-sm" ng-click="downSupervisor(area, $index)" ng-if="$index != nightSupervisors[area.id].length - 1 && nightSupervisors[area.id].length != 1" title="نقل المشرف لأسفل">
+								<i class="bi bi-chevron-down"></i>
+							</button>
+							<button type="button" class="btn btn-action-warning btn-sm" ng-click="deleteSupervisor(area, $index)" ng-if="nightSupervisors[area.id].length != 1" title="حذف المشرف">
+								<i class="bi bi-trash"></i>
+							</button>
+							<button type="button" class="btn btn-action-primary btn-sm" ng-click="addSupervisor(area, areaIndex, $index + 1)" title="إضافة مشرف جديد قبل هذا">
+								<i class="bi bi-plus-lg"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="list-item-content">
+					<div class="course-select-section">
+						<div class="input-group">
+							<span class="input-group-text list-switch-container">
+								<div class="text-center">
+									<i class="bi bi-person-gear"></i>
+									اختر المشرف
+								</div>
+							</span>
+							<select id="area{{areaIndex}}_supervisor{{$index}}" name="area{{areaIndex}}_supervisors" ng-model="nightSupervisors[area.id][$index]" class="form-select" required="required" ng-disabled="submitted" ng-options="supervisor.id as supervisor.name for supervisor in supervisors | orderBy:'index'">
+								<option value="" disabled="disabled">-- اختر المشرف --</option>
+							</select>
+							<span class="input-group-text list-order">
+								<i class="bi bi-sort-numeric-down"></i>
+								{{$index + 1}}
+							</span>
+						</div>
+						<div class="help-text-enhanced">
+							<small class="text-helper">
+								<i class="bi bi-info-circle"></i>
+								اختر المشرف المناسب لهذه المنطقة
+							</small>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-add" ng-click="saveNightSupervisors()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ مشرفي الليلة
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border ms-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+		</div>
+	</div>
+
+</div>

@@ -1,0 +1,651 @@
+<div ng-controller="marks-monitor">
+
+	<div class="levels-monitor-list">
+		
+		<div class="level-monitor-item" ng-repeat="level in levels | orderBy : 'index' track by $index">
+			
+			<div class="level-monitor-header">
+				<button class="level-monitor-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#level-{{level.id}}" aria-expanded="true" aria-controls="level-{{level.id}}">
+					<div class="level-monitor-info">
+						<div class="level-monitor-number">
+							<span class="counter-badge">{{$index + 1}}</span>
+						</div>
+						<div class="level-monitor-details">
+							<div class="level-monitor-name">
+								<i class="bi bi-layers"></i>
+								{{level.name}}
+							</div>
+							<div class="level-monitor-summary">
+								<i class="bi bi-book"></i>
+								{{level.courses.length}} مواد
+								<span class="mx-2">•</span>
+								<i class="bi bi-people"></i>
+								{{level.students.length}} طالب
+							</div>
+						</div>
+					</div>
+				</button>
+			</div>
+
+			<div id="level-{{level.id}}" class="collapse show level-monitor-content">
+				<div class="level-monitor-body">
+					
+					<div class="courses-monitor-list" ng-if="level.courses.length">
+						
+						<div class="course-monitor-item" ng-repeat="course in level.courses track by $index">
+							
+							<div class="course-monitor-header" ng-class="{'course-completed': marks[level.id][course.id] != null, 'course-pending': marks[level.id][course.id] == null}">
+								<button class="course-monitor-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#course-{{level.id}}-{{course.id}}" aria-expanded="false" aria-controls="course-{{level.id}}-{{course.id}}">
+									<div class="course-monitor-info">
+										<div class="course-monitor-number">
+											<span class="counter-badge counter-badge-sm">{{$index + 1}}</span>
+										</div>
+										<div class="course-monitor-details">
+											<div class="course-monitor-name">
+												<i class="bi bi-book"></i>
+												{{course.name}}
+											</div>
+											<div class="course-monitor-teacher" ng-if="teachers[course.teacher]">
+												<i class="bi bi-person-workspace"></i>
+												{{teachers[course.teacher].name}}
+											</div>
+										</div>
+									</div>
+									<div class="course-monitor-status">
+										<span class="status-badge" ng-class="{'status-badge-completed': marks[level.id][course.id] != null, 'status-badge-error': marks[level.id][course.id] == null}">
+											<i class="bi" ng-class="{'bi-check-circle-fill': marks[level.id][course.id] != null, 'bi-x-circle-fill': marks[level.id][course.id] == null}"></i>
+											<span ng-if="marks[level.id][course.id] != null">مكتملة</span>
+											<span ng-if="marks[level.id][course.id] == null">غير مكتملة</span>
+										</span>
+										<i class="bi bi-chevron-down toggle-icon-sm"></i>
+									</div>
+								</button>
+							</div>
+
+							<div id="course-{{level.id}}-{{course.id}}" class="collapse course-monitor-content">
+								<div class="course-monitor-body">
+									
+									<div class="course-marks-table-section" ng-if="level.students.length">
+										<div class="table-responsive">
+											<table class="table table-striped">
+												<thead>
+													<tr>
+														<th>
+															<i class="bi bi-hash"></i>
+															#
+														</th>
+														<th>
+															<i class="bi bi-person"></i>
+															اسم الطالب
+														</th>
+														<th ng-repeat="distribution in marksDistribution track by $index" class="text-center">
+															<i class="bi bi-stack"></i>
+															<div class="distribution-header">
+																<div class="distribution-title">{{distribution.title}}</div>
+																<div class="distribution-max">({{distribution.mark}})</div>
+															</div>
+														</th>
+														<th class="text-center">
+															<i class="bi bi-calculator-fill"></i>
+															<div class="total-header">
+																<div class="total-title">المجموع</div>
+																<div class="total-max">(100)</div>
+															</div>
+														</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr ng-repeat="student in level.students | orderBy:'name' track by $index">
+														<td>
+															<span class="counter-badge counter-badge-sm">{{$index + 1}}</span>
+														</td>
+														<td>
+															<div class="student-info">
+																<div class="student-name">
+																	<i class="bi bi-person"></i>
+																	{{student.name}}
+																</div>
+																<div class="student-cpr">
+																	<i class="bi bi-card-text"></i>
+																	{{student.cpr}}
+																</div>
+															</div>
+														</td>
+														<td ng-repeat="distribution in marksDistribution track by $index" class="text-center">
+															<span class="status-badge status-badge-warning">
+																{{marks[level.id][course.id][student.cpr][distribution.id] || 0}}
+															</span>
+														</td>
+														<td class="text-center">
+															<span class="status-badge status-badge-linked">
+																{{marks[level.id][course.id][student.cpr]['المجموع'] || 0}}
+															</span>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<style>
+/* Marks Monitor Container */
+.marks-monitor-container {
+    margin-bottom: 30px;
+}
+
+/* Levels Monitor List */
+.levels-monitor-list {
+    display: grid;
+    gap: 25px;
+}
+
+/* Level Monitor Item */
+.level-monitor-item {
+    background: white;
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.level-monitor-item:hover {
+    border-color: var(--theme-accent);
+    box-shadow: 0 15px 35px rgba(59, 130, 246, 0.15);
+    transform: translateY(-3px);
+}
+
+/* Level Header */
+.level-monitor-header {
+    background: linear-gradient(135deg, var(--theme-dark), var(--theme-primary));
+    color: white;
+}
+
+.level-monitor-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    color: white;
+    padding: 22px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.level-monitor-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.level-monitor-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.level-monitor-details {
+    text-align: right;
+}
+
+.level-monitor-name {
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.level-monitor-summary {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.level-monitor-status {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.toggle-icon {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.level-monitor-toggle[aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+}
+
+/* Level Content */
+.level-monitor-content {
+    border-top: 2px solid rgba(59, 130, 246, 0.1);
+}
+
+.level-monitor-body {
+    padding: 25px;
+}
+
+/* Courses Empty State */
+.courses-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(248, 250, 252, 0.5);
+    border-radius: 15px;
+    border: 2px dashed rgba(59, 130, 246, 0.2);
+}
+
+.courses-empty-icon {
+    font-size: 3rem;
+    color: var(--theme-muted);
+    opacity: 0.5;
+    margin-bottom: 15px;
+}
+
+.courses-empty-title {
+    color: var(--theme-dark);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.courses-empty-text {
+    color: var(--theme-muted);
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+/* Courses Monitor List */
+.courses-monitor-list {
+    display: grid;
+    gap: 20px;
+}
+
+/* Course Monitor Item */
+.course-monitor-item {
+    background: rgba(248, 250, 252, 0.8);
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.course-monitor-item:hover {
+    border-color: var(--theme-accent);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+    transform: translateY(-3px);
+}
+
+/* Course Header */
+.course-monitor-header {
+    color: white;
+}
+
+.course-completed {
+    background: linear-gradient(135deg, var(--theme-success), #059669);
+}
+
+.course-pending {
+    background: linear-gradient(135deg, var(--theme-danger), #dc2626);
+}
+
+.course-monitor-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    color: white;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.course-monitor-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.course-monitor-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.course-monitor-details {
+    text-align: right;
+}
+
+.course-monitor-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.course-monitor-teacher {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.course-monitor-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toggle-icon-sm {
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.course-monitor-toggle[aria-expanded="true"] .toggle-icon-sm {
+    transform: rotate(180deg);
+}
+
+/* Course Content */
+.course-monitor-content {
+    border-top: 2px solid rgba(59, 130, 246, 0.1);
+}
+
+.course-monitor-body {
+    padding: 22px;
+}
+
+/* Students Empty State */
+.students-empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    background: rgba(248, 250, 252, 0.5);
+    border-radius: 12px;
+    border: 2px dashed rgba(59, 130, 246, 0.2);
+}
+
+.students-empty-icon {
+    font-size: 2.5rem;
+    color: var(--theme-muted);
+    opacity: 0.5;
+    margin-bottom: 12px;
+}
+
+.students-empty-title {
+    color: var(--theme-dark);
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.students-empty-text {
+    color: var(--theme-muted);
+    margin-bottom: 0;
+    font-size: 0.85rem;
+}
+
+/* Course Marks Table */
+.course-marks-table-section {
+    margin-bottom: 20px;
+}
+
+.course-marks-table {
+    margin-bottom: 0;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.course-marks-table thead th {
+    background: linear-gradient(135deg, var(--theme-accent), var(--theme-secondary));
+    color: white;
+    border: none;
+    padding: 15px 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+.distribution-header,
+.total-header {
+    text-align: center;
+}
+
+.distribution-title,
+.total-title {
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+}
+
+.distribution-max,
+.total-max {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+/* Student Row */
+.student-row {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.student-row:hover {
+    transform: translateX(3px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+}
+
+/* Student Info */
+.student-info {
+    padding: 6px 0;
+}
+
+.student-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--theme-dark);
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.student-cpr {
+    font-size: 0.8rem;
+    color: var(--theme-muted);
+    font-family: 'Courier New', monospace;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Mark Cells */
+.mark-cell,
+.total-cell,
+.grade-cell {
+    vertical-align: middle;
+    padding: 12px 8px;
+}
+
+.mark-value,
+.total-mark {
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    padding: 3px 6px;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 4px;
+    display: inline-block;
+    min-width: 35px;
+    font-size: 0.9rem;
+}
+
+.mark-empty,
+.total-empty,
+.grade-empty {
+    color: var(--theme-muted);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* Grade Badge */
+.grade-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.grade-excellent { background: linear-gradient(45deg, #10b981, #059669); color: white; }
+.grade-very-good { background: linear-gradient(45deg, #3b82f6, #1e40af); color: white; }
+.grade-good { background: linear-gradient(45deg, #06b6d4, #0891b2); color: white; }
+.grade-pass { background: linear-gradient(45deg, #84cc16, #65a30d); color: white; }
+.grade-weak { background: linear-gradient(45deg, #f59e0b, #d97706); color: white; }
+.grade-fail { background: linear-gradient(45deg, #ef4444, #dc2626); color: white; }
+
+/* Course Actions */
+.course-actions {
+    background: rgba(248, 250, 252, 0.8);
+    padding: 18px;
+    border-top: 2px solid rgba(59, 130, 246, 0.1);
+    margin-top: 15px;
+    border-radius: 12px;
+}
+
+/* Global Actions */
+.monitor-global-actions {
+    margin-top: 40px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .marks-monitor-container {
+        padding: 15px;
+    }
+    
+    .level-monitor-toggle {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 18px 20px;
+    }
+    
+    .level-monitor-info {
+        justify-content: center;
+    }
+    
+    .level-monitor-status {
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .course-monitor-toggle {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+        padding: 15px 18px;
+    }
+    
+    .course-monitor-info {
+        justify-content: center;
+    }
+    
+    .course-monitor-status {
+        justify-content: center;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .level-monitor-body {
+        padding: 20px 15px;
+    }
+    
+    .course-monitor-body {
+        padding: 18px 15px;
+    }
+    
+    .course-actions {
+        padding: 15px;
+    }
+    
+    .action-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .action-group .btn {
+        margin-bottom: 8px;
+    }
+    
+    .course-marks-table thead th {
+        padding: 10px 6px;
+        font-size: 0.8rem;
+    }
+    
+    .mark-cell,
+    .total-cell,
+    .grade-cell {
+        padding: 8px 4px;
+    }
+    
+    .student-name {
+        font-size: 0.85rem;
+    }
+    
+    .student-cpr {
+        font-size: 0.75rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .monitor-global-actions,
+    .course-actions {
+        display: none !important;
+    }
+    
+    .level-monitor-item {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    
+    .course-monitor-item {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+    
+    .course-marks-table {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+    
+    .student-row:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    
+    .grade-badge {
+        background: transparent !important;
+        color: black !important;
+        border: 1px solid #ddd !important;
+    }
+}
+</style>

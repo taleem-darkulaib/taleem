@@ -1,0 +1,157 @@
+<div ng-controller="functions">
+	
+	<div class="card fade-in">
+		<div class="card-header">
+			<i class="bi bi-grid-3x3-gap"></i>
+			القائمة الرئيسية
+			<span class="category-counter">{{menu.length}} مجموعة</span>
+		</div>
+		<ul class="list-group">
+			<li class="list-group-item slide-in-right" ng-repeat="category in menu track by $index" style="animation-delay: {{$index * 0.1}}s">
+				<div class="btn-group btn-group-sm float-start mb-3 w-auto" role="group" ng-hide="submitted">
+					<button class="btn btn-sm btn-success" ng-click="addCategory($index + 1)" ng-if="!submitted" title="إضافة مجموعة جديدة">
+						<i class="bi bi-plus-lg m-0"></i>
+					</button>
+					<button class="btn btn-sm btn-danger" ng-click="deleteCategory($index)" ng-if="menu.length != 1 && category.functions.length == 0 && !submitted" title="حذف المجموعة">
+						<i class="bi bi-x-lg m-0"></i>
+					</button>
+					<button class="btn btn-sm btn-warning" ng-click="upCategory($index)" ng-if="$index != 0 && menu.length != 1 && !submitted" title="تحريك لأعلى">
+						<i class="bi bi-chevron-double-up m-0"></i>
+					</button>
+					<button class="btn btn-sm btn-warning" ng-click="downCategory($index)" ng-if="$index != menu.length - 1 && menu.length != 1 && !submitted" title="تحريك لأسفل">
+						<i class="bi bi-chevron-double-down m-0"></i>
+					</button>
+					<button class="btn btn-sm btn-info" ng-click="addCategory($index)" ng-if="!submitted" title="إضافة مجموعة في نفس الموضع">
+						<i class="bi bi-plus-lg m-0"></i>
+					</button>
+				</div>
+				<div class="input-group">
+					<input id="categoryTitle{{$index}}" name="categoryTitles" ng-model="category.title" type="text" class="form-control is-invalid" required="required" maxlength="100" placeholder="اسم المجموعة" autocomplete="off" ng-disabled="submitted">
+					<button class="btn icon-btn" ng-click="selectCategory(category)" data-bs-toggle="modal" data-bs-target="#icons" ng-disabled="submitted" title="اختيار أيقونة">
+						<i class="bi m-0" ng-class="category.icon"></i>
+					</button>
+					<span class="input-group-text">{{$index + 1}}</span>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+	<div class="card bounce-in" ng-repeat="(categoryIndex, category) in menu track by $index" style="animation-delay: {{$index * 0.2}}s">
+		<div class="card-header">
+			<i class="bi" ng-class="category.icon"></i>
+			<span class="me-2">{{category.title}}</span>
+			<span class="function-counter">{{category.functions.length}} وظيفة</span>
+		</div>
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="(functionIndex, function) in category.functions track by $index">
+				<div class="input-group">
+					<button class="btn btn-info" ng-click="upFunction(category, $index)" ng-if="$index != 0 && !submitted" title="تحريك لأعلى">
+						<i class="bi bi-chevron-double-up m-0"></i>
+					</button>
+					<button class="btn btn-warning" ng-click="downFunction(category, $index)" ng-if="$index != category.functions.length - 1 && category.functions.length != 1 && !submitted" title="تحريك لأسفل">
+						<i class="bi bi-chevron-double-down m-0"></i>
+					</button>
+					<input for="function{{categoryIndex}}_{{functionIndex}}" ng-model="function.title" type="text" class="form-control is-invalid" required="required" maxlength="100" placeholder="اسم الوظيفة" autocomplete="off" ng-disabled="submitted">
+					<button class="btn icon-btn" ng-click="selectFunction(function)" data-bs-toggle="modal" data-bs-target="#icons" ng-disabled="submitted" title="اختيار أيقونة">
+						<i class="bi m-0" ng-class="function.icon"></i>
+					</button>
+					<label for="function{{categoryIndex}}_{{functionIndex}}" class="input-group-text">
+						<div class="form-check form-switch">
+							<input id="function{{categoryIndex}}_{{functionIndex}}" ng-model="function.selected" type="checkbox" class="form-check-input form-check-input-lg" ng-true-value="true" ng-false-value="false" ng-disabled="submitted">
+						</div>
+					</label>
+				</div>
+			</li>
+		</ul>
+		<div class="card-footer" ng-hide="submitted" ng-hide="loading || submitted">
+			<button class="btn card-add-btn" ng-click="moveToCategory(category)">
+				<i class="bi bi-plus-lg"></i>
+				إضافة الخصائص المختارة
+			</button>
+		</div>
+	</div>
+	
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<div class="spinner-border loading-spinner" role="status" ng-show="loading">
+			<span class="visually-hidden">جاري التحميل...</span>
+		</div>
+		<button class="btn" ng-click="saveMenu()" ng-hide="loading">
+			<i class="bi bi-floppy"></i>
+			حفظ القائمة
+		</button>
+	</div>
+	
+	<div id="icons" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-grid-3x3-gap"></i>
+						اختيار الأيقونة
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+				</div>
+				<div class="modal-body">
+					<div class="row g-2">
+						<div class="col-sm-6 col-md-4 col-lg-3 col-xl-2" ng-repeat="icon in icons track by $index">
+							<div class="icon-grid-item bounce-in" data-bs-dismiss="modal" ng-click="selectIcon(icon)" style="animation-delay: {{$index * 0.02}}s">
+								<i class="bi" ng-class="icon"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+<style>
+
+/* Icon Grid Enhancement */
+.icon-grid-item {
+	background: rgba(248, 250, 252, 0.8);
+	border: 2px solid rgba(59, 130, 246, 0.1);
+	border-radius: 15px;
+	padding: 20px;
+	margin: 8px;
+	transition: all 0.3s ease;
+	cursor: pointer;
+	position: relative;
+	overflow: hidden;
+	text-align: center;
+}
+
+.icon-grid-item::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+	transition: left 0.5s ease;
+}
+
+.icon-grid-item:hover {
+	background: rgba(59, 130, 246, 0.05);
+	border-color: var(--theme-accent);
+	transform: translateY(-5px) scale(1.05);
+	box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+}
+
+.icon-grid-item:hover::before {
+	left: 100%;
+}
+
+.icon-grid-item i {
+	font-size: 2rem;
+	color: var(--theme-accent);
+	transition: all 0.3s ease;
+}
+
+.icon-grid-item:hover i {
+	color: var(--theme-gold);
+	transform: scale(1.2) rotate(5deg);
+}
+
+</style>

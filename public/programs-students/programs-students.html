@@ -1,0 +1,291 @@
+<div ng-controller="programs-students">
+
+	<div class="info-panel">
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-mortarboard-fill"></i>
+				البرنامج
+			</label>
+			<select id="program" ng-model="program.id" class="form-select" ng-options="program.id as program.name for program in programs" ng-disabled="programs.length == 1 || submitted" ng-change="updateProgram()">
+				<option disabled="disabled" ng-value="0">اختر البرنامج</option>
+			</select>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				اختر البرنامج لعرض الطلبة المسجلين
+			</small>
+		</div>
+	</div>
+	
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-card-text"></i>
+						الرقم الشخصي
+					</label>
+					<input id="cpr-search" ng-model="search.cpr" type="tel" class="form-control cpr" placeholder="الرقم الشخصي" maxlength="9" autocomplete="off" ng-change="searchStudents()">
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-person-fill"></i>
+						اسم الطالب
+					</label>
+					<input id="name-search" ng-model="search.name" type="text" class="form-control name" placeholder="اسم الطالب" maxlength="50" autocomplete="off" ng-change="searchStudents()">
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-telephone-fill"></i>
+						رقم الهاتف
+					</label>
+					<input id="mobile-search" ng-model="search.mobile" type="tel" class="form-control mobile" placeholder="رقم الهاتف" maxlength="8" autocomplete="off" ng-change="searchStudents()">
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-mortarboard"></i>
+						الصف
+					</label>
+					<select id="grade-search" ng-model="search.grade" class="form-select" class="الصف" ng-options="grade.id as grade.name for grade in grades" ng-change="searchStudents()">
+						<option selected="selected" value="">جميع الصفوف</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-layers"></i>
+						{{labels.level}}
+					</label>
+					<select id="level-search" ng-model="search.level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in levels" ng-change="searchStudents()">
+						<option selected="selected" value="">{{labels.level}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-credit-card"></i>
+						حالة الدفع
+					</label>
+					<select id="payment-search" ng-model="search.payment" class="form-select" placeholder="حالة الدفع" ng-change="searchStudents()">
+						<option selected="selected" value="">جميع حالات الدفع</option>
+						<option value="لم يدفع">لم يدفع</option>
+						<option value="قيد المراجعة">قيد المراجعة</option>
+						<option value="تمت المراجعة">تمت المراجعة</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-person-check"></i>
+						حالة الحضور
+					</label>
+					<select id="attend-search" ng-model="search.attend" class="form-select" placeholder="حالة الحضور" ng-change="searchStudents()">
+						<option selected="selected" value="">جميع حالات الحضور</option>
+						<option value="لم يحضر">لم يحضر</option>
+						<option value="حضر قليلا">حضر قليلا</option>
+						<option value="حضر كثيرا">حضر كثيرا</option>
+						<option value="حضر دائما">حضر دائما</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="table-responsive">
+		<table id="students" class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						<i class="bi bi-hash"></i>
+						#
+					</th>
+					<th>
+						<i class="bi bi-person-badge"></i>
+						بيانات الطالب
+					</th>
+					<th>
+						<i class="bi bi-mortarboard"></i>
+						الصف
+					</th>
+					<th>
+						<i class="bi bi-telephone"></i>
+						أرقام التواصل
+					</th>
+					<th>
+						<i class="bi bi-cash-stack"></i>
+						حالة الدفع
+					</th>
+					<th>
+						<i class="bi bi-clipboard-check"></i>
+						حالة الحضور
+					</th>
+					<th>
+						<i class="bi bi-clock-history"></i>
+						وقت التسجيل
+					</th>
+					<th class="text-center d-none-print">
+						<i class="bi bi-trash-fill"></i>
+						العمليات
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="student in studentsSearch | orderBy : 'id' track by $index">
+					<td>
+						<div class="counter-badge counter-badge-sm">
+							{{$index + 1}}
+						</div>
+					</td>
+					<td>
+						{{student.name}}
+					</td>
+					<td>
+						<span class="list-badge-secondary">{{grades[student.grade].name}}</span>
+					</td>
+					<td>
+						<div class="contact-info">
+							<div class="contact-number">
+								<strong>هاتف 1:</strong>
+								<a class="contact-whatsapp-link" ng-href="https://wa.me/973{{student.mobile}}">
+									<i class="bi bi-whatsapp"></i>
+									{{student.mobile}}
+								</a>
+							</div>
+							<div class="contact-number">
+								<strong>هاتف 2:</strong>
+								<a class="contact-whatsapp-link" ng-href="https://wa.me/973{{student.phone}}">
+									<i class="bi bi-whatsapp"></i>
+									{{student.phone}}
+								</a>
+							</div>
+							<div class="contact-number" ng-if="student.contact">
+								<strong>الطالب:</strong>
+								<a class="contact-whatsapp-link" ng-href="https://wa.me/973{{student.contact}}">
+									<i class="bi bi-whatsapp"></i>
+									{{student.contact}}
+								</a>
+							</div>
+						</div>
+					</td>
+					<td class="text-center">
+						<div class="status-badge" 
+							 ng-class="{
+								'status-badge-error': student.payment == 'لم يدفع',
+								'status-badge-warning': student.payment == 'قيد المراجعة',
+								'status-badge-completed': student.payment == 'تمت المراجعة'}">
+							<i class="bi" ng-class="{
+								'bi-x-circle-fill': student.payment == 'لم يدفع',
+								'bi-clock-fill': student.payment == 'قيد المراجعة',
+								'bi-check-circle-fill': student.payment == 'تمت المراجعة'}"></i>
+							{{student.payment}}
+						</div>
+					</td>
+					<td class="text-center">
+						<div class="status-badge" 
+							 ng-class="{
+								'status-badge-error': student.attend == 'لم يحضر',
+								'status-badge-warning': student.attend == 'حضر قليلا',
+								'status-badge-linked': student.attend == 'حضر كثيرا',
+								'status-badge-completed': student.attend == 'حضر دائما'}">
+							<i class="bi" ng-class="{
+								'bi-person-x-fill': student.attend == 'لم يحضر',
+								'bi-person-dash-fill': student.attend == 'حضر قليلا',
+								'bi-person-plus-fill': student.attend == 'حضر كثيرا',
+								'bi-person-check-fill': student.attend == 'حضر دائما'}"></i>
+							{{student.attend}}
+							
+							({{student.attendCount}}/{{student.totalDays}})
+						</div>
+					</td>
+					<td>
+						<div>
+							{{student.time}}
+						</div>
+					</td>
+					<td class="text-center d-none-print">
+						<button class="btn-action-warning" data-bs-toggle="modal" data-bs-target="#deleteModal" ng-click="selectStudent(student)" ng-if="isStringNotEmpty(student.cpr)">
+							<i class="bi bi-trash-fill"></i>
+							حذف
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="form-controls">
+		<button class="btn-action-primary" ng-click="print('students')">
+			<i class="bi bi-printer-fill"></i>
+			طباعة القائمة
+		</button>
+		<button class="btn-action-secondary" ng-click="saveStudents()">
+			<i class="bi bi-download"></i>
+			تحميل البيانات
+		</button>
+		<a class="btn-action-warning" ng-href="{{contacts}}" download="contact.csv">
+			<i class="bi bi-phone-fill"></i>
+			حفظ الأرقام
+		</a>
+	</div>
+	
+	<div id="deleteModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-exclamation-triangle-fill"></i>
+						</div>
+						تأكيد حذف الطالب
+					</h5>
+					<button type="button" class="btn-close d-print-none" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<div class="info-panel info-panel-danger">
+						<div class="d-flex align-items-center gap-3">
+							<i class="bi bi-exclamation-triangle-fill"></i>
+							<div>
+								<h6>هل أنت متأكد من حذف الطالب؟</h6>
+								<div class="student-data-item">
+									<div class="student-data-icon">
+										<i class="bi bi-person-fill"></i>
+									</div>
+									<div class="student-data-text">
+										<strong>{{student.name}}</strong>
+									</div>
+								</div>
+								<p class="text-helper mt-2 mb-0">لا يمكن التراجع عن هذا الإجراء</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<button type="button" class="btn btn-delete" data-bs-dismiss="modal" ng-click="deleteStudent()">
+						<i class="bi bi-trash-fill"></i>
+						تأكيد الحذف
+					</button>
+					<button type="button" class="btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="print" class="d-none d-print-block w-100 m-0 p-0">
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}" style="display: none;"></a>
+	
+</div>

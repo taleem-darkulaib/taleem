@@ -1,0 +1,190 @@
+<div ng-controller="view-courses-comments">
+	
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="level-search" class="form-label">
+						<i class="bi bi-mortarboard-fill"></i>
+						{{labels.level}}
+					</label>
+					<select id="level-search" ng-model="search.level" class="form-select" placeholder="{{labels.level}}" ng-options="level.id as level.name for level in values(levels) | orderBy : 'index'" ng-disabled="submitted" ng-change="searchComments()">
+						<option value="">اختر {{labels.level}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="course-search" class="form-label">
+						<i class="bi bi-book"></i>
+						{{labels.course}}
+					</label>
+					<select 
+						id="course-search" ng-model="search.course" class="form-select" placeholder="{{labels.course}}" ng-options="course.id as course.name for course in values(courses) | orderBy : 'index'" ng-change="searchComments()">
+						<option value="">{{labels.courses}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="table-responsive">
+		<table id="comments" class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						<i class="bi bi-hash"></i>
+					</th>
+					<th>
+						<i class="bi bi-layers"></i>
+						{{labels.level}}
+					</th>
+					<th>
+						<i class="bi bi-book"></i>
+						{{labels.course}}
+					</th>
+					<th>
+						<i class="bi bi-chat-text"></i>
+						محتوى الملاحظة
+					</th>
+					<th>
+						<i class="bi bi-clock"></i>
+						تاريخ الإنشاء
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="comment in matchedComments | orderBy : 'id' track by $index">
+					<td>
+						<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+					</td>
+					<td>
+						{{levels[comment.level].name}}
+					</td>
+					<td>
+						{{courses[comment.course].name}}
+					</td>
+					<td>
+						<div class="info-panel">
+							<small class="text-helper">
+								<i class="bi bi-chat-text"></i>
+								<span ng-bind-html="comment.content"></span>
+							</small>
+						</div>
+					</td>
+					<td>
+						{{comment.time}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+	
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadCoursesCommentsModal" ng-hide="loading">
+			<i class="bi bi-upload"></i>
+			رفع ملاحظات {{labels.courses}}
+		</button>
+		<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
+			<i class="bi bi-download"></i>
+			حفظ ملاحظات {{labels.courses}}
+		</button>
+	</div>
+	
+	<div id="uploadCoursesCommentsModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-upload"></i>
+						</div>
+						رفع ملاحظات {{labels.courses}}
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class" ng-show="alert.message">
+						<i class="bi alert-icon" ng-class="alert.icon"></i>
+						<div>
+							<strong class="ms-2">{{alert.title}}</strong> {{alert.message}}
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="type" class="form-label">
+							<i class="bi bi-cloud-upload"></i>
+							رفع الملاحظات
+						</label>
+						<input id="file" type="file" class="form-control" accept=".xlsx" placeholder="الملاحظات" ng-disabled="submitted">
+						<div class="help-text-enhanced">
+							<small class="text-helper">
+								<i class="bi bi-info-circle"></i>
+								يدعم ملفات Excel (.xlsx) بنفس ترتيب الأعمدة
+							</small>
+						</div>
+					</div>
+
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>
+										<i class="bi bi-layers"></i>
+										{{labels.level}}
+									</th>
+									<th>
+										<i class="bi bi-book"></i>
+										{{labels.course}}
+									</th>
+									<th>
+										<i class="bi bi-chat-text"></i>
+										الملاحظة
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="courseComment in uploadedCoursesComments track by $index">
+									<td>
+										<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+									</td>
+									<td>
+										{{levels[courseComment.level].name}}
+									</td>
+									<td>
+										{{courses[courseComment.course].name}}
+									</td>
+									<td>
+										<div class="info-panel">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												<span ng-bind-html="courseComment.content"></span>
+											</small>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<div class="modal-actions">
+						<button class="btn-action-primary" ng-click="uploadCoursesComments()">
+							<i class="bi bi-floppy"></i>
+							حفظ الملاحظات
+						</button>
+						<button type="button" class="btn-outline-dark" data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i>
+							إلغاء
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

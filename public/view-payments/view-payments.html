@@ -1,0 +1,269 @@
+<div ng-controller="view-payments">
+
+	<div class="info-panel">
+		<div class="row">
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="cpr-search" class="form-label">
+						<i class="bi bi-person-badge"></i>
+						الرقم الشخصي
+					</label>
+					<div class="input-group">
+						<span class="input-group-text">
+							<i class="bi bi-person-badge"></i>
+						</span>
+						<input id="cpr-search" ng-model="search.cpr" type="tel" class="form-control cpr" placeholder="الرقم الشخصي" maxlength="9" autocomplete="off" ng-change="searchStudents()">
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="name-search" class="form-label">
+						<i class="bi bi-person"></i>
+						اسم الطالب
+					</label>
+					<div class="input-group">
+						<span class="input-group-text">
+							<i class="bi bi-person"></i>
+						</span>
+						<input id="name-search" ng-model="search.name" type="text" class="form-control name" placeholder="اسم الطالب" maxlength="50" autocomplete="off" ng-change="searchStudents()">
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="mobile-search" class="form-label">
+						<i class="bi bi-phone"></i>
+						رقم الهاتف
+					</label>
+					<div class="input-group">
+						<span class="input-group-text">
+							<i class="bi bi-phone"></i>
+						</span>
+						<input id="mobile-search" ng-model="search.mobile" type="tel" class="form-control mobile" placeholder="رقم الهاتف" maxlength="8" autocomplete="off" ng-change="searchStudents()">
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="grade-search" class="form-label">
+						<i class="bi bi-mortarboard"></i>
+						الصف الدراسي
+					</label>
+					<select id="grade-search" ng-model="search.grade" class="form-select" ng-options="grade.id as grade.name for grade in grades" placeholder="الصف الدراسي" ng-change="searchStudents()">
+						<option value="">جميع الصفوف</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="level-search" class="form-label">
+						<i class="bi bi-mortarboard-fill"></i>
+						{{labels.level}}
+					</label>
+					<select id="level-search" ng-model="search.level" class="form-select" ng-options="level.id as level.name for level in values(levels) | orderBy:'index'" placeholder="{{labels.level}}" ng-change="searchStudents()">
+						<option value="">{{labels.level}}</option>
+					</select>
+				</div>
+			</div>
+			
+			<div class="col-md-6 col-lg-4">
+				<div class="form-group">
+					<label for="payment-search" class="form-label">
+						<i class="bi bi-check-circle"></i>
+						حالة الدفع
+					</label>
+					<select id="payment-search" ng-model="search.payment" class="form-select" placeholder="حالة الدفع" ng-change="searchStudents()">
+						<option ng-value="undefined">جميع الحالات</option>
+						<option value="قيد المراجعة">قيد المراجعة</option>
+						<option value="تمت المراجعة">تمت المراجعة</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="table-responsive">
+		<table id="payments" class="table payments-table">
+			<thead>
+				<tr>
+					<th>
+						<i class="bi bi-hash"></i>
+					</th>
+					<th>
+						<i class="bi bi-person-badge"></i>
+						الرقم الشخصي
+					</th>
+					<th>
+						<i class="bi bi-person"></i>
+						اسم الطالب
+					</th>
+					<th>
+						<i class="bi bi-mortarboard-fill"></i>
+						{{labels.level}}
+					</th>
+					<th>
+						<i class="bi bi-person-check"></i>
+						المستلم
+					</th>
+					<th>
+						<i class="bi bi-cash"></i>
+						المبلغ
+					</th>
+					<th>
+						<i class="bi bi-calendar"></i>
+						التاريخ
+					</th>
+					<th>
+						<i class="bi bi-flag"></i>
+						الحالة
+					</th>
+					<th class="text-center no-export">
+						<i class="bi bi-image"></i>
+						الصورة
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="no-export" ng-show="matchedPayments.length == 0">
+					<td colspan="8" class="list-table-cell-empty no-export">
+						<div class="list-empty-state">
+							<i class="bi bi-receipt list-empty-icon"></i>
+							<h5 class="list-empty-title">لا توجد مدفوعات</h5>
+							<p class="list-empty-text">لم يتم العثور على مدفوعات تطابق معايير البحث</p>
+						</div>
+					</td>
+				</tr>
+				<tr ng-repeat="payment in matchedPayments | orderBy : 'id' track by $index" ng-hide="loading" ng-class="getPaymentRowClass(payment)">
+					<td class="text-center">
+						<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+					</td>
+					<td>
+						{{payment.cpr}}
+					</td>
+					<td>
+						{{students[payment.cpr].name}}
+					</td>
+					<td>
+						{{levels[students[payment.cpr].level].name}}
+					</td>
+					<td>
+						{{payment.receiver}}
+					</td>
+					<td>
+						{{payment.amount}}
+					</td>
+					<td>
+						{{payment.time}}
+					</td>
+					<td>
+						<div class="status-badge" 
+							 ng-class="{
+								'status-badge-error': students[payment.cpr].payment == 'لم يدفع',
+								'status-badge-warning': students[payment.cpr].payment == 'قيد المراجعة',
+								'status-badge-completed': students[payment.cpr].payment == 'تمت المراجعة'}">
+							<i class="bi" ng-class="{
+								'bi-x-circle-fill': students[payment.cpr].payment == 'لم يدفع',
+								'bi-clock-fill': students[payment.cpr].payment == 'قيد المراجعة',
+								'bi-check-circle-fill': students[payment.cpr].payment == 'تمت المراجعة'}"></i>
+							{{students[payment.cpr].payment}}
+						</div>
+					</td>
+					<td class="text-center no-export">
+						<img width="100" role="button" ng-if="payment.url" class="payment-thumbnail" ng-src="{{payment.url}}" data-bs-toggle="modal" data-bs-target="#paymentModal" ng-click="selectPayment(payment)" alt="صورة الدفع">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+	
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
+			<i class="bi bi-download"></i>
+			حفظ دفع الرسوم
+		</button>
+	</div>
+
+	<div id="paymentModal" class="modal fade">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-receipt"></i>
+						</div>
+						معاينة الدفع
+					</h4>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body text-center">
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="info-panel">
+								<i class="bi bi-person"></i>
+								<strong>اسم الطالب:</strong> {{students[payment.cpr].name}}
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="info-panel">
+								<i class="bi bi-person-badge"></i>
+								<strong>الرقم الشخصي:</strong> {{payment.cpr}}
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="info-panel">
+								<i class="bi bi-cash"></i>
+								<strong>المبلغ:</strong> {{payment.amount}} د.ب
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="info-panel">
+								<i class="bi bi-calendar"></i>
+								<strong>التاريخ:</strong> {{payment.time}}
+							</div>
+						</div>
+						<div class="col-md-6" ng-show="payment.receiver">
+							<div class="info-panel">
+								<i class="bi bi-person-check"></i>
+								<strong>المستلم:</strong> {{payment.receiver}}
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="info-panel" ng-class="payment.selected ? 'info-panel-success' : 'info-panel-warning'">
+								<i class="bi ms-2" ng-class="payment.selected ? 'bi-check-circle' : 'bi-clock'"></i>
+								<strong>الحالة:</strong> {{payment.selected ? 'تمت المراجعة' : 'قيد المراجعة'}}
+							</div>
+						</div>
+					</div>
+					<div class="info-panel">
+						<img class="preview-image" ng-src="{{payment.url}}" alt="صورة الدفع">
+					</div>
+				</div>
+				<div class="modal-footer" ng-show="!payment.selected">
+					<button class="btn btn-action-primary" ng-click="confirmPayment()" data-bs-dismiss="modal">
+						<i class="bi bi-check-circle"></i>
+						تأكيد الدفع
+					</button>
+					<button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+						<i class="bi bi-x-circle"></i>
+						إغلاق
+					</button>
+				</div>
+				<div class="modal-footer" ng-show="payment.selected">
+					<div class="info-panel info-panel-success">
+						<i class="bi bi-check-circle-fill"></i>
+						<strong>تم تأكيد هذا الدفع مسبقاً</strong>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

@@ -1,0 +1,357 @@
+<div ng-controller="programs">
+	
+	<div class="card">
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<div class="d-flex align-items-center">
+				<i class="bi bi-calendar-event"></i>
+				قائمة البرامج
+			</div>
+			<button class="btn btn-add" ng-click="toAddProgram()" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#programModal">
+				<i class="bi bi-plus-lg"></i>
+				إضافة برنامج جديد
+			</button>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							<i class="bi bi-hash"></i>
+							#
+						</th>
+						<th>
+							<i class="bi bi-calendar-event"></i>
+							البرنامج
+						</th>
+						<th>
+							<i class="bi bi-mortarboard"></i>
+							الصفوف
+						</th>
+						<th>
+							<i class="bi bi-moon-stars"></i>
+							الليالي
+						</th>
+						<th>
+							<i class="bi bi-door-open"></i>
+							المكان
+						</th>
+						<th>
+							<i class="bi bi-calendar-date"></i>
+							التاريخ
+						</th>
+						<th>
+							<i class="bi bi-clock"></i>
+							التوقيت
+						</th>
+						<th>
+							<i class="bi bi-info-circle"></i>
+							التفاصيل
+						</th>
+						<th class="text-center">
+							<i class="bi bi-gear-fill"></i>
+							الإجراءات
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="program in programs track by $index">
+						<td>
+							<div class="counter-badge counter-badge-sm">
+								{{$index + 1}}
+							</div>
+						</td>
+						<td>
+							{{program.name}}
+							<span ng-if="program.registration" class="status-badge status-badge-active">
+								<i class="bi bi-unlock-fill"></i>
+								مفتوح للتسجيل
+							</span>
+							<span ng-if="!program.registration" class="status-badge status-badge-inactive">
+								<i class="bi bi-lock-fill"></i>
+								مغلق للتسجيل
+							</span>
+						</td>
+						<td>
+							<div class="info-panel">
+								<div ng-repeat="grade in program.grades track by $index">
+									<span class="mt-1 list-badge-secondary">{{grades[grade].name}}</span>
+									<br ng-if="!$last">
+								</div>
+							</div>
+						</td>
+						<td>
+							<div class="info-panel">
+								<div ng-repeat="night in program.nights track by $index">
+									<span class="mt-1 list-badge-primary">{{nights[night].name}}</span>
+									<br ng-if="!$last">
+								</div>
+							</div>
+						</td>
+						<td>
+							<div class="plan-data-item">
+								<div class="plan-data-icon">
+									<i class="bi bi-geo-alt-fill"></i>
+								</div>
+								<div class="plan-data-text">{{rooms[program.room].name}}</div>
+							</div>
+						</td>
+						<td>
+							<div><strong>من:</strong> {{program.startDate}}</div>
+							<div><strong>إلى:</strong> {{program.endDate}}</div>
+						</td>
+						<td>
+							<div>{{program.startTime}} - {{program.endTime}}</div>
+						</td>
+						<td>
+							<div class="student-data-item">
+								<div class="student-data-icon">
+									<i class="bi bi-credit-card-fill"></i>
+								</div>
+								<div class="student-data-text">
+									<div><strong>بنفت:</strong> {{program.benefit}}</div>
+									<div><strong>الرسوم:</strong> {{program.feesAmount}} د.ب</div>
+								</div>
+							</div>
+						</td>
+						<td class="text-center">
+							<button class="btn btn-edit" ng-click="toEditProgram(program)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#programModal">
+								<i class="bi bi-pencil-square"></i>
+								تعديل
+							</button>
+							<button class="btn btn-delete" ng-click="selectProgram(program)" data-bs-toggle="modal" data-bs-target="#deleteModal" ng-hide="submitted" title="حذف البرنامج" ng-if="isStringNotEmpty(program.id)">
+								<i class="bi bi-trash"></i>
+								حذف
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div id="programModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<div class="modal-logo">
+							<i class="bi bi-mortarboard-fill"></i>
+						</div>
+						معلومات البرنامج
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class">
+						<i class="bi alert-icon" ng-class="alert.icon"></i>
+						<div>{{alert.message}}</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-tag-fill"></i>
+							اسم البرنامج
+						</label>
+						<input id="name" ng-model="program.name" type="text" class="form-control" placeholder="اسم البرنامج" maxlength="100" autocomplete="off" required="required" ng-disabled="submitted">
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-collection-fill"></i>
+							الصفوف
+						</label>
+						<div class="input-group mt-1" ng-repeat="grade in values(grades) | orderBy:'index' track by $index">
+							<div class="input-group-text">
+								<div class="form-check form-switch">
+									<input id="grade{{$index}}" checklist-model="program.grades" checklist-value="grade.id" type="checkbox" class="form-check-input" ng-disabled="submitted">
+								</div>
+							</div>
+							<label for="grade{{$index}}" class="form-control">
+								{{grade.name}}
+								<i class="bi bi-mortarboard me-1"></i>
+							</label>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-moon-stars-fill"></i>
+							الليالي
+						</label>
+						<div class="input-group mt-1" ng-repeat="night in values(nights) | orderBy:'index' track by $index">
+							<div class="input-group-text">
+								<div class="form-check form-switch">
+									<input id="night{{$index}}" checklist-model="program.nights" checklist-value="night.id" type="checkbox" class="form-check-input" ng-disabled="submitted">
+								</div>
+							</div>
+							<label for="grade{{$index}}" class="form-control">
+								{{night.name}}
+								<i class="bi bi-calendar-week"></i>
+							</label>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-geo-alt-fill"></i>
+							المكان
+						</label>
+						<select ng-model="program.room" class="form-select" ng-options="room.id as room.name for room in values(rooms) | orderBy:'index'" ng-disabled="submitted">
+							<option value="">اختر المكان</option>
+						</select>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-calendar-plus"></i>
+									من تاريخ
+								</label>
+								<input id="startDate" ng-model="program.startDate" class="form-control" placeholder="من تاريخ" maxlength="10" autocomplete="off" required="required" ng-disabled="submitted">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-calendar-minus"></i>
+									إلى تاريخ
+								</label>
+								<input id="endDate" ng-model="program.endDate" class="form-control" placeholder="إلى تاريخ" maxlength="10" autocomplete="off" required="required" ng-disabled="submitted">
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-clock"></i>
+									من الساعة
+								</label>
+								<select id="startTime" ng-model="program.startTime" class="form-select" placeholder="من الساعة" ng-options="time for time in times" ng-disabled="submitted">
+									<option value="">من الساعة</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-clock-fill"></i>
+									إلى الساعة
+								</label>
+								<select id="endTime" ng-model="program.endTime" class="form-select" placeholder="إلى الساعة" ng-options="time for time in times" ng-disabled="submitted">
+									<option value="">إلى الساعة</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-credit-card"></i>
+									حساب بنفت
+								</label>
+								<input id="benefit" ng-model="program.benefit" type="text" class="form-control" placeholder="رقم بنفت" maxlength="22" autocomplete="off" ng-disabled="submitted">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="form-label">
+									<i class="bi bi-currency-dollar"></i>
+									رسوم البرنامج
+								</label>
+								<input id="feesAmount" ng-model="program.feesAmount" type="number" class="form-control" placeholder="رسوم البرنامج" maxlength="5" autocomplete="off" required="required" ng-disabled="submitted">
+							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-toggle-on"></i>
+							حالة التسجيل
+						</label>
+						<div class="btn-group" role="group">
+							<input id="close" name="registration" ng-model="program.registration" type="radio" ng-value="false" class="btn-check" ng-disabled="submitted">
+							<label for="close" type="button" class="btn btn-outline-dark">
+								<i class="bi bi-lock-fill"></i>
+								مغلق
+							</label>
+							<input id="open" name="registration" ng-model="program.registration" type="radio" ng-value="true" class="btn-check" ng-disabled="submitted">
+							<label for="open" type="button" class="btn btn-outline-dark">
+								<i class="bi bi-unlock-fill"></i>
+								مفتوح
+							</label>
+						</div>
+					</div>
+					
+					<div class="form-group comments-section">
+						<label for="comments" class="form-label">
+							<i class="bi bi-chat-left-text"></i>
+							ملاحظات التسجيل
+						</label>
+						<div class="input-group mb-3" ng-repeat="comment in program.comments track by $index">
+							<button class="btn btn-success" ng-click="addComment($index + 1)" ng-if="!submitted" title="إضافة ملاحظة">
+								<i class="bi bi-plus-lg"></i>
+							</button>
+							<button class="btn btn-danger" ng-click="deleteComment($index)" ng-if="$index != 0 && !submitted" title="حذف الملاحظة">
+								<i class="bi bi-x-lg"></i>
+							</button>
+							<input id="comments{{$index}}" name="comments" ng-model="comment.content" type="text" class="form-control is-valid" maxlength="100" placeholder="الملاحظة" autocomplete="off" ng-disabled="submitted">
+							<span class="input-group-text">{{$index + 1}}</span>
+						</div>
+					</div>
+					
+				</div>
+				<div class="modal-footer" ng-hide="submitted">
+					<button class="btn btn-action-primary" ng-click="saveProgram()">
+						<i class="bi bi-floppy"></i>
+						حفظ البرنامج
+					</button>
+					<button type="button" class="btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إغلاق
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="deleteModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-calendar-event"></i>
+						حذف البرنامج
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+				</div>
+				<div class="modal-body">
+					<div class="text-center">
+						<h3 class="mb-3">
+							هل أنت متأكد من حذف برنامج "{{program.name}}"؟
+						</h3>
+						<p class="text-muted">
+							هذا الإجراء لا يمكن التراجع عنه وسيتم حذف جميع البيانات المرتبطة بهذه البرنامج.
+						</p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-delete" data-bs-dismiss="modal" ng-click="deleteProgram()">
+						<i class="bi bi-check-lg"></i>
+						تأكيد الحذف
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

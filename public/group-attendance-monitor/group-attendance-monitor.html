@@ -1,0 +1,102 @@
+<div ng-controller="group-attendance-monitor">
+	
+	<div class="info-panel">
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-calendar-event"></i>
+				التاريخ
+			</label>
+			<div class="input-group registration-input-group">
+				<button class="input-group-btn btn-action-secondary" ng-click="nextDate()" ng-hide="submitted" title="التاريخ التالي">
+					<i class="bi bi-chevron-double-down m-0"></i>
+				</button>
+				<select id="date" ng-model="date" class="form-select" placeholder="التاريخ" ng-options="date for date in dates" ng-change="updateDate()">
+					<option disabled="disabled" value="">اختر التاريخ</option>
+				</select>
+				<button class="input-group-btn btn-action-secondary" ng-click="previousDate()" ng-hide="submitted" title="التاريخ السابق">
+					<i class="bi bi-chevron-double-up m-0"></i>
+				</button>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-label">
+				<i class="bi bi-diagram-3"></i>
+				التقسيم
+			</label>
+			<select id="group" ng-model="group" class="form-select" placeholder="التقسيم" ng-options="group.id as group.name for group in groups" ng-change="updateGroup(true)">
+				<option disabled="disabled" value="">اختر التقسيم</option>
+			</select>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				اختر التقسيم لعرض حضور المجموعات
+			</small>
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>
+						<i class="bi bi-hash"></i>
+					</th>
+					<th>
+						<i class="bi bi-layers"></i>
+						{{labels.level}}
+					</th>
+					<th class="text-center">
+						<i class="bi bi-people-fill"></i>
+						الطلبة
+					</th>
+					<th class="text-center">
+						<i class="bi bi-person-badge"></i>
+						المعلم
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="partition in partitions | orderBy:'index' track by $index">
+					<td>
+						<div class="counter-badge counter-badge-sm">
+							{{$index + 1}}
+						</div>
+					</td>
+					<td>
+						{{partition.name}}
+					</td>
+					<td class="text-center">
+						<div ng-if="attendance[partition.id].students != null">
+							<div class="status-badge status-badge-completed">
+								<i class="bi bi-people-fill"></i>
+								{{attendance[partition.id].students}}
+							</div>
+						</div>
+						<div ng-if="attendance[partition.id].students == null">
+							<div class="status-badge status-badge-warning">
+								<i class="bi bi-exclamation-triangle-fill"></i>
+								غير مسجل
+							</div>
+						</div>
+					</td>
+					<td class="text-center">
+						<div ng-if="attendance[partition.id].teacher != null">
+							<div class="status-badge status-badge-completed">
+								<i class="bi bi-person-check-fill"></i>
+								{{attendance[partition.id].teacher}}
+							</div>
+						</div>
+						<div ng-if="attendance[partition.id].teacher == null">
+							<div class="status-badge status-badge-warning">
+								<i class="bi bi-person-x-fill"></i>
+								غير مسجل
+							</div>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+</div>

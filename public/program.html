@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html dir="rtl" manifest="offline.appcache">
+	<head>
+
+		<title>التعليم الديني</title>
+
+		<meta http-equiv="Expires" content="-1">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+		
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="viewport" content="width = device-width, initial-scale = 1, user-scalable = no">
+
+	    <link rel="shortcut icon" href="images/logo.jpg">
+		<link rel="apple-touch-icon" href="images/logo.jpg">
+		<link rel="apple-touch-startup-image" href="images/logo.jpg">
+		<link rel="apple-touch-icon-precomposed" href="images/logo.jpg">
+		
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.css" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+		<link href="https://twitter.github.io/typeahead.js/css/examples.css" rel="stylesheet">
+		<link href="styles/style.css?version=20251208" rel="stylesheet">
+
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.3/typeahead.jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/checklist-model/1.0.0/checklist-model.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.8.3/angular-sanitize.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+		
+		<script src="scripts/firebase.js?version=20251208"></script>
+		<script src="scripts/common.js?version=20251208"></script>
+		<script src="scripts/program.js?version=20251208"></script>
+		
+	</head>
+	<body class="bg-light" ng-app="application" ng-controller="controller">
+		
+		<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+			<div class="container">
+				<div class="logo-container">
+					<img class="logo-icon" src="images/logo.jpg">
+					<h1 class="company-name">{{config.title}}</h1>
+				</div>
+			</div>
+		</nav>
+		
+		<div class="container-fluid py-5">
+			
+			<div class="row">
+				<div class="col-lg-8 mx-auto">
+					<div class="form-card">
+
+						<h3 class="form-title arabic-text">
+							{{title}}
+						</h3>
+
+						<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class">
+							<i class="bi alert-icon" ng-class="alert.icon"></i>
+							<div>
+								<strong class="ms-2">{{alert.title}}</strong> {{alert.message}}
+							</div>
+						</div>
+
+						<div ng-show="loading" class="list-loading-state">
+							<div class="loading-spinner mx-auto"></div>
+							<p class="list-loading-text">جاري تحميل البيانات...</p>
+						</div>
+
+						<div ng-hide="loading" ng-view></div>
+
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		
+	</body>
+</html>

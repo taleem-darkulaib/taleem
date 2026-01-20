@@ -1,0 +1,204 @@
+<div ng-controller="roles">
+	
+	<div class="card">
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<div class="d-flex align-items-center">
+				<i class="bi bi-table"></i>
+				قائمة الصلاحيات
+			</div>
+			<button class="btn btn-add" ng-click="toAddRole()" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#roleModal">
+				<i class="bi bi-plus-lg"></i>
+				إضافة صلاحية جديدة
+			</button>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>
+							<i class="bi bi-hash"></i>
+							#
+						</th>
+						<th>
+							<i class="bi bi-person-badge"></i>
+							اسم الصلاحية
+						</th>
+						<th>
+							<i class="bi bi-shield-check"></i>
+							الصلاحيات
+						</th>
+						<th>
+							<i class="bi bi-key"></i>
+							الرمز السري
+						</th>
+						<th>
+							<i class="bi bi-clock"></i>
+							الوقت
+						</th>
+						<th class="text-center">
+							<i class="bi bi-gear-fill"></i>
+							الإجراءات
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="role in roles track by $index" style="animation-delay: {{$index * 0.1}}s">
+						<th>
+							<span class="counter-badge counter-badge-sm">
+								{{$index + 1}}
+							</span>
+						</th>
+						<td>
+							<strong>{{role.name}}</strong>
+						</td>
+						<td>
+							<div ng-repeat="(category, count) in role.menu track by $index">
+							<div class="status-badge status-badge-active mt-1">
+								{{$index + 1}}. {{category}} ({{count}})
+							</div>
+							</div>
+						</td>
+						<td>
+							{{role.password}}
+						</td>
+						<td>
+							{{role.time}}
+						</td>
+						<td class="text-center">
+							<button class="btn btn-edit" ng-click="toEditRole(role)" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#roleModal" title="تعديل الصلاحية">
+								<i class="bi bi-pencil-square"></i>
+								تعديل
+							</button>
+							<button class="btn btn-delete" ng-hide="submitted" data-bs-toggle="modal" data-bs-target="#deleteModal" ng-click="selectRole(role)" title="حذف الصلاحية" ng-if="isStringNotEmpty(role.id)">
+								<i class="bi bi-trash"></i>
+								حذف
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div id="roleModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-person-gear"></i>
+						معلومات الصلاحية
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+				</div>
+				<div class="modal-body">
+				
+					<div class="form-group">
+						<label for="name" class="form-label">
+							<i class="bi bi-tag-fill text-primary"></i>
+							اسم الصلاحية
+						</label>
+						<input id="name" ng-model="role.name" type="text" class="form-control is-invalid" placeholder="أدخل اسم الصلاحية" maxlength="100" autocomplete="off" required="required" ng-disabled="submitted">
+					</div>
+					
+					<div class="form-group">
+						<label for="password" class="form-label">
+							<i class="bi bi-shield-lock-fill text-warning"></i>
+							الرمز السري
+						</label>
+						<div class="input-group">
+							<button class="btn btn-edit" ng-click="generatePassword()" title="توليد رمز جديد">
+								<i class="bi bi-arrow-clockwise"></i>
+								تجديد
+							</button>
+							<input id="password" ng-model="role.password" type="text" class="form-control is-invalid" placeholder="الرمز السري" maxlength="6" autocomplete="off" required="required" ng-disabled="submitted">
+						</div>
+					</div>
+					
+					<div class="form-group mb-0">
+						<label class="form-label">
+							<i class="bi bi-list-check text-success"></i>
+							تحديد الصلاحيات
+						</label>
+						<div class="accordion">
+							<div id="role-menu" class="accordion">
+								<div class="card mt-1" ng-repeat="(categoryIndex, category) in menu track by $index">
+									<div id="menu{{$index}}head" class="card-header">
+										<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#menu{{$index}}" aria-expanded="false" aria-controls="menu{{$index}}">
+											<i class="bi ms-1" ng-class="category.icon"></i>
+											{{category.title}}
+											<span class="badge bg-primary me-2">{{category.functions.length}}</span>
+										</a>
+									</div>
+									<div id="menu{{$index}}" class="collapse" aria-labelledby="menu{{$index}}head" data-bs-parent="#role-menu">
+										<ul class="list-group">
+											<li class="list-group-item" ng-repeat="(functionIndex, function) in category.functions track by $index">
+												<div class="input-group">
+													<label for="function{{categoryIndex}}_{{functionIndex}}" class="form-control">
+														{{function.title}}
+													</label>
+													<label for="function{{categoryIndex}}_{{functionIndex}}" class="input-group-text">
+														<i class="bi m-0" ng-class="function.icon"></i>
+													</label>
+													<label for="function{{categoryIndex}}_{{functionIndex}}" class="input-group-text">
+														<div class="form-check form-switch">
+															<input id="function{{categoryIndex}}_{{functionIndex}}" ng-model="function.selected" type="checkbox" class="form-check-input form-check-input-lg" checklist-model="role.functions" checklist-value="function.url" ng-disabled="submitted">
+														</div>
+													</label>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-add" ng-click="saveRole()">
+						<i class="bi bi-floppy"></i>
+						حفظ الصلاحية
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إغلاق
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="deleteModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-exclamation-triangle"></i>
+						حذف الصلاحية
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+				</div>
+				<div class="modal-body">
+					<div class="text-center">
+						<h3 class="mb-3">
+							هل أنت متأكد من حذف صلاحية "{{role.name}}"؟
+						</h3>
+						<p class="text-muted">
+							هذا الإجراء لا يمكن التراجع عنه وسيتم حذف جميع البيانات المرتبطة بهذه الصلاحية.
+						</p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-delete" data-bs-dismiss="modal" ng-click="deleteRole()">
+						<i class="bi bi-check-lg"></i>
+						تأكيد الحذف
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						إلغاء
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

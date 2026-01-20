@@ -1,0 +1,85 @@
+<div ng-controller="marks-distribution">
+	
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h3>إدارة توزيع الدرجات</h3>
+		<button class="btn btn-add" ng-click="addDistribution()" ng-hide="submitted">
+			<i class="bi bi-plus-lg"></i>
+			إضافة توزيع جديد
+		</button>
+	</div>
+	
+	<div class="list-item-complex list-fade-in" ng-repeat="distribution in marksDistribution track by $index">
+		
+		<div class="list-item-header">
+			<div class="list-title-section">
+				<div class="list-item-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="list-item-title">
+					<i class="bi bi-stack list-icon-md"></i>
+					توزيع رقم {{$index + 1}}
+				</div>
+			</div>
+			<div class="list-item-actions" ng-hide="submitted">
+				<button class="btn-action-primary" ng-click="addDistribution()" ng-if="$index == 0" title="إضافة توزيع جديد">
+					<i class="bi bi-plus-lg m-0"></i>
+				</button>
+				<button class="btn-action-warning" ng-click="deleteDistribution(distribution)" ng-if="length(marksDistribution) != 1" title="حذف التوزيع">
+					<i class="bi bi-trash m-0"></i>
+				</button>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+			
+			<div class="row">
+				<div class="col-md-2">
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-hash"></i>
+							الترتيب
+						</label>
+						<div class="order-display">
+							<i class="bi bi-hash"></i>
+							{{$index + 1}}
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-tag-fill"></i>
+							اسم التوزيع
+						</label>
+						<input id="distributionTitle{{$index}}" name="distributionsTitles" ng-model="distribution.title" type="text" class="form-control" required="required" maxlength="100" placeholder="اسم التوزيع" autocomplete="off" ng-disabled="submitted">
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+						<label class="form-label">
+							<i class="bi bi-123"></i>
+							الدرجة
+						</label>
+						<select id="distributionMark{{$index}}" name="distributionsMarks" ng-model="distribution.mark" class="form-select" placeholder="الدرجة" required="required" ng-options="mark for mark in marks" ng-disabled="submitted">
+							<option selected="selected" disabled="disabled" value="">اختر الدرجة</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3">
+			<button class="btn btn-action-primary" ng-click="saveMarksDistribution()" ng-hide="loading">
+				<i class="bi bi-floppy"></i>
+				حفظ توزيع الدرجات
+			</button>
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="loading-spinner"></div>
+			</div>
+		</div>
+	</div>
+	
+</div>

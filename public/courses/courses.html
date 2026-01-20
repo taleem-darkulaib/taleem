@@ -1,0 +1,79 @@
+<div ng-controller="courses">
+	
+	<div class="d-flex justify-content-between align-items-center mb-4">
+		<h3>إدارة {{labels.courses}}</h3>
+		<button class="btn btn-add" ng-click="addCourse(courseList.length)" ng-hide="submitted">
+			<i class="bi bi-plus-lg"></i>
+			إضافة مادة جديدة
+		</button>
+	</div>
+	
+	<div class="list-item-complex list-fade-in" ng-repeat="course in courseList track by $index">
+		
+		<div class="list-item-header">
+			<div class="list-title-section">
+				<div class="list-item-number">
+					<span class="list-item-counter">{{$index + 1}}</span>
+				</div>
+				<div class="list-item-title">
+					<i class="bi bi-book list-icon-md"></i>
+					مادة رقم {{$index + 1}}
+				</div>
+			</div>
+			<div class="list-item-actions" ng-hide="submitted">
+				<button type="button" class="btn btn-sm" ng-click="addCourse($index)" title="إضافة مادة جديدة بعد هذه">
+					<i class="bi bi-plus-lg"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="upCourse($index)" ng-if="$index != 0 && courseList.length != 1" title="نقل {{labels.course}} لأعلى">
+					<i class="bi bi-chevron-double-up"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="downCourse($index)" ng-if="$index != courseList.length - 1 && courseList.length != 1" title="نقل {{labels.course}} لأسفل">
+					<i class="bi bi-chevron-double-down"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="deleteCourse($index)" ng-if="courseList.length != 1" title="حذف {{labels.course}}">
+					<i class="bi bi-trash"></i>
+				</button>
+				<button type="button" class="btn btn-sm" ng-click="addCourse($index + 1)" title="إضافة مادة جديدة قبل هذه">
+					<i class="bi bi-plus-lg"></i>
+				</button>
+			</div>
+		</div>
+		
+		<div class="list-item-content">
+			<div class="input-group list-input-group">
+				<span class="input-group-text list-switch-container">
+					<div class="text-center">
+						<i class="bi bi-book-half"></i>
+						<div class="list-switch-label">مادة دراسية</div>
+					</div>
+				</span>
+				<input id="course{{$index}}" name="courses" ng-model="course.name" type="text" class="form-control" required="required" maxlength="100" placeholder="مثال: الرياضيات، اللغة العربية، العلوم" autocomplete="off" ng-disabled="submitted">
+				<span class="input-group-text list-order">
+					<i class="bi bi-sort-numeric-down"></i>
+					{{$index + 1}}
+				</span>
+			</div>
+			
+			<div class="list-help-text">
+				<small class="list-text-helper">
+					<i class="bi bi-info-circle list-icon-sm"></i>
+					أدخل اسماً واضحاً ومميزاً للمادة الدراسية
+				</small>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-controls" ng-hide="submitted">
+		<div class="d-flex justify-content-center align-items-center gap-3" ng-hide="loading">
+			<div class="d-flex align-items-center" ng-show="loading">
+				<div class="spinner-border ms-2"></div>
+				<span>جاري الحفظ...</span>
+			</div>
+			<button class="btn btn-add" ng-click="saveCourses()">
+				<i class="bi bi-floppy"></i>
+				حفظ جميع {{labels.courses}}
+			</button>
+		</div>
+	</div>
+	
+</div>

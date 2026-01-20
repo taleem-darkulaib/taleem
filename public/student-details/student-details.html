@@ -1,0 +1,1806 @@
+<div ng-controller="student-details">
+	
+	<div class="section-divider">
+		<span class="section-divider-text">
+			<i class="bi bi-person-vcard"></i>
+			البحث باسم الطالب
+		</span>
+	</div>
+		
+	<div class="info-panel">
+		<div class="form-group">
+			<label for="name" class="form-label">اسم الطالب</label>
+			<div class="input-group">
+				<button class="btn btn-outline-dark" ng-click="clearSearch()"><i class="bi bi-x-lg"></i></button>
+				<input id="name" ng-model="name" type="text" class="form-control is-valid" placeholder="اسم الطالب" maxlength="100" autocomplete="off" autofocus="autofocus">
+			</div>
+		</div>
+		<div class="help-text-enhanced">
+			<small>
+				<i class="bi bi-info-circle"></i>
+				يرجى كتابة اسم الطالب الرباعي
+			</small>
+		</div>
+	</div>
+
+	<ng-container ng-show="student != null">
+		
+		<div class="section-divider">
+			<span class="section-divider-text">
+				<i class="bi bi-person-vcard"></i>
+				معلومات الطالب
+			</span>
+		</div>
+
+		<div class="card">
+			<div class="card-header">
+				<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#student" aria-expanded="false" aria-controls="student">
+					<i class="bi bi-person-vcard"></i>
+					معلومات الطالب
+				</a>
+			</div>
+			<div id="student" class="collapse show" aria-labelledby="student-head">
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<tbody>
+							<tr>
+								<th>
+									<i class="bi bi-credit-card-2-front"></i>
+									الرقم الشخصي
+								</th>
+								<td>
+									{{student.cpr}}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<i class="bi bi-person"></i>
+									اسم الطالب
+								</th>
+								<td>
+									{{student.name}}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<i class="bi bi-mortarboard"></i>
+									الصف
+								</th>
+								<td>
+									{{grades[student.grade].name}}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<i class="bi bi-phone"></i>
+									{{labels.mobile}}
+								</th>
+								<td>
+									{{student.mobile}}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<i class="bi bi-telephone"></i>
+									{{labels.phone}}
+								</th>
+								<td>
+									{{student.phone}}
+								</td>
+							</tr>
+							<tr ng-show="config.fields.contact">
+								<th>
+									<i class="bi bi-person-lines-fill"></i>
+									{{labels.contact}}
+								</th>
+								<td>
+									{{student.contact}}
+								</td>
+							</tr>
+							<tr ng-show="config.fields.dateOfBirth">
+								<th>
+									<i class="bi bi-calendar-date"></i>
+									تاريخ الميلاد
+								</th>
+								<td>
+									{{student.dateOfBirth}}
+								</td>
+							</tr>
+							<tr ng-show="config.fields.health">
+								<th>
+									<i class="bi bi-heart-pulse"></i>
+									الحالة الصحية
+								</th>
+								<td>
+									{{student.health}}
+								</td>
+							</tr>
+							<tr ng-show="config.fields.city">
+								<th>
+									<i class="bi bi-geo-alt"></i>
+									منطقة السكن
+								</th>
+								<td>
+									{{student.city}}
+								</td>
+							</tr>
+							<tr ng-show="config.fields.block">
+								<th>
+									<i class="bi bi-buildings"></i>
+									رقم المجمع
+								</th>
+								<td>
+									{{student.block}}
+								</td>
+							</tr>
+							<tr ng-show="config.fields.photo && student.photo != null">
+								<th>
+									<i class="bi bi-camera"></i>
+									الصورة الشخصية
+								</th>
+								<td>
+									<a ng-href="{{student.photo}}">الصورة الشخصية<a>
+								</td>
+							</tr>
+							<tr ng-show="config.fields.mother">
+								<th>
+									<i class="bi bi-person-heart"></i>
+									اسم الأم
+								</th>
+								<td>
+									{{student.mother}}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<i class="bi bi-layer-forward"></i>
+									{{labels.level}}
+								</th>
+								<td>
+									{{levels[student.level].name}}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<i class="bi bi-door-open"></i>
+									الغرفة
+								</th>
+								<td>
+									{{rooms[student.room].name}}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<i class="bi bi-clock"></i>
+									وقت التسجيل
+								</th>
+								<td class="ltr">
+									{{student.time}}
+								</td>
+							</tr>
+							<tr>
+								<th>
+									<i class="bi bi-cash-coin"></i>
+									دفع الرسوم
+								</th>
+								<td>
+									<div class="status-badge status-badge-error" ng-if="student.payment == null">
+										<i class="bi bi-x-circle-fill"></i>
+										لم يدفع الرسوم
+									</div>
+									<div class="status-badge status-badge-warning" ng-if="student.payment != null && !student.payment.selected">
+										<i class="bi bi-clock-fill"></i>
+										قيد المراجعة
+									</div>
+									<div class="status-badge status-badge-completed" ng-if="student.payment != null && student.payment.selected">
+										<i class="bi bi-check-circle-fill"></i>
+										تم دفع الرسوم
+									</div>
+								</td>
+							</tr>
+							<tr ng-if="student.payment != null && student.payment.selected">
+								<th>
+									<i class="bi bi-clock-history"></i>
+									وقت الدفع
+								</th>
+								<td class="ltr">
+									{{student.payment.time}}
+								</td>
+							</tr>
+							<tr ng-if="config.transfer && student.payment != null && student.payment.url != null && student.payment.url.startsWith('http')">
+								<th>
+									<i class="bi bi-image"></i>
+									صورة الدفع
+								</th>
+								<td>
+									<img class="form-image" ng-src="{{student.payment.url}}" class="img-fluid rounded" role="button" ng-click="previewImage(student.payment.url)">
+								</td>
+							</tr>
+							<tr ng-if="config.transfer && (student.payment == null || student.payment.url == null || !student.payment.selected)">
+								<th>
+									<i class="bi bi-cloud-upload"></i>
+									رفع صورة الدفع
+								</th>
+								<td>
+									<input id="payment" ng-model="student.payment.url" type="file" class="form-control is-invalid" placeholder="صورة الدفع" onchange="angular.element(this).scope().onFileSelect()">
+								</td>
+							</tr>
+							<tr ng-if="config.requestPhoto">
+								<th>
+									<i class="bi bi-camera"></i>
+									الصورة الشخصية
+								</th>
+								<td>
+									<input id="photo" ng-model="student.photo" type="file" class="form-control is-valid" placeholder="الصورة الشخصية" ng-if="student.photo == null" onchange="angular.element(this).scope().onPhotoSelected()">
+									<img width="100" ng-src="{{student.photo}}" ng-if="student.photo != null" class="img-fluid rounded" role="button" ng-click="previewImage(student.photo)">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		<ng-container ng-if="isListNotEmpty(student.evaluations)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-clipboard-check-fill"></i>
+					التقييمات
+				</span>
+			</div>
+			
+			<div class="card" ng-repeat="evaluation in evaluations track by $index" ng-if="student.evaluations[evaluation.id] != null">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#evaluation{{$index}}" aria-expanded="false" aria-controls="evaluation{{$index}}">
+						<i class="bi bi-clipboard-check-fill"></i>
+						تقييم {{evaluation.name}}
+					</a>
+				</div>
+				<div id="evaluation{{$index}}" class="collapse" aria-labelledby="evaluation{{$index}}head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-trophy"></i>
+										الكفاية
+									</th>
+									<th>
+										<i class="bi bi-award"></i>
+										الدرجة
+									</th>
+									<th>
+										<i class="bi bi-award"></i>
+										الدرجة الكلية
+									</th>
+									<th>
+										<i class="bi bi-journal-text"></i>
+										الملاحظة
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="criteria in evaluation.criterias track by $index">
+									<td>
+										{{$index + 1}}
+									</td>
+									<td>
+										{{criteria.name}}
+									</td>
+									<td>
+										{{student.evaluations[evaluation.id].criterias[criteria.id].mark}}
+									</td>
+									<td>
+										{{criteria.mark}}
+									</td>
+									<td>
+										<div class="info-panel">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												<span ng-bind-html="student.evaluations[evaluation.id].criterias[criteria.id].comment"></span>
+											</small>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr ng-show="evaluation.type == 'درجات'">
+									<th>
+									</th>
+									<th>
+										المجموع
+									</th>
+									<th>
+										{{student.evaluations[evaluation.id].mark}}
+									</th>
+									<th>
+										{{evaluation.total}}
+									</th>
+									<th>
+										<div class="info-panel">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												<span ng-bind-html="student.evaluations[evaluation.id].comment"></span>
+											</small>
+										</div>
+									</th>
+								</tr>
+								<tr ng-show="evaluation.type == 'اجتياز'">
+									<th rowspan="2">
+										المجموع
+									</th>
+									<th>
+										اجتاز
+									</th>
+									<th>
+										{{student.evaluations[evaluation.id].passed}}
+									</th>
+									<th rowspan="2">
+										{{evaluation.count}}
+									</th>
+									<th rowspan="2">
+										<div class="info-panel">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												<span ng-bind-html="student.evaluations[evaluation.id].comment"></span>
+											</small>
+										</div>
+									</th>
+								</tr>
+								<tr ng-show="evaluation.type == 'اجتياز'">
+									<th>
+										لم يجتز
+									</th>
+									<th>
+										{{student.evaluations[evaluation.id].failed}}
+									</th>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(student.books)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-book"></i>
+					الكتب المستلمة
+				</span>
+			</div>
+			
+			<div class="card">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#books" aria-expanded="false" aria-controls="books">
+						<i class="bi bi-book"></i>
+						الكتب المستلمة
+					</a>
+				</div>
+				<div id="books" class="collapse" aria-labelledby="books-head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-book"></i>
+										{{labels.course}}
+									</th>
+									<th>
+										<i class="bi bi-clock"></i>
+										الوقت
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="(course, book) in student.books track by $index">
+									<th>
+										{{$index + 1}}
+									</th>
+									<td>
+										{{courses[course].name}}
+									</td>
+									<td class="ltr">
+										{{book.time}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(student.plan)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-list-task"></i>
+					جدول الفصل الدراسي
+				</span>
+			</div>
+			
+			<div class="card">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#plan" aria-expanded="false" aria-controls="plan">
+						<i class="bi bi-list-task"></i>
+						جدول الفصل الدراسي
+					</a>
+				</div>
+				<div id="plan" class="collapse" aria-labelledby="plan-head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-calendar-week"></i>
+										{{config.period}}
+									</th>
+									<th>
+										<i class="bi bi-book"></i>
+										{{labels.course}}
+									</th>
+									<th>
+										<i class="bi bi-person-workspace"></i>
+										المعلم
+									</th>
+									<th>
+										<i class="bi bi-door-open"></i>
+										الغرفة
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="(night, plan) in student.plan track by $index">
+									<td>
+										<div class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</div>
+									</td>
+									<td>
+										{{nights[night].name}}
+									</td>
+									<td>
+										{{courses[plan.course].name}}
+									</td>
+									<td>
+										{{teachers[plan.teacher].name}}
+									</td>
+									<td>
+										{{rooms[plan.room].name}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(student.levelCourses)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-collection"></i>
+					خطة دروس مواد المستوى
+				</span>
+			</div>
+			
+			<div class="card" ng-repeat="course in student.levelCourses track by $index" ng-if="units[course] != null">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#courseLessons{{$index}}" aria-expanded="false" aria-controls="courseLessons{{$index}}">
+						<i class="bi bi-clipboard-check-fill"></i>
+						خطة دروس مادة {{courses[course].name}}
+					</a>
+				</div>
+				<div id="courseLessons{{$index}}" class="collapse" aria-labelledby="courseLessons{{$index}}head">
+					<ul class="list-group">
+						<li class="list-group-item" ng-repeat="unit in units[course] track by $index">
+							<div class="input-group">
+								<label class="form-control">
+									{{unit.name}}
+								</label>
+								<label class="input-group-text">
+									{{$index + 1}}
+								</label>
+							</div>
+							<div class="card card-body">
+								<div class="input-group mt-1" ng-repeat="topic in unit.topics track by $index">
+									<span class="input-group-text child-order" ng-if="student.coursesCompletedTopics[course][topic.id] != null">
+										{{topic.time}}
+									</span>
+									<label class="form-control">
+										{{topic.name}}
+									</label>
+									<label class="input-group-text" ng-class="{'child-order':student.coursesCompletedTopics[course][topic.id] != null}">
+										{{$index + 1}}
+									</label>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(student.coursesAttendance)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-person-check-fill"></i>
+					الحضور في الفصل الدراسي
+				</span>
+			</div>
+			
+			<div class="card">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#attendance" aria-expanded="false" aria-controls="attendance">
+						<i class="bi bi-person-check-fill"></i>
+						الحضور في الفصل الدراسي
+					</a>
+				</div>
+				<div id="attendance" class="collapse" aria-labelledby="attendance-head">
+					<div class="table-responsive mb-4">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-list-ul"></i>
+										النوع
+									</th>
+									<th ng-repeat="(course, attendance) in student.coursesAttendance.courses track by $index">
+										<i class="bi bi-book"></i>
+										{{courses[course].name}}
+									</th>
+									<th>
+										<i class="bi bi-calculator"></i>
+										المجموع
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th>
+										<i class="bi bi-check-circle text-success"></i>
+										حاضر
+									</th>
+									<td ng-repeat="attendance in student.coursesAttendance.courses track by $index">
+										{{attendance['حاضر']}}
+									</td>
+									<td>
+										{{student.coursesAttendance.statuses['حاضر']}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-clock text-warning"></i>
+										متأخر
+									</th>
+									<td ng-repeat="attendance in student.coursesAttendance.courses track by $index">
+										{{attendance['متأخر']}}
+									</td>
+									<td>
+										{{student.coursesAttendance.statuses['متأخر']}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-exclamation-triangle text-info"></i>
+										معتذر
+									</th>
+									<td ng-repeat="attendance in student.coursesAttendance.courses track by $index">
+										{{attendance['معتذر']}}
+									</td>
+									<td>
+										{{student.coursesAttendance.statuses['معتذر']}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-x-circle text-danger"></i>
+										غائب
+									</th>
+									<td ng-repeat="attendance in student.coursesAttendance.courses track by $index">
+										{{attendance['غائب']}}
+									</td>
+									<td>
+										{{student.coursesAttendance.statuses['غائب']}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-calculator"></i>
+										المجموع
+									</th>
+									<td ng-repeat="attendance in student.coursesAttendance.courses track by $index">
+										{{attendance['المجموع']}}
+									</td>
+									<td>
+										{{student.coursesAttendance.statuses['المجموع']}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-percent"></i>
+										النسبة
+									</th>
+									<td ng-repeat="attendance in student.coursesAttendance.courses track by $index">
+										{{attendance['النسبة']}}%
+									</td>
+									<td>
+										{{student.coursesAttendance.statuses['النسبة']}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+			<div class="card" ng-repeat="(course, attendance) in student.sortedAttendance track by $index">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#attendance{{$index}}" aria-expanded="false" aria-controls="attendance{{$index}}">
+						<i class="bi bi-person-check-fill"></i>
+						الحضور في مادة {{courses[course].name}}
+					</a>
+				</div>
+				<div id="attendance{{$index}}" class="collapse" aria-labelledby="attendance{{$index}}head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-calendar-week"></i>
+										{{config.period}}
+									</th>
+									<th>
+										<i class="bi bi-calendar-date"></i>
+										التاريخ
+									</th>
+									<th>
+										<i class="bi bi-clipboard-check"></i>
+										الحالة
+									</th>
+									<th>
+										<i class="bi bi-journal-text"></i>
+										الملاحظة
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="attend in attendance track by $index">
+									<td>
+										<div class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</div>
+									</td>
+									<td>
+										{{getNight(attend.date)}}
+									</td>
+									<td>
+										{{attend.date}}
+									</td>
+									<td>
+										<ng-container ng-show="selectedCourse != course">
+											<span class="status-badge" ng-class="{
+												'status-badge-present': attend.status == 'حاضر',
+												'status-badge-late': attend.status == 'متأخر',
+												'status-badge-excuse': attend.status == 'معتذر',
+												'status-badge-absent': attend.status == 'غائب'}">
+												<i class="bi" ng-class="{
+													'bi-check-circle-fill': attend.status == 'حاضر',
+													'bi-stopwatch-fill': attend.status == 'متأخر',
+													'bi-clock-fill': attend.status == 'معتذر',
+													'bi-x-circle-fill': attend.status == 'غائب'}"></i>
+												{{attend.status}}
+											</span>
+										</ng-container>
+										<select ng-model="attend.status" class="form-control" ng-show="selectedCourse == course">
+											<option value=""></option>
+											<option value="حاضر">حاضر</option>
+											<option value="غائب">غائب</option>
+											<option value="متأخر">متأخر</option>
+											<option value="معتذر">معتذر</option>
+										</select>
+									</td>
+									<td>
+										<div class="info-panel" ng-show="selectedCourse != course">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												<span ng-bind-html="attend.content"></span>
+											</small>
+										</div>
+										<input ng-model="attend.comment" class="form-control" ng-show="selectedCourse == course" maxlength="100" placeholder="الملاحظة">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="card-footer" ng-hide="student == null || submitted">
+					<button class="btn btn-action-secondary" ng-click="selectCourse(course)" ng-show="selectedCourse == null">
+						<i class="bi bi-pencil"></i>
+						تعديل
+					</button>
+					<button class="btn btn-action-primary" ng-click="saveCourseAttend()" ng-show="selectedCourse == course">
+						<i class="bi bi-floppy"></i>
+						حفظ
+					</button>
+				</div>
+			</div>
+		
+		</ng-container>
+		
+		<div class="section-divider">
+			<span class="section-divider-text">
+				<i class="bi bi-chat-text"></i>
+				ملاحظات الطالب
+			</span>
+		</div>
+		
+		<div class="card">
+			<div class="card-header">
+				<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#student-comments" aria-expanded="false" aria-controls="student-comments">
+					<i class="bi bi-chat-text"></i>
+					ملاحظات الطالب
+				</a>
+			</div>
+			<div id="student-comments" class="collapse" aria-labelledby="student-comments-head">
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>
+									<i class="bi bi-hash"></i>
+									#
+								</th>
+								<th>
+									<i class="bi bi-eye"></i>
+									الملاحظ
+								</th>
+								<th>
+									<i class="bi bi-tags"></i>
+									النوع
+								</th>
+								<th>
+									<i class="bi bi-journal-text"></i>
+									الملاحظة
+								</th>
+								<th>
+									<i class="bi bi-clock"></i>
+									الوقت
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="comment in student.comments track by $index">
+								<th>
+									<div class="counter-badge counter-badge-sm">
+										{{$index + 1}}
+									</div>
+								</th>
+								<td>
+									{{comment.applicant}}
+								</td>
+								<td>
+									{{comment.type}}
+								</td>
+								<td>
+									<div class="info-panel">
+										<small class="text-helper">
+											<i class="bi bi-chat-text"></i>
+											{{comment.content}}
+										</small>
+									</div>
+								</td>
+								<td class="ltr">
+									{{comment.time}}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		<div class="form-controls">
+			<button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#commentModal">
+				<i class="bi bi-pencil"></i>
+				تسجيل الملاحظات
+			</button>
+		</div>
+		
+		<ng-container ng-if="isListNotEmpty(generalComments)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-chat-text"></i>
+					الملاحظات العامة
+				</span>
+			</div>
+			
+			<div class="card">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#general-comments" aria-expanded="false" aria-controls="student-comments">
+						<i class="bi bi-chat-text"></i>
+						الملاحظات العامة
+					</a>
+				</div>
+				<div id="general-comments" class="collapse" aria-labelledby="general-comments-head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-journal-text"></i>
+										الملاحظة
+									</th>
+									<th>
+										<i class="bi bi-clock"></i>
+										الوقت
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="comment in generalComments track by $index">
+									<td>
+										<div class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</div>
+									</td>
+									<td>
+										<div class="info-panel">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												<span ng-bind-html="comment.content"></span>
+											</small>
+										</div>
+									</td>
+									<td class="ltr">
+										{{comment.time}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(student.levelComments)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-chat-text"></i>
+					ملاحظات {{labels.level}} {{levels[student.level].name}}
+				</span>
+			</div>
+			
+			<div class="card">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#level-comments" aria-expanded="false" aria-controls="level-comments">
+						<i class="bi bi-chat-text"></i>
+						ملاحظات {{labels.level}} {{levels[student.level].name}}
+					</a>
+				</div>
+				<div id="level-comments" class="collapse" aria-labelledby="level-comments-head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-journal-text"></i>
+										الملاحظة
+									</th>
+									<th>
+										<i class="bi bi-clock"></i>
+										الوقت
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="comment in student.levelComments track by $index">
+									<td>
+										<div class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</div>
+									</td>
+									<td>
+										<div class="info-panel">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												<span ng-bind-html="comment.content"></span>
+											</small>
+										</div>
+									</td>
+									<td class="ltr">
+										{{comment.time}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(student.coursesComments)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-chat-text"></i>
+					ملاحظات {{labels.courses}}
+				</span>
+			</div>
+			
+			<div class="card" ng-repeat="(course, comments) in student.coursesComments track by $index">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#course{{$index}}-comments" aria-expanded="false" aria-controls="course{{$index}}-comments">
+						<i class="bi bi-chat-text"></i>
+						ملاحظات على مادة {{courses[course].name}}
+					</a>
+				</div>
+				<div id="course{{$index}}-comments" class="collapse" aria-labelledby="course{{$index}}-comments">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-journal-text"></i>
+										الملاحظة
+									</th>
+									<th>
+										<i class="bi bi-clock"></i>
+										الوقت
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="comment in comments track by $index">
+									<td>
+										<div class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</div>
+									</td>
+									<td>
+										<div class="info-panel">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												<span ng-bind-html="comment.content"></span>
+											</small>
+										</div>
+									</td>
+									<td class="ltr">
+										{{comment.time}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(student.quranEvaluations)">
+			
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-book-half"></i>
+					دروس القرآن
+				</span>
+			</div>
+			
+			<div class="card">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#quran-evaluations" aria-expanded="false" aria-controls="quran-evaluations">
+						<i class="bi bi-book-half"></i>
+						دروس القرآن
+					</a>
+				</div>
+				<div id="quran-evaluations" class="collapse" aria-labelledby="quran-evaluations-head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-clock"></i>
+										الوقت
+									</th>
+									<th>
+										<i class="bi bi-book-half"></i>
+										السورة
+									</th>
+									<th>
+										<i class="bi bi-bookmark"></i>
+										الآية
+									</th>
+									<th>
+										<i class="bi bi-star"></i>
+										التقييم
+									</th>
+									<th>
+										<i class="bi bi-journal-text"></i>
+										الملاحظة
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="evaluation in student.quranEvaluations track by $index">
+									<td>
+										<div class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</div>
+									</td>
+									<td class="ltr">
+										{{evaluation.time}}
+									</td>
+									<td>
+										{{evaluation.part}}
+									</td>
+									<td>
+										{{evaluation.number}}
+									</td>
+									<td>
+										{{evaluation.mark}}
+									</td>
+									<td>
+										<div class="info-panel">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												<span ng-bind-html="evaluation.content"></span>
+											</small>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(groups)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-people-fill"></i>
+					المجموعات
+				</span>
+			</div>
+			
+			<div class="card" ng-repeat="group in groups track by $index" ng-if="group.students[student.cpr] != null">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#groups{{$index}}" aria-expanded="false" aria-controls="groups{{$index}}">
+						<i class="bi bi-people-fill"></i>
+						{{group.name}}
+					</a>
+				</div>
+				<div id="groups{{$index}}" class="collapse" aria-labelledby="groups{{$index}}head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<tbody>
+								<tr>
+									<th>
+										<i class="bi bi-book"></i>
+										{{labels.course}}
+									</th>
+									<td>
+										{{courses[group.course].name}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-people"></i>
+										المجموعة
+									</th>
+									<td>
+										{{group.partitions[group.students[student.cpr]].name}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-person-workspace"></i>
+										المعلم
+									</th>
+									<td>
+										{{teachers[group.partitions[group.students[student.cpr]].teacher].name}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-door-open"></i>
+										الغرفة
+									</th>
+									<td>
+										{{rooms[group.partitions[group.students[student.cpr]].room].name}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(student.programs)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-calendar-event"></i>
+					البرامج
+				</span>
+			</div>
+
+			<div class="card" ng-repeat="program in programs track by $index" ng-if="student.programs.includes(program.id.toString())">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#programs{{$index}}" aria-expanded="false" aria-controls="programs{{$index}}">
+						<i class="bi bi-calendar-event"></i>
+						{{program.name}}
+					</a>
+				</div>
+				<div id="programs{{$index}}" class="collapse" aria-labelledby="programs{{$index}}head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<tbody>
+								<tr>
+									<th>
+										<i class="bi bi-mortarboard"></i>
+										الصفوف
+									</th>
+									<td>
+										<div class="d-flex flex-wrap gap-2">
+											<span class="list-badge-primary" ng-repeat="grade in program.grades track by $index">
+												{{grades[grade].name}}
+											</span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-moon-stars"></i>
+										الليالي
+									</th>
+									<td>
+										<div class="d-flex flex-wrap gap-2">
+											<span class="list-badge-primary" ng-repeat="night in program.nights track by $index">
+												{{nights[night].name}}
+											</span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-door-open"></i>
+										الغرفة
+									</th>
+									<td>
+										{{rooms[program.room].name}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-cash-coin"></i>
+										الرسوم
+									</th>
+									<td>
+										{{program.feesAmount}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-calendar-plus"></i>
+										من تاريخ
+									</th>
+									<td>
+										{{program.startDate}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-calendar-x"></i>
+										إلى تاريخ
+									</th>
+									<td>
+										{{program.endDate}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-clock"></i>
+										من الساعة
+									</th>
+									<td>
+										{{program.startTime}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-clock-history"></i>
+										إلى الساعة
+									</th>
+									<td>
+										{{program.endTime}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-cash-stack"></i>
+										دفع الرسوم
+									</th>
+									<td>
+										<div class="status-badge status-badge-error" ng-if="student.programsPayments[program.id] == null">
+											<i class="bi bi-x-circle-fill"></i>
+											لم يدفع الرسوم
+										</div>
+										<div class="status-badge status-badge-warning" ng-if="student.programsPayments[program.id] != null && !student.programsPayments[program.id].selected">
+											<i class="bi bi-clock-fill"></i>
+											قيد المراجعة
+										</div>
+										<div class="status-badge status-badge-completed" ng-if="student.programsPayments[program.id] != null && student.programsPayments[program.id].selected">
+											<i class="bi bi-check-circle-fill"></i>
+											تم دفع الرسوم
+										</div>
+									</td>
+								</tr>
+								<tr ng-show="config.transfer && student.programsPayments[program.id] != null && student.programsPayments[program.id].selected">
+									<th>
+										<i class="bi bi-clock-history"></i>
+										وقت الدفع
+									</th>
+									<td class="ltr">
+										{{student.programsPayments[program.id].time}}
+									</td>
+								</tr>
+								<tr ng-show="config.transfer && student.programsPayments[program.id] != null && student.programsPayments[program.id].url != null">
+									<th>
+										<i class="bi bi-image"></i>
+										صورة الدفع
+									</th>
+									<td>
+										<img width="100" ng-src="{{student.programsPayments[program.id].url}}" class="img-fluid rounded" role="button" ng-click="previewImage(student.programsPayments[program.id].url)">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(trips)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-airplane-fill"></i>
+					الرحلات
+				</span>
+			</div>
+			
+			<div class="card" ng-repeat="trip in trips track by $index" ng-if="trip.levels.includes(student.level) && student.coursesAttendance.statuses['النسبة'] >= trip.percent">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#trips{{$index}}" aria-expanded="false" aria-controls="trips{{$index}}">
+						<i class="bi bi-airplane-fill"></i>
+						رحلة {{trip.name}}
+					</a>
+				</div>
+				<div id="trips{{$index}}" class="collapse" aria-labelledby="trips{{$index}}head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<tbody>
+								<tr>
+									<th>
+										<i class="bi bi-signpost-2"></i>
+										نوع الرحلة
+									</th>
+									<td>
+										{{trip.type}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-geo-alt"></i>
+										مكان الرحلة
+									</th>
+									<td>
+										{{trip.location}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-calendar-week"></i>
+										يوم الرحلة
+									</th>
+									<td>
+										{{trip.day}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-calendar-date"></i>
+										تاريخ الرحلة
+									</th>
+									<td>
+										{{trip.date}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-clock"></i>
+										من الساعة
+									</th>
+									<td>
+										{{trip.startTime}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-clock-history"></i>
+										إلى الساعة
+									</th>
+									<td>
+										{{trip.endTime}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-cash-coin"></i>
+										رسوم الرحلة
+									</th>
+									<td>
+										{{trip.feesAmount}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-check-circle"></i>
+										الرحلة تشمل
+									</th>
+									<td>
+										{{trip.covered}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-journal-text"></i>
+										الملاحظة
+									</th>
+									<td>
+										{{trip.comment}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-telephone"></i>
+										رقم التواصل
+									</th>
+									<td>
+										{{trip.contact}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-person-workspace"></i>
+										مسؤول الرحلة
+									</th>
+									<td>
+										{{trip.responsible}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-credit-card"></i>
+										رقم دفع بنفت
+									</th>
+									<td>
+										{{trip.benefit}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-cash-stack"></i>
+										دفع الرسوم
+									</th>
+									<td>
+										<div class="status-badge status-badge-error" ng-if="student.tripsPayments[trip.id] == null">
+											<i class="bi bi-x-circle-fill"></i>
+											لم يدفع الرسوم
+										</div>
+										<div class="status-badge status-badge-warning" ng-if="student.tripsPayments[trip.id] != null && !student.tripsPayments[trip.id].selected">
+											<i class="bi bi-clock-fill"></i>
+											قيد المراجعة
+										</div>
+										<div class="status-badge status-badge-completed" ng-if="student.tripsPayments[trip.id] != null && student.tripsPayments[trip.id].selected">
+											<i class="bi bi-check-circle-fill"></i>
+											تم دفع الرسوم
+										</div>
+									</td>
+								</tr>
+								<tr ng-if="student.tripsPayments != null && student.tripsPayments[trip.id] != null">
+									<th>
+										<i class="bi bi-clock-history"></i>
+										وقت الدفع
+									</th>
+									<td class="ltr">
+										{{student.tripsPayments[trip.id].time}}
+									</td>
+								</tr>
+								<tr ng-if="config.transfer && student.tripsPayments[trip.id] != null && student.tripsPayments[trip.id].url != null && student.tripsPayments[trip.id].url.startsWith('http')">
+									<th>
+										<i class="bi bi-image"></i>
+										صورة الدفع
+									</th>
+									<td>
+										<img class="form-image" ng-src="{{student.tripsPayments[trip.id].url}}" class="img-fluid rounded" role="button" ng-click="previewImage(student.tripsPayments[trip.id].url)">
+									</td>
+								</tr>
+								<tr ng-if="student.tripsPayments != null && student.tripsPayments[trip.id] != null">
+									<th>
+										<i class="bi bi-image"></i>
+										صورة الدفع
+									</th>
+									<td>
+										<img width="100" ng-src="{{student.tripsPayments[trip.id].url}}" class="img-fluid rounded" role="button" ng-click="previewImage(student.tripsPayment[trip.id].url)">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(student.exams)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-clipboard-check-fill"></i>
+					الامتحانات
+				</span>
+			</div>
+			
+			<div class="card" ng-repeat="exam in exams track by $index" ng-if="exam.plan != null && exam.plan[student.level] != null">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#exams{{$index}}" aria-expanded="false" aria-controls="exams{{$index}}">
+						<i class="bi bi-clipboard-check-fill"></i>
+						{{exam.title}}
+					</a>
+				</div>
+				<div id="exams{{$index}}" class="collapse" aria-labelledby="exams{{$index}}head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<tbody>
+								<tr>
+									<th>
+										<i class="bi bi-calendar-plus"></i>
+										تاريخ البدء
+									</th>
+									<td>
+										{{exam.startDate}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-calendar-x"></i>
+										تاريخ الانتهاء
+									</th>
+									<td>
+										{{exam.endDate}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-clock"></i>
+										وقت البدء
+									</th>
+									<td>
+										{{exam.startTime}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-clock-history"></i>
+										وقت الانتهاء
+									</th>
+									<td>
+										{{exam.endTime}}
+									</td>
+								</tr>
+								<tr>
+									<th>
+										<i class="bi bi-journal-text"></i>
+										الملاحظات
+									</th>
+									<td>
+										<ng-container ng-repeat="comment in exam.comments track by $index">
+											<br ng-if="$index">
+											{{$index + 1}}. {{comment.content}}
+										</ng-container>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="4">
+										
+										<div class="card">
+											<div class="card-header">
+												<i class="bi bi-list-task"></i>
+												الجدول
+											</div>
+											<div class="table-responsive">
+												<table class="table table-striped">
+													<thead>
+														<tr>
+															<th>
+																<i class="bi bi-hash"></i>
+																#
+															</th>
+															<th>
+																<i class="bi bi-calendar-week"></i>
+																{{config.period}}
+															</th>
+															<th>
+																<i class="bi bi-calendar-date"></i>
+																التاريخ
+															</th>
+															<th>
+																<i class="bi bi-book"></i>
+																{{labels.course}}
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr ng-repeat="(date, course) in exam.plan[student.level] track by $index">
+															<td>
+																{{$index + 1}}
+															</td>
+															<td>
+																{{getNight(date)}}
+															</td>
+															<td>
+																{{date}}
+															</td>
+															<td>
+																{{courses[course].name}}
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										
+										<div class="card" ng-repeat="(course, subjects) in examsSubjects[exam.id][student.level] track by $index">
+											<div class="card-header">
+												<i class="bi bi-journal-text"></i>
+												الدروس المطلوبة في مادة {{courses[course].name}}
+											</div>
+											<ul class="list-group">
+												<li class="list-group-item" ng-repeat="(unitIndex, unit) in units[course] track by $index" ng-if="subjects.includes(unit.id)">
+													<div class="input-group">
+														<label class="form-control">
+															{{unit.name}}
+														</label>
+														<label class="input-group-text">
+															{{$index + 1}}
+														</label>
+													</div>
+													<div class="card card-body">
+														<div class="input-group mt-1" ng-repeat="(topicIndex, topic) in unit.topics track by $index" ng-if="subjects.includes(topic.id)">
+															<label class="form-control">
+																{{topic.name}}
+															</label>
+															<label class="input-group-text">
+																{{$index + 1}}
+															</label>
+														</div>
+													</div>
+												</li>
+											</ul>
+										</div>
+										
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(student.marks)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-percent"></i>
+					الدرجات
+				</span>
+			</div>
+			
+			<div class="card">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#marks" aria-expanded="false" aria-controls="marks">
+						<i class="bi bi-percent"></i>
+						الدرجات
+					</a>
+				</div>
+				<div id="marks" class="collapse" aria-labelledby="marks-head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+									<tr>
+										<th>
+											<i class="bi bi-hash"></i>
+											#
+										</th>
+										<th>
+											<i class="bi bi-book"></i>
+											{{labels.course}}
+										</th>
+										<th ng-repeat="distribution in marksDistribution track by $index">
+											<i class="bi bi-clipboard-data"></i>
+											{{distribution.title}} ({{distribution.mark}})
+										</th>
+										<th>
+											<i class="bi bi-calculator"></i>
+											المجموع (100)
+										</th>
+									</tr>
+								</thead>
+							<tbody>
+								<tr ng-repeat="(course, marks) in student.marks track by $index">
+									<td>
+										<div class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</div>
+									</td>
+									<td>
+										{{courses[course].name}}
+									</td>
+									<td ng-repeat="distribution in marksDistribution track by $index">
+										{{marks[distribution.id]}}
+									</td>
+									<td>
+										{{marks['المجموع']}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+		</ng-container>
+		
+	</ng-container>
+	
+	<div id="commentModal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<i class="bi bi-journal-plus"></i>
+						تسجيل ملاحظة على الطالب
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					
+					<div class="alert alert-custom d-flex align-items-center" ng-class="alert.class">
+						<i class="bi alert-icon" ng-class="alert.icon"></i>
+						<div>
+							<strong class="ms-2">{{alert.title}}</strong> {{alert.message}}
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="applicant" class="form-label">
+							<i class="bi bi-eye"></i>
+							اسم الملاحظ
+						</label>
+						<input id="applicant" ng-model="comment.applicant" class="form-control is-valid" placeholder="اسم الملاحظ" maxlength="100" required="required" ng-disabled="submitted">
+					</div>
+					
+					<div class="form-group">
+						<label for="type" class="form-label">
+							<i class="bi bi-tags"></i>
+							نوع الملاحظة
+						</label>
+						<div id="type" class="btn-group" role="group">
+							<input id="positive" name="type" ng-model="comment.type" type="radio" value="حسن سلوك" placeholder="نوع الملاحظة" class="btn-check" required="required">
+							<label for="positive" type="button" class="btn btn-outline-success fw-bold">
+								<i class="bi bi-hand-thumbs-up"></i>
+								حسن سلوك
+							</label>
+							<input id="academic" name="type" ng-model="comment.type" type="radio" value="ملاحظة أكاديمية" placeholder="نوع الملاحظة" class="btn-check" required="required">
+							<label for="academic" type="button" class="btn btn-outline-primary fw-bold">
+								<i class="bi bi-book"></i>
+								ملاحظة أكاديمية
+							</label>
+							<input id="negative" name="type" ng-model="comment.type" type="radio" value="اشعار سلوكي" placeholder="نوع الملاحظة" class="btn-check" required="required">
+							<label for="negative" type="button" class="btn btn-outline-danger fw-bold">
+								<i class="bi bi-exclamation-triangle"></i>
+								اشعار سلوكي
+							</label>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="content" class="form-label">
+							<i class="bi bi-journal-text"></i>
+							الملاحظة
+						</label>
+						<textarea id="content" rows="5" ng-model="comment.content" class="form-control is-valid" placeholder="الملاحظة" maxlength="200" required="required" ng-disabled="submitted"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-action-secondary" ng-click="saveComment()">
+						<i class="bi bi-save"></i>
+						حفظ الملاحظة
+					</button>
+					<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
+						<i class="bi bi-x-lg"></i>
+						غلق
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="toast-container position-fixed top-50 start-50 translate-middle">
+		<div id="preview" class="toast" role="alert">
+			<div class="toast-header bg-warning text-light">
+				<i class="bi bi-image"></i>
+				معاينة الصورة
+				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+			<div class="toast-body text-center">
+				<img width="700" ng-src="{{image}}" ng-if="image != null" class="image-center img-fluid rounded" role="button" data-bs-dismiss="toast">
+			</div>
+		</div>
+	</div>
+	
+</div>
