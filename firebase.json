@@ -1,40 +1,41 @@
 {
-	"hosting": {
-		"public": "public",
-		"ignore": [
-			"firebase.json",
-			"**/.*",
-			"**/node_modules/**"
-		],
-		"rewrites": [
-			{
-				"source": "/home",
-				"destination": "/home.html"
-			},
-			{
-				"source": "/register",
-				"destination": "/register.html"
-			},
-			{
-				"source": "/program",
-				"destination": "/program.html"
-			},
-			{
-				"source": "/trip",
-				"destination": "/trip.html"
-			},
-			{
-				"source": "/update-menu",
-				"destination": "/update-menu.html"
-			},
-			{
-				"source": "/visits",
-				"destination": "/visits.html"
-			},
-			{
-				"source": "/send",
-				"destination": "/send.html"
-			}
-		]
-	}
+    "hosting": {
+        "public": "public",
+        "ignore": [
+            "firebase.json",
+            "**/.*",
+            "**/node_modules/**"
+        ],
+        "rewrites": [
+            {
+                "source": "/home",
+                "destination": "/home.html"
+            },
+            {
+                "source": "/register",
+                "destination": "/register.html"
+            },
+            {
+                "source": "/program",
+                "destination": "/program.html"
+            },
+            {
+                "source": "/trip",
+                "destination": "/trip.html"
+            },
+            {
+                "source": "/update-menu",
+                "destination": "/update-menu.html"
+            },
+            {
+                "source": "/visits",
+                "destination": "/visits.html"
+            },
+            {
+                "source": "/send",
+                "destination": "/send.html"
+            }
+        ],
+        "site": "taleem-demo"
+    }
 }
