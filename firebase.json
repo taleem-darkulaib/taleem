@@ -8,13 +8,6 @@
 		],
 		"rewrites": [
 			{
-				"source": "/deploy",
-				"run": {
-					"serviceId": "taleem",
-					"region": "asia-east1"
-				}
-			},
-			{
 				"source": "/home",
 				"destination": "/home.html"
 			},
