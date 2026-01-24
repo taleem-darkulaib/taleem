@@ -25,4 +25,41 @@ application.controllerProvider.register("view-supervisors-attend", ($scope, $tim
 	$scope.selectSupervisor = supervisor => {
 		$scope.supervisor = supervisor;
 	}
+	
+	$scope.exportToExcel = () =>{
+		
+		let rows = new Array();
+		
+		rows.push(["#", "اسم المشرف", "حاضر", "غائب", "معتذر", "متأخر", "المجموع", "النسبة"]);
+		
+		$scope.supervisors.forEach((supervisor, index) => {
+			
+			if($scope.attendance[supervisor.id] != null){
+				
+				rows.push([index + 1, 
+					supervisor.name,
+					$scope.attendance[supervisor.id]["حاضر"],
+					$scope.attendance[supervisor.id]["غائب"],
+					$scope.attendance[supervisor.id]["معتذر"],
+					$scope.attendance[supervisor.id]["متأخر"],
+					$scope.attendance[supervisor.id]["المجموع"],
+					$scope.attendance[supervisor.id]["النسبة"]
+				]);
+			
+			}else{
+				
+				rows.push([index + 1, 
+					supervisor.name,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0
+				]);
+			}
+		});
+		
+		$scope.writeExcel(rows, "حضور المشرفين");
+	}
 });

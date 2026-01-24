@@ -25,4 +25,41 @@ application.controllerProvider.register("view-teachers-attend", ($scope, $timeou
 	$scope.selectTeacher = teacher => {
 		$scope.teacher = teacher;
 	}
+	
+	$scope.exportToExcel = () =>{
+		
+		let rows = new Array();
+		
+		rows.push(["#", "اسم المشرف", "حاضر", "غائب", "معتذر", "متأخر", "المجموع", "النسبة"]);
+		
+		$scope.teachers.forEach((teacher, index) => {
+			
+			if($scope.attendance[teacher.id] != null){
+				
+				rows.push([index + 1, 
+					teacher.name,
+					$scope.attendance[teacher.id]["حاضر"],
+					$scope.attendance[teacher.id]["غائب"],
+					$scope.attendance[teacher.id]["معتذر"],
+					$scope.attendance[teacher.id]["متأخر"],
+					$scope.attendance[teacher.id]["المجموع"],
+					$scope.attendance[teacher.id]["النسبة"]
+				]);
+			
+			}else{
+				
+				rows.push([index + 1, 
+					teacher.name,
+					0,
+					0,
+					0,
+					0,
+					0,
+					0
+				]);
+			}
+		});
+		
+		$scope.writeExcel(rows, "حضور المعلمين");
+	}
 });

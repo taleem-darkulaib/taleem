@@ -1538,6 +1538,31 @@ application.run(function($rootScope, $timeout, $location, $route, $sce){
 		return sortedAttendance;
 	}
 	
+	$rootScope.getSortedDates = attendance => {
+		
+		let sortedDates = $rootScope.values(attendance).flatMap(courseAttendance => {
+			return $rootScope.keys(courseAttendance);
+		});
+		
+		sortedDates = sortedDates.sort((date1, date2) => moment(date1, "DD-MM-YYYY") - moment(date2, "DD-MM-YYYY"));
+		
+		console.log("sortedDates", sortedDates);
+		
+		return sortedDates;
+	}
+	
+	$rootScope.getAttendanceByDates = attendance => {
+		
+		let attendanceByDate = new Object();
+		
+		$rootScope.values(attendance).forEach(courseAttendance => {
+			
+			Object.entries(courseAttendance).forEach(([date, attend]) => attendanceByDate[date] = attend);			
+		});
+		
+		return attendanceByDate;
+	}
+	
 	$rootScope.print = id => {
 		
 		if(id != null){

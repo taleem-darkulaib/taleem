@@ -9,6 +9,12 @@ application.controllerProvider.register("view-students-attend", ($scope, $timeou
 	$scope.level = localStorage.getItem("level") != null ? Number(localStorage.getItem("level")) : null;
 	$scope.attendance = new Object();
 	$scope.student = new Object();
+	$scope.attendanceDates = new Array();
+	$scope.dates = new Array();
+	$scope.attendanceByDate = new Object();
+	$scope.search = new Object();
+	$scope.start = 0;
+	$scope.absentStudents = new Array();
 	
 	$scope.get("nights", nights => {
 		if($scope.isListNotEmpty(nights)){
@@ -67,6 +73,27 @@ application.controllerProvider.register("view-students-attend", ($scope, $timeou
 			$scope.getBySemester("night-attend/" + $scope.level, attendance =>{
 				
 				$scope.attendance = $scope.calculateLevelAttendanceMarks(attendance);
+				
+				$scope.attendanceDates = $scope.getSortedDates(attendance);
+				$scope.dates = $scope.getSortedDates(attendance);
+				
+				if($scope.isListNotEmpty($scope.dates)){
+					
+					$scope.search.startDate = $scope.dates[0];
+					$scope.search.endDate = $scope.dates[$scope.dates.length - 1];
+				}
+				
+				$scope.attendanceByDate = $scope.getAttendanceByDates(attendance);
+				
+				$scope.start = 0;
+				
+				$timeout(()=>{
+					flatpickr("#startDate", {dateFormat: "d-m-Y", onChange:$scope.updatePeriod});
+					flatpickr("#endDate", {dateFormat: "d-m-Y", onChange:$scope.updatePeriod});
+					isValidForm();
+				});
+				
+				$scope.updatePeriod();
 			});
 		}
 	}
@@ -123,5 +150,56 @@ application.controllerProvider.register("view-students-attend", ($scope, $timeou
 		let level = $scope.levels.find(level => level.id == $scope.level);
 		
 		$scope.writeExcel(rows, "حضور طلبة " + level.name);
+	}
+	
+	$scope.previousDate = ()=> {
+		
+		$scope.start--;
+	}
+	
+	$scope.nextDate = ()=> {
+		
+		$scope.start++;
+	}
+	
+	$scope.updatePeriod = ()=> {
+		
+		$timeout(()=> {
+			
+			console.log("updatePeriod", $scope.search);
+		
+			$scope.start = 0;
+			
+			let startDate = moment($scope.search.startDate, "DD-MM-YYYY");
+			let endDate = moment($scope.search.endDate, "DD-MM-YYYY");
+
+			$scope.dates = $scope.attendanceDates.filter(date => moment(date, "DD-MM-YYYY").isBetween(startDate, endDate, null, '[]'));
+			
+			$scope.levelStudents.forEach(student => {
+				
+				student.absentDates = $scope.dates.filter(date => {
+					
+					return $scope.attendanceByDate[date][student.cpr] != null
+							&& $scope.attendanceByDate[date][student.cpr].status == "غائب";
+				});
+				
+				student.excuseDates = $scope.dates.filter(date => {
+					
+					return $scope.attendanceByDate[date][student.cpr] != null
+							&& $scope.isStringNotEmpty($scope.attendanceByDate[date][student.cpr].comment);
+				
+				}).map(date => {
+					
+					let attend = $scope.attendanceByDate[date][student.cpr];
+					
+					attend.date = date;
+					
+					return attend;
+				});
+			});
+			
+			$scope.absentStudents = $scope.levelStudents.filter(student => student.absentDates.length >= 1);
+			$scope.excuseStudents = $scope.levelStudents.filter(student => student.excuseDates.length >= 1);
+		});
 	}
 });

@@ -16,145 +16,356 @@
 				</small>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-calendar-plus"></i>
+						من تاريخ
+					</label>
+					<input id="startDate" ng-model="search.startDate" class="form-control date" placeholder="من تاريخ" maxlength="10" ng-disabled="submitted" ng-change="updatePeriod()">
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="form-label">
+						<i class="bi bi-calendar-minus"></i>
+						إلى تاريخ
+					</label>
+					<input id="endDate" ng-model="search.endDate" class="form-control date" placeholder="إلى تاريخ" maxlength="10" ng-disabled="submitted" ng-change="updatePeriod()">
+				</div>
+			</div>
+		</div>
 	</div>
 	
-	<div class="table-responsive">
-		<table class="table table-responsive">
-			<thead>
-				<tr>
-					<th>
-						<i class="bi bi-hash"></i>
-					</th>
-					<th>
-						<i class="bi bi-person-fill"></i>
-						اسم الطالب
-					</th>
-					<th>
-						<i class="bi bi-bar-chart"></i>
-						نوع الإحصائية
-					</th>
-					<th ng-repeat="course in levelCourses track by $index">
-						<i class="bi bi-book"></i>
-						{{course.name}}
-					</th>
-					<th>
-						<i class="bi bi-calculator-fill"></i>
-						المجموع الكلي
-					</th>
-					<th class="text-center">
-						<i class="bi bi-list-ul"></i>
-						التفاصيل
-					</th>
-				</tr>
-			</thead>
-			<tbody ng-repeat="student in levelStudents track by $index">
-				<tr>
-					<td rowspan="6">
-						<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
-					</td>
-					<td rowspan="6">
-						{{student.name}}
-					</td>
-					<td>
-						<div class="status-badge status-badge-present">
-							<i class="bi bi-check-circle-fill"></i>
-							حاضر
-						</div>
-					</td>
-					<td ng-repeat="course in levelCourses track by $index">
-						{{attendance[student.cpr].courses[course.id].statuses['حاضر']}}
-					</td>
-					<td>
-						{{attendance[student.cpr].statuses['حاضر']}}
-					</td>
-					<td class="text-center" rowspan="6">
-						<button class="btn-action-primary" ng-click="selectStudent(student)" data-bs-toggle="modal" data-bs-target="#studentModal">
-							<i class="bi bi-list-ul"></i>
-							عرض التفاصيل
-						</button>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="status-badge status-badge-inactive">
-							<i class="bi bi-stopwatch-fill"></i>
-							متأخر
-						</div>
-					</td>
-					<td ng-repeat="course in levelCourses track by $index">
-						{{attendance[student.cpr].courses[course.id].statuses['متأخر']}}
-					</td>
-					<td>
-						{{attendance[student.cpr].statuses['متأخر']}}
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="status-badge status-badge-pending">
-							<i class="bi bi-clock-fill"></i>
-							معتذر
-						</div>
-					</td>
-					<td ng-repeat="course in levelCourses track by $index">
-						{{attendance[student.cpr].courses[course.id].statuses['معتذر']}}
-					</td>
-					<td>
-						{{attendance[student.cpr].statuses['معتذر']}}
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="status-badge status-badge-error">
-							<i class="bi bi-x-circle-fill"></i>
-							غائب
-						</div>
-					</td>
-					<td ng-repeat="course in levelCourses track by $index">
-						{{attendance[student.cpr].courses[course.id].statuses['غائب']}}
-					</td>
-					<td>
-						{{attendance[student.cpr].statuses['غائب']}}
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="status-badge status-badge-linked">
-							<i class="bi bi-calculator-fill"></i>
-							المجموع
-						</div>
-					</td>
-					<td ng-repeat="course in levelCourses track by $index">
-						{{attendance[student.cpr].courses[course.id].statuses['المجموع']}}
-					</td>
-					<td>
-						{{attendance[student.cpr].statuses['المجموع']}}
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="status-badge status-badge-linked">
-							<i class="bi bi-percent"></i>
-							النسبة
-						</div>
-					</td>
-					<td ng-repeat="course in levelCourses track by $index">
-						{{attendance[student.cpr].courses[course.id].statuses['النسبة']}}
-					</td>
-					<td>
-						{{attendance[student.cpr].statuses['النسبة']}}
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+	<div class="card">
 	
-	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+		<div class="card-header">
+			<ul class="nav nav-tabs card-header-tabs">
+				<li class="nav-item" role="presentation">
+					<button id="statistics-tab" class="nav-link active" data-bs-toggle="tab" data-bs-target="#statistics-tab-pane" type="button" role="tab" aria-controls="statistics-tab-pane" aria-selected="true">
+						<i class="bi bi-bar-chart-fill"></i>
+						الاحصائيات
+					</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button id="attendance-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#attendance-tab-pane" type="button" role="tab" aria-controls="attendance-tab-pane" aria-selected="false">
+						<i class="bi bi-person-check"></i>
+						الحضور
+					</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button id="absent-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#absent-tab-pane" type="button" role="tab" aria-controls="absent-tab-pane" aria-selected="false">
+						<i class="bi bi-person-x"></i>
+						الغياب
+					</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button id="permission-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#permission-tab-pane" type="button" role="tab" aria-controls="permission-tab-pane" aria-selected="false">
+						<i class="bi bi-pencil-square"></i>
+						الأعذار
+					</button>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="card-body">
+			<div class="tab-content">
+				<div id="statistics-tab-pane" class="tab-pane fade show active" role="tabpanel" aria-labelledby="statistics-tab" tabindex="0">
+					
+					<div class="table-responsive">
+						<table class="table table-responsive">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+									</th>
+									<th>
+										<i class="bi bi-person-fill"></i>
+										اسم الطالب
+									</th>
+									<th>
+										<i class="bi bi-bar-chart"></i>
+										نوع الإحصائية
+									</th>
+									<th ng-repeat="course in levelCourses track by $index">
+										<i class="bi bi-book"></i>
+										{{course.name}}
+									</th>
+									<th>
+										<i class="bi bi-calculator-fill"></i>
+										المجموع الكلي
+									</th>
+									<th class="text-center">
+										<i class="bi bi-list-ul"></i>
+										التفاصيل
+									</th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="student in levelStudents track by $index">
+								<tr>
+									<td rowspan="6">
+										<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+									</td>
+									<td rowspan="6">
+										{{student.name}}
+									</td>
+									<td>
+										<div class="status-badge status-badge-present">
+											<i class="bi bi-check-circle-fill"></i>
+											حاضر
+										</div>
+									</td>
+									<td ng-repeat="course in levelCourses track by $index">
+										{{attendance[student.cpr].courses[course.id].statuses['حاضر']}}
+									</td>
+									<td>
+										{{attendance[student.cpr].statuses['حاضر']}}
+									</td>
+									<td class="text-center" rowspan="6">
+										<button class="btn-action-primary" ng-click="selectStudent(student)" data-bs-toggle="modal" data-bs-target="#studentModal">
+											<i class="bi bi-list-ul"></i>
+											عرض التفاصيل
+										</button>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="status-badge status-badge-inactive">
+											<i class="bi bi-stopwatch-fill"></i>
+											متأخر
+										</div>
+									</td>
+									<td ng-repeat="course in levelCourses track by $index">
+										{{attendance[student.cpr].courses[course.id].statuses['متأخر']}}
+									</td>
+									<td>
+										{{attendance[student.cpr].statuses['متأخر']}}
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="status-badge status-badge-pending">
+											<i class="bi bi-clock-fill"></i>
+											معتذر
+										</div>
+									</td>
+									<td ng-repeat="course in levelCourses track by $index">
+										{{attendance[student.cpr].courses[course.id].statuses['معتذر']}}
+									</td>
+									<td>
+										{{attendance[student.cpr].statuses['معتذر']}}
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="status-badge status-badge-error">
+											<i class="bi bi-x-circle-fill"></i>
+											غائب
+										</div>
+									</td>
+									<td ng-repeat="course in levelCourses track by $index">
+										{{attendance[student.cpr].courses[course.id].statuses['غائب']}}
+									</td>
+									<td>
+										{{attendance[student.cpr].statuses['غائب']}}
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="status-badge status-badge-linked">
+											<i class="bi bi-calculator-fill"></i>
+											المجموع
+										</div>
+									</td>
+									<td ng-repeat="course in levelCourses track by $index">
+										{{attendance[student.cpr].courses[course.id].statuses['المجموع']}}
+									</td>
+									<td>
+										{{attendance[student.cpr].statuses['المجموع']}}
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="status-badge status-badge-linked">
+											<i class="bi bi-percent"></i>
+											النسبة
+										</div>
+									</td>
+									<td ng-repeat="course in levelCourses track by $index">
+										{{attendance[student.cpr].courses[course.id].statuses['النسبة']}}
+									</td>
+									<td>
+										{{attendance[student.cpr].statuses['النسبة']}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+					<a id="download" ng-href="{{href}}" download="{{download}}"></a>
 
-	<div class="form-controls fade-in" ng-hide="submitted">
-		<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
-			<i class="bi bi-download"></i>
-			حفظ حضور الطلبة
-		</button>
+					<div class="form-controls fade-in" ng-hide="submitted">
+						<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
+							<i class="bi bi-download"></i>
+							حفظ حضور الطلبة
+						</button>
+					</div>
+	
+				</div>
+				<div id="attendance-tab-pane" class="tab-pane fade" role="tabpanel" aria-labelledby="attendance-tab" tabindex="1">
+					
+					<div class="d-flex justify-content-between mb-4" ng-hide="loading">
+						<span>
+							<button class="btn-action-primary" ng-click="previousDate()" ng-hide="start == 0">
+								<i class="bi bi-chevron-double-right m-0"></i>
+							</button>
+						</span>
+						<span>
+							<button class="btn-action-primary" ng-click="nextDate()" ng-hide="start == dates.length - 5">
+								<i class="bi bi-chevron-double-left m-0"></i>
+							</button>
+						</span>
+					</div>
+					
+					<div class="table-responsive">
+						<table class="table table-responsive">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+									</th>
+									<th>
+										<i class="bi bi-person-fill"></i>
+										اسم الطالب
+									</th>
+									<th ng-repeat="date in dates.slice(start, start + 5) track by $index">
+										{{date}}
+									</th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="student in levelStudents track by $index">
+								<tr>
+									<td>
+										<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+									</td>
+									<td>
+										{{student.name}}
+									</td>
+									<td ng-repeat="date in dates.slice(start, start + 5) track by $index">
+										<span class="status-badge" ng-class="{
+											'status-badge-present': attendanceByDate[date][student.cpr].status == 'حاضر',
+											'status-badge-late': attendanceByDate[date][student.cpr].status == 'متأخر',
+											'status-badge-excuse': attendanceByDate[date][student.cpr].status == 'معتذر',
+											'status-badge-absent': attendanceByDate[date][student.cpr].status == 'غائب'}">
+											<i class="bi" ng-class="{
+												'bi-check-circle-fill': attendanceByDate[date][student.cpr].status == 'حاضر',
+												'bi-stopwatch-fill': attendanceByDate[date][student.cpr].status == 'متأخر',
+												'bi-clock-fill': attendanceByDate[date][student.cpr].status == 'معتذر',
+												'bi-x-circle-fill': attendanceByDate[date][student.cpr].status == 'غائب'}"></i>
+											{{attendanceByDate[date][student.cpr].status}}
+										</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+	
+				</div>
+				<div id="absent-tab-pane" class="tab-pane fade" role="tabpanel" aria-labelledby="absent-tab" tabindex="2">
+					
+					<div class="table-responsive">
+						<table class="table table-responsive">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+									</th>
+									<th>
+										<i class="bi bi-person-fill"></i>
+										اسم الطالب
+									</th>
+									<th class="text-center">
+										<i class="bi bi-person-x"></i>
+										أيام الغياب
+									</th>
+									<th class="text-center">
+										<i class="bi bi-bar-chart-fill"></i>
+										العدد
+									</th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="student in absentStudents track by $index">
+								<tr>
+									<td>
+										<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+									</td>
+									<td>
+										{{student.name}}
+									</td>
+									<td class="text-center">
+										<div ng-repeat="date in student.absentDates track by $index">
+											<span class="status-badge status-badge-absent">
+												<i class="bi bi-x-circle-fill"></i>
+												{{date}}
+											</span>
+										</div>
+									</td>
+									<td class="text-center">
+										<div class="status-badge status-badge-absent">
+											{{student.absentDates.length}}
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+				</div>
+				<div id="permission-tab-pane" class="tab-pane fade" role="tabpanel" aria-labelledby="permission-tab" tabindex="3">
+					
+					<div class="table-responsive">
+						<table class="table table-responsive">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+									</th>
+									<th>
+										<i class="bi bi-person-fill"></i>
+										اسم الطالب
+									</th>
+									<th class="text-center">
+										<i class="bi bi-pencil-square"></i>
+										الأعذار
+									</th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="student in excuseStudents track by $index">
+								<tr>
+									<td>
+										<div class="counter-badge counter-badge-sm">{{$index + 1}}</div>
+									</td>
+									<td>
+										{{student.name}}
+									</td>
+									<td class="text-center">
+										<div class="info-panel" ng-repeat="attend in student.excuseDates track by $index">
+											<small class="text-helper">
+												<i class="bi bi-chat-text"></i>
+												{{attend.date}} : {{attend.comment}}
+											</small>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		
 	</div>
 
 	<div id="studentModal" class="modal fade" tabindex="-1">

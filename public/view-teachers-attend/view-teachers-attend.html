@@ -108,6 +108,15 @@
 		</table>
 	</div>
 	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
+	
+	<div class="form-controls fade-in" ng-hide="submitted">
+		<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
+			<i class="bi bi-download"></i>
+			حفظ حضور المعلمين
+		</button>
+	</div>
+	
 	<div id="teacherModal" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
