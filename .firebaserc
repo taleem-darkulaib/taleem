@@ -1,5 +1,5 @@
 {
-  "projects": {
-    "default": "taleem-aldair"
-  }
+    "projects": {
+        "default": "taleem-demo"
+    }
 }
