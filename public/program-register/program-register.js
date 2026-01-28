@@ -5,6 +5,7 @@ application.controllerProvider.register("program-register", ($scope, $timeout) =
 	$scope.programs = new Array();
 	$scope.program = null;
 	$scope.student = new Object();
+	$scope.exist = false;
 	$scope.valid = false;
 	$scope.studentUrl = "https://" + window.location.host + "/program";
 	
@@ -26,12 +27,21 @@ application.controllerProvider.register("program-register", ($scope, $timeout) =
 	});
 	
 	$scope.getArray("programs", programs => {
+		
 		$scope.programs = programs.filter(program => program.registration);
-		if($scope.programs.length == 1){
-			$scope.program = $scope.programs[0];
-			$scope.updateProgram();
-			$scope.updateCpr();
-		}
+		
+		$scope.onUpdate("programs-students", programs => {
+			
+			Object.entries(programs).forEach(([programId, students])=>{
+				let program = $scope.programs.find(program => program.id == programId);
+				if(program != null){
+					program.count = $scope.length(students);
+					console.log(program);
+				}
+			});
+			
+			$scope.programs = $scope.programs.filter(program => program.registration && program.count < program.limit);
+		});
 	});
 	
 	$("#cpr").focus();
@@ -50,7 +60,10 @@ application.controllerProvider.register("program-register", ($scope, $timeout) =
 				
 				if($scope.isListNotEmpty(student)){
 					$scope.student = student;
+					$scope.exist = true;
 				}else{
+					
+					$scope.exist = false;
 					
 					$scope.getBySemester("students/" + $scope.student.cpr, student =>{
 						
@@ -164,6 +177,14 @@ application.controllerProvider.register("program-register", ($scope, $timeout) =
 			$scope.student.time = moment().format("DD-MM-YYYY HH:mm:ss");
 
 			$scope.set("students-programs/" + $scope.student.cpr + "/" + $scope.program.id, $scope.student.time, ()=> {
+				
+				if(!$scope.exist){
+					if($scope.program.count == null){
+						$scope.program.count = 0;
+					}
+					$scope.program.count++;
+					$scope.set("programs/" + $scope.program.id + "/count", $scope.program.count);
+				}
 				
 				$scope.set("programs-students/" + $scope.program.id + "/" + $scope.student.cpr, $scope.student, "تم حفظ تسجيل الطالب بنجاح");
 			});

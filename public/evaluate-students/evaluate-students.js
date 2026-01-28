@@ -127,5 +127,37 @@ application.controllerProvider.register("evaluate-students", ($scope, $timeout) 
 
 		$scope.saveResetBySemester("evaluations-students/" + $scope.evaluation.id + "/" + $scope.cpr, $scope.result, "تم حفظ تقييم الطالب بنجاح");
 		$scope.saveResetBySemester("students-evaluations/" + $scope.cpr + "/" + $scope.evaluation.id, $scope.result, "تم حفظ تقييم الطالب بنجاح");
+		
+		if($scope.isStringNotEmpty($scope.config.evaluationLetter)){
+			
+			let student = $scope.levelStudents.find(student => student.cpr == $scope.cpr);
+			let level = $scope.levels.find(level => level.id == student.level);
+			let contact = student[$scope.config.absentContact];
+			let message = $scope.config.evaluationLetter;
+			
+			if($scope.isStringNotEmpty(contact)){
+
+				message = message.replace(new RegExp('"اسم الطالب"', "g"), student.name);
+				message = message.replace(new RegExp('"المستوى"', "g"), level.name);
+				message = message.replace(new RegExp('"التقييم"', "g"), $scope.evaluation.name);
+				message = message.replace(new RegExp('"التاريخ"', "g"), moment().format("DD-MM-YYYY"));
+				message = message.replace(new RegExp('"الوقت"', "g"), moment().format("HH:mm"));
+
+				let whatsapp = new Object();
+				whatsapp.id = moment().valueOf();
+				whatsapp.type = "التقييم";
+				whatsapp.send = false;
+				whatsapp.time = moment().format("DD-MM-YYYY HH:mm:ss");
+				whatsapp.mobile = contact;
+				whatsapp.content = message;
+				
+				$scope.set("whatsapp/" + whatsapp.id, whatsapp);
+				
+				if($scope.isStringNotEmpty($scope.config.textMeBot)){
+
+					$http.get("https://api.textmebot.com/send.php?recipient=+973" + contact + "&apikey=" + $scope.config.textMeBot + "&text=" + encodeURIComponent(message));
+				}
+			}
+		}
 	}
 });

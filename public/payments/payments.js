@@ -69,32 +69,34 @@ application.controllerProvider.register("payments", ($scope, $timeout, $http) =>
 			let contact = student[$scope.config.absentContact];
 			let message = $scope.config.paymentLetter;
 			
-			message = message.replace(new RegExp('"اسم الطالب"', "g"), student.name);
-			message = message.replace(new RegExp('"التاريخ"', "g"), moment().format("DD-MM-YYYY"));
-			message = message.replace(new RegExp('"الوقت"', "g"), moment().format("HH:mm"));
-			message = message.replace(new RegExp('"المبلغ"', "g"), student.payment.amount);
+			if($scope.isStringNotEmpty(contact)){
 			
-			if(student.level != null){
+				message = message.replace(new RegExp('"اسم الطالب"', "g"), student.name);
+				message = message.replace(new RegExp('"التاريخ"', "g"), moment().format("DD-MM-YYYY"));
+				message = message.replace(new RegExp('"الوقت"', "g"), moment().format("HH:mm"));
+				message = message.replace(new RegExp('"المبلغ"', "g"), student.payment.amount);
 				
-				let level = $scope.levels.find(level => level.id == student.level);
+				if(student.level != null){
+					
+					let level = $scope.levels.find(level => level.id == student.level);
+					
+					message = message.replace(new RegExp('"' + $scope.labels.level + '"', "g"), level.name);
+				}
 				
-				message = message.replace(new RegExp('"' + $scope.labels.level + '"', "g"), level.name);
-			}
-			
-			let whatsapp = new Object();
-			whatsapp.id = moment().valueOf();
-			whatsapp.type = "الدفع";
-			whatsapp.send = false;
-			whatsapp.time = moment().format("DD-MM-YYYY HH:mm:ss");
-			whatsapp.mobile = contact;
-			whatsapp.content = message;
-			
-			$scope.set("whatsapp/" + whatsapp.id, whatsapp);
-			
-			if($scope.isStringNotEmpty($scope.config.textMeBot)
-				&& $scope.isStringNotEmpty(contact)){
+				let whatsapp = new Object();
+				whatsapp.id = moment().valueOf();
+				whatsapp.type = "الدفع";
+				whatsapp.send = false;
+				whatsapp.time = moment().format("DD-MM-YYYY HH:mm:ss");
+				whatsapp.mobile = contact;
+				whatsapp.content = message;
+				
+				$scope.set("whatsapp/" + whatsapp.id, whatsapp);
+				
+				if($scope.isStringNotEmpty($scope.config.textMeBot)){
 
-				$http.get("https://api.textmebot.com/send.php?recipient=+973" + contact + "&apikey=" + $scope.config.textMeBot + "&text=" + encodeURIComponent(message));
+					$http.get("https://api.textmebot.com/send.php?recipient=+973" + contact + "&apikey=" + $scope.config.textMeBot + "&text=" + encodeURIComponent(message));
+				}
 			}
 		}
 	}

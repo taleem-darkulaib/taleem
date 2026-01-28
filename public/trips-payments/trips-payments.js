@@ -146,6 +146,39 @@ application.controllerProvider.register("trips-payments", ($scope, $timeout) => 
 			
 			$scope.setSilentBySemester("trips-payments/" + $scope.trip + "/" + student.cpr, $scope.payments[student.cpr]);
 			$scope.setSilentBySemester("trips-students-payments/" + student.cpr + "/" + $scope.trip, $scope.payments[student.cpr]);
+			
+			if($scope.isStringNotEmpty($scope.config.tripPaymentLetter)){
+				
+				let trip = $scope.trips.find(trip => trip.id == $scope.trip);
+				let level = $scope.levels.find(level => level.id == student.level);
+				let contact = student[$scope.config.absentContact];
+				let message = $scope.config.tripPaymentLetter;
+				
+				if($scope.isStringNotEmpty(contact)){
+
+					message = message.replace(new RegExp('"اسم الطالب"', "g"), student.name);
+					message = message.replace(new RegExp('"المستوى"', "g"), level.name);
+					message = message.replace(new RegExp('"المبلغ"', "g"), $scope.fees);
+					message = message.replace(new RegExp('"الرحلة"', "g"), trip.name);
+					message = message.replace(new RegExp('"التاريخ"', "g"), moment().format("DD-MM-YYYY"));
+					message = message.replace(new RegExp('"الوقت"', "g"), moment().format("HH:mm"));
+					
+					let whatsapp = new Object();
+					whatsapp.id = moment().valueOf();
+					whatsapp.type = "الدفع للرحلة";
+					whatsapp.send = false;
+					whatsapp.time = moment().format("DD-MM-YYYY HH:mm:ss");
+					whatsapp.mobile = contact;
+					whatsapp.content = message;
+					
+					$scope.set("whatsapp/" + whatsapp.id, whatsapp);
+					
+					if($scope.isStringNotEmpty($scope.config.textMeBot)){
+
+						$http.get("https://api.textmebot.com/send.php?recipient=+973" + contact + "&apikey=" + $scope.config.textMeBot + "&text=" + encodeURIComponent(message));
+					}
+				}
+			}
 		}
 	}
 });

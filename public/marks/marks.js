@@ -158,6 +158,40 @@ application.controllerProvider.register("marks", ($scope, $timeout) => {
 				student.alert = "تم حفظ درجات " + $scope.labels.course + " بنجاح";
 				
 				$timeout(() => student.alert = null, 3000);
+				
+				console.log("$scope.config.marksLetter", $scope.config.marksLetter);
+				
+				if($scope.isStringNotEmpty($scope.config.marksLetter)){
+					
+					let level = $scope.levels.find(level => level.id == $scope.level);
+					let course = $scope.courses.find(course => course.id == $scope.course);
+					let contact = student[$scope.config.absentContact];
+					let message = $scope.config.marksLetter;
+					
+					if($scope.isStringNotEmpty(contact)){
+
+						message = message.replace(new RegExp('"اسم الطالب"', "g"), student.name);
+						message = message.replace(new RegExp('"المستوى"', "g"), level.name);
+						message = message.replace(new RegExp('"المادة"', "g"), course.name);
+						message = message.replace(new RegExp('"التاريخ"', "g"), moment().format("DD-MM-YYYY"));
+						message = message.replace(new RegExp('"الوقت"', "g"), moment().format("HH:mm"));
+						
+						let whatsapp = new Object();
+						whatsapp.id = moment().valueOf();
+						whatsapp.type = "الدرجات";
+						whatsapp.send = false;
+						whatsapp.time = moment().format("DD-MM-YYYY HH:mm:ss");
+						whatsapp.mobile = contact;
+						whatsapp.content = message;
+						
+						$scope.set("whatsapp/" + whatsapp.id, whatsapp);
+						
+						if($scope.isStringNotEmpty($scope.config.textMeBot)){
+
+							$http.get("https://api.textmebot.com/send.php?recipient=+973" + contact + "&apikey=" + $scope.config.textMeBot + "&text=" + encodeURIComponent(message));
+						}
+					}
+				}
 			});
 		});
 	}

@@ -44,6 +44,10 @@
 							التوقيت
 						</th>
 						<th>
+							<i class="bi bi-align-top"></i>
+							الحد الأقصى
+						</th>
+						<th>
 							<i class="bi bi-info-circle"></i>
 							التفاصيل
 						</th>
@@ -101,6 +105,9 @@
 						</td>
 						<td>
 							<div>{{program.startTime}} - {{program.endTime}}</div>
+						</td>
+						<td class="text-center">
+							{{program.limit}}
 						</td>
 						<td>
 							<div class="student-data-item">
@@ -266,6 +273,20 @@
 								</label>
 								<input id="feesAmount" ng-model="program.feesAmount" type="number" class="form-control" placeholder="رسوم البرنامج" maxlength="5" autocomplete="off" required="required" ng-disabled="submitted">
 							</div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="limit" class="form-label">
+							<i class="bi bi-align-top"></i>
+							الحد الأقصى للتسجيل
+						</label>
+						<input id="limit" ng-model="program.limit" type="number" class="form-control" placeholder="الحد الأقصى للتسجيل" maxlength="2" autocomplete="off" required="required" ng-disabled="submitted">
+						<div class="help-text-enhanced">
+							<small>
+								<i class="bi bi-info-circle"></i>
+								أكبر عدد ممكن من الطلبة المسجلين
+							</small>
 						</div>
 					</div>
 					

@@ -32,6 +32,7 @@ application.controllerProvider.register("student-register", ($scope, $timeout, $
 	});
 	
 	$scope.getBySemester("levels", levels => {
+		
 		$scope.levels = levels;
 	});
 	
@@ -263,15 +264,26 @@ application.controllerProvider.register("student-register", ($scope, $timeout, $
 				let levels = new Array();
 
 				$scope.distributions[$scope.student.grade].forEach(level => {
-
-					levels.push({id:level, count:$scope.length($scope.registration[level])});
+					
+					if($scope.semester.limit > $scope.length($scope.registration[level])){
+						levels.push({id:level, count:$scope.length($scope.registration[level])});
+					}
 				});
 				
-				levels.sort((level1, level2) => level1.count - level2.count);
+				if(levels.length != 0){
+					
+					levels.sort((level1, level2) => level1.count - level2.count);
 				
-				$scope.student.level = levels[0].id;
+					$scope.student.level = levels[0].id;
+				
+				}else{
+					
+					return false;
+				}
 			}
 		}
+		
+		return true;
 	}
 	
 	$scope.selectLevel = level => {
@@ -284,12 +296,16 @@ application.controllerProvider.register("student-register", ($scope, $timeout, $
 		
 		if(result == null && $scope.isValidCpr($scope.student.cpr)){
 			
+			if(!$scope.updateLevel()){
+				
+				$scope.danger("لا يوجد مقاعد شاغرة لطلبة الصف " + $scope.grades[$scope.student.grade].name);
+				return;
+			}
+			
 			$scope.submitted = true;
 			$scope.loading = true;
 			
 			$scope.wait();
-			
-			$scope.updateLevel();
 			
 			$scope.student.id = moment().valueOf();
 			$scope.student.cpr = $scope.student.cpr.toString();

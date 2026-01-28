@@ -287,6 +287,10 @@
 									</th>
 									<th class="text-center">
 										<i class="bi bi-person-x"></i>
+										التواصل
+									</th>
+									<th class="text-center">
+										<i class="bi bi-person-x"></i>
 										أيام الغياب
 									</th>
 									<th class="text-center">
@@ -302,6 +306,35 @@
 									</td>
 									<td>
 										{{student.name}}
+									</td>
+									<td>
+										<div ng-show="isStringNotEmpty(student.mobile)">
+											{{student.mobile}}
+											<a class="badge text-bg-success" ng-href="https://wa.me/973{{student.mobile}}" role="buttton">
+												<i class="bi bi-whatsapp m-0"></i>
+											</a>
+											<a class="badge text-bg-danger" ng-href="tel:{{student.mobile}}" role="buttton">
+												<i class="bi bi-telephone m-0"></i>
+											</a>
+										</div>
+										<div ng-show="isStringNotEmpty(student.phone)">
+											{{student.phone}}
+											<a class="badge text-bg-success" ng-href="https://wa.me/973{{student.phone}}" role="buttton">
+												<i class="bi bi-whatsapp m-0"></i>
+											</a>
+											<a class="badge text-bg-danger" ng-href="tel:{{student.phone}}" role="buttton">
+												<i class="bi bi-telephone m-0"></i>
+											</a>
+										</div>
+										<div ng-show="isStringNotEmpty(student.contact)">
+											{{student.contact}}
+											<a class="badge text-bg-success" ng-href="https://wa.me/973{{student.contact}}" role="buttton">
+												<i class="bi bi-whatsapp m-0"></i>
+											</a>
+											<a class="badge text-bg-danger" ng-href="tel:{{student.contact}}" role="buttton">
+												<i class="bi bi-telephone m-0"></i>
+											</a>
+										</div>
 									</td>
 									<td class="text-center">
 										<div ng-repeat="date in student.absentDates track by $index">

@@ -211,21 +211,21 @@
 									دفع الرسوم
 								</th>
 								<td>
-									<div class="status-badge status-badge-error" ng-if="student.payment == null">
+									<div class="status-badge status-badge-error" ng-if="isListEmpty(student.payment)">
 										<i class="bi bi-x-circle-fill"></i>
 										لم يدفع الرسوم
 									</div>
-									<div class="status-badge status-badge-warning" ng-if="student.payment != null && !student.payment.selected">
+									<div class="status-badge status-badge-warning" ng-if="isListNotEmpty(student.payment) && !student.payment.selected">
 										<i class="bi bi-clock-fill"></i>
 										قيد المراجعة
 									</div>
-									<div class="status-badge status-badge-completed" ng-if="student.payment != null && student.payment.selected">
+									<div class="status-badge status-badge-completed" ng-if="isListNotEmpty(student.payment) && student.payment.selected">
 										<i class="bi bi-check-circle-fill"></i>
 										تم دفع الرسوم
 									</div>
 								</td>
 							</tr>
-							<tr ng-if="student.payment != null && student.payment.selected">
+							<tr ng-if="isListNotEmpty(student.payment) && student.payment.selected">
 								<th>
 									<i class="bi bi-clock-history"></i>
 									وقت الدفع
@@ -234,7 +234,7 @@
 									{{student.payment.time}}
 								</td>
 							</tr>
-							<tr ng-if="config.transfer && student.payment != null && student.payment.url != null && student.payment.url.startsWith('http')">
+							<tr ng-if="config.transfer && isListNotEmpty(student.payment) && student.payment.url != null && student.payment.url.startsWith('http')">
 								<th>
 									<i class="bi bi-image"></i>
 									صورة الدفع
@@ -243,7 +243,7 @@
 									<img class="form-image" ng-src="{{student.payment.url}}" class="img-fluid rounded" role="button" ng-click="previewImage(student.payment.url)">
 								</td>
 							</tr>
-							<tr ng-if="config.transfer && (student.payment == null || student.payment.url == null || !student.payment.selected)">
+							<tr ng-if="config.transfer && (isListEmpty(student.payment) || student.payment.url == null || !student.payment.selected)">
 								<th>
 									<i class="bi bi-cloud-upload"></i>
 									رفع صورة الدفع
