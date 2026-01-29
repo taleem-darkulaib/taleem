@@ -106,7 +106,7 @@ application.controllerProvider.register("view-payments", ($scope, $timeout, $htt
 			whatsapp.mobile = contact;
 			whatsapp.content = message;
 			
-			$scope.set("whatsapp/" + whatsapp.id, whatsapp);
+			$scope.setSilent("whatsapp/" + whatsapp.id, whatsapp);
 			
 			if($scope.isStringNotEmpty($scope.config.textMeBot)
 				&& $scope.isStringNotEmpty(contact)){

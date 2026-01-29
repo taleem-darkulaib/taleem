@@ -151,7 +151,7 @@ application.controllerProvider.register("evaluate-students", ($scope, $timeout) 
 				whatsapp.mobile = contact;
 				whatsapp.content = message;
 				
-				$scope.set("whatsapp/" + whatsapp.id, whatsapp);
+				$scope.setSilent("whatsapp/" + whatsapp.id, whatsapp);
 				
 				if($scope.isStringNotEmpty($scope.config.textMeBot)){
 

@@ -1,0 +1,40 @@
+[debug] [2026-01-29T16:09:45.336Z] ----------------------------------------------------------------------
+[debug] [2026-01-29T16:09:45.343Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\hp\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting --token 1//0ccCiTfxDJXAtCgYIARAAGAwSNwF-L9IrjbSQnPPN61hOyx3_fFy87FSyicbPz2Ygfb9RvYJc4KznXiXfsorzhpJigxSVqVYUTjg
+[debug] [2026-01-29T16:09:45.344Z] CLI Version:   14.7.0
+[debug] [2026-01-29T16:09:45.344Z] Platform:      win32
+[debug] [2026-01-29T16:09:45.345Z] Node Version:  v22.16.0
+[debug] [2026-01-29T16:09:45.346Z] Time:          Thu Jan 29 2026 19:09:45 GMT+0300 (Arabian Standard Time)
+[debug] [2026-01-29T16:09:45.346Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-01-29T16:09:45.820Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-01-29T16:09:45.820Z] > authorizing via --token option
+[warn] !  Authenticating with `--token` is deprecated and will be removed in a future major version of `firebase-tools`. Instead, use a service account key with `GOOGLE_APPLICATION_CREDENTIALS`: https://cloud.google.com/docs/authentication/getting-started 
+[debug] [2026-01-29T16:09:45.823Z] [iam] checking project taleem-demo for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-01-29T16:09:45.825Z] No OAuth tokens found
+[debug] [2026-01-29T16:09:45.825Z] No OAuth tokens found
+[debug] [2026-01-29T16:09:45.826Z] > refreshing access token with scopes: []
+[debug] [2026-01-29T16:09:45.829Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-01-29T16:09:45.829Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-01-29T16:09:46.307Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-01-29T16:09:46.307Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-01-29T16:09:46.308Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/taleem-demo:testIamPermissions [none]
+[debug] [2026-01-29T16:09:46.309Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/taleem-demo:testIamPermissions x-goog-quota-user=projects/taleem-demo
+[debug] [2026-01-29T16:09:46.309Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/taleem-demo:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-01-29T16:09:47.899Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/taleem-demo:testIamPermissions 200
+[debug] [2026-01-29T16:09:47.900Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/taleem-demo:testIamPermissions {}
+[debug] [2026-01-29T16:09:47.900Z] [iam] error while checking permissions, command may fail: Authorization failed. This account is missing the following required permissions on project taleem-demo:
+
+  firebase.projects.get
+  firebasehosting.sites.update
+[debug] [2026-01-29T16:09:47.901Z] Checked if tokens are valid: true, expires at: 1769706585308
+[debug] [2026-01-29T16:09:47.901Z] Checked if tokens are valid: true, expires at: 1769706585308
+[debug] [2026-01-29T16:09:47.902Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/taleem-demo [none]
+[debug] [2026-01-29T16:09:48.493Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/taleem-demo 403
+[debug] [2026-01-29T16:09:48.493Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/taleem-demo {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-01-29T16:09:48.495Z] Request to https://firebase.googleapis.com/v1beta1/projects/taleem-demo had HTTP Error: 403, The caller does not have permission
+[debug] [2026-01-29T16:09:48.858Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/taleem-demo had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\hp\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:52:12)
+    at RetryOperation._fn (C:\Users\hp\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:312:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[error] 
+[error] Error: Failed to get Firebase project taleem-demo. Please make sure the project exists and your account has permission to access it.

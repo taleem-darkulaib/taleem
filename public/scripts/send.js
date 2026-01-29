@@ -29,7 +29,7 @@ application.controller("controller", ($scope, $rootScope, $timeout, $sce, $locat
 			
 			console.log(message);
 			
-			$scope.set("whatsapp/" + message.id, message, ()=> {
+			$scope.setSilent("whatsapp/" + message.id, message, ()=> {
 
 				$scope.success("تم حفظ الرسالة النصية بنجاح");
 				
@@ -67,7 +67,7 @@ application.controller("controller", ($scope, $rootScope, $timeout, $sce, $locat
 			}
 		});
 
-		$scope.set("whatsapp", $scope.messages, ()=> {
+		$scope.setSilent("whatsapp", $scope.messages, ()=> {
 
 			$scope.success("تم حذف المرسل بنجاح");
 			
