@@ -57,8 +57,8 @@ application.controllerProvider.register("exams", ($scope, $timeout) => {
 		$scope.addComment();
 		
 		$timeout(()=>{
-			flatpickr("#startDate", {dateFormat: "d-m-Y"});
-			flatpickr("#endDate", {dateFormat: "d-m-Y"});
+			flatpickr("#startDate", {dateFormat: "d-m-Y", disableMobile: true});
+			flatpickr("#endDate", {dateFormat: "d-m-Y", disableMobile: true});
 			isValidForm();
 		});
 	}
@@ -77,8 +77,8 @@ application.controllerProvider.register("exams", ($scope, $timeout) => {
 		$scope.updatePeriod();
 		
 		$timeout(() => {
-			flatpickr("#startDate", {dateFormat: "d-m-Y"});
-			flatpickr("#endDate", {dateFormat: "d-m-Y"});
+			flatpickr("#startDate", {dateFormat: "d-m-Y", disableMobile: true});
+			flatpickr("#endDate", {dateFormat: "d-m-Y", disableMobile: true});
 			isValidForm();
 		});
 	}

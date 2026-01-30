@@ -88,8 +88,8 @@ application.controllerProvider.register("view-students-attend", ($scope, $timeou
 				$scope.start = 0;
 				
 				$timeout(()=>{
-					flatpickr("#startDate", {dateFormat: "d-m-Y", onChange:$scope.updatePeriod});
-					flatpickr("#endDate", {dateFormat: "d-m-Y", onChange:$scope.updatePeriod});
+					flatpickr("#startDate", {dateFormat: "d-m-Y", disableMobile: true, onChange:$scope.updatePeriod});
+					flatpickr("#endDate", {dateFormat: "d-m-Y", disableMobile: true, onChange:$scope.updatePeriod});
 					isValidForm();
 				});
 				

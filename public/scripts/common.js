@@ -1655,7 +1655,7 @@ function isValidCpr(cpr){
 $(document).mousedown((event)=>{
 
 	if ($.fn.select2 != null
-		&& $(event.target).is("select")
+		&& $(event.target).is(".form-select")
 		&& !$(event.target).hasClass("select2")){
 		
 		$(event.target).blur();

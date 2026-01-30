@@ -207,7 +207,7 @@ application.controllerProvider.register("student-register", ($scope, $timeout, $
 	
 	$scope.updateRegistration = ()=> {
 		
-		flatpickr("#dateOfBirth", {dateFormat: "d-m-Y"});
+		flatpickr("#dateOfBirth", {dateFormat: "d-m-Y", disableMobile: true});
 		
 		$(":input").not("#cpr").change(() => {
 		

@@ -21,7 +21,7 @@ application.controllerProvider.register("trips", ($scope, $timeout) => {
 		$scope.trip.available = true;
 
 		$timeout(()=>{
-			flatpickr("#date", {dateFormat: "d-m-Y"});
+			flatpickr("#date", {dateFormat: "d-m-Y", disableMobile: true});
 			isValidForm();
 		});
 	}
@@ -33,7 +33,7 @@ application.controllerProvider.register("trips", ($scope, $timeout) => {
 		$scope.trip = $scope.copy(trip);
 		
 		$timeout(()=>{
-			flatpickr("#date", {dateFormat: "d-m-Y"});
+			flatpickr("#date", {dateFormat: "d-m-Y", disableMobile: true});
 			isValidForm();
 		});
 	}

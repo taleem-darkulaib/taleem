@@ -35,8 +35,8 @@ application.controllerProvider.register("programs", ($scope, $timeout) => {
 		$scope.addComment(0);
 		
 		$timeout(()=>{
-			flatpickr("#startDate", {dateFormat: "d-m-Y"});
-			flatpickr("#endDate", {dateFormat: "d-m-Y"});
+			flatpickr("#startDate", {dateFormat: "d-m-Y", disableMobile: true});
+			flatpickr("#endDate", {dateFormat: "d-m-Y", disableMobile: true});
 			isValidForm();
 		});
 	}
@@ -55,8 +55,8 @@ application.controllerProvider.register("programs", ($scope, $timeout) => {
 		}
 		
 		$timeout(()=>{
-			flatpickr("#startDate", {dateFormat: "d-m-Y"});
-			flatpickr("#endDate", {dateFormat: "d-m-Y"});
+			flatpickr("#startDate", {dateFormat: "d-m-Y", disableMobile: true});
+			flatpickr("#endDate", {dateFormat: "d-m-Y", disableMobile: true});
 			isValidForm();
 		});
 	}
