@@ -522,7 +522,7 @@
 									<i class="bi bi-calendar3"></i>
 									اختر الفصل الدراسي للنسخ منه
 								</label>
-								<select id="sourceSemester" ng-model="sourceSemester" class="form-control" ng-options="semester.id as semester.name for semester in semesters" ng-change="copyFromSemester()">
+								<select id="sourceSemester" ng-model="sourceSemester" class="form-control" ng-options="semester.id as semester.name for semester in semesters" ng-change="copyFromSemester()" ng-disabled="submitted">
 									<option value="">-- اختر الفصل الدراسي --</option>
 								</select>
 								<div class="help-text-enhanced">

@@ -198,6 +198,24 @@ application.controllerProvider.register("student-info", ($scope, $timeout) => {
 						$scope.student.coursesComments = coursesComments;
 					});
 					
+					$scope.get("semesters", semesters =>{
+						
+						let currentSemester = semesters[$rootScope.currentSemester];
+						
+						if(currentSemester.dependent != null){
+				
+							$scope.dependentSemester = semesters[currentSemester.dependent];
+							
+							$scope.get("semester-info/" + currentSemester.dependent + "/students-marks/" + $scope.student.cpr, marks => {
+								$scope.student.lastMarks = marks;
+							});
+							
+							$scope.get("semester-info/" + currentSemester.dependent + "/marks-distribution", marksDistribution => {
+								$scope.lastMarksDistribution = marksDistribution;
+							});
+						}
+					});
+					
 				}else {
 					
 					$scope.danger("الرقم الشخصي غير مسجل في التعليم الديني");

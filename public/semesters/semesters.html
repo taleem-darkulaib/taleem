@@ -151,6 +151,23 @@
 						</select>
 					</div>
 					
+					<div class="form-group" ng-hide="semester.dependent == null">
+						<label for="employees" class="form-label">
+							<i class="bi bi-list-check"></i>
+							نقل المعلومات
+						</label>
+						<div class="input-group mt-3" ng-repeat="field in fields track by $index">
+							<label for="field{{$index}}" class="form-control field-label">
+								{{field.title}}
+							</label>
+							<label for="field{{$index}}" class="input-group-text">
+								<div class="form-check form-switch">
+									<input id="field{{$index}}" ng-model="field.selected" type="checkbox" class="form-check-input form-check-input-lg" ng-value="true" ng-true-value="true" ng-false-value="false" ng-disabled="submitted">
+								</div>
+							</label>
+						</div>
+					</div>
+					
 					<div class="form-group">
 						<label for="fees" class="form-label">
 							<i class="bi bi-currency-dollar"></i>

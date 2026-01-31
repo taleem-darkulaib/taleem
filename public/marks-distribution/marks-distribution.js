@@ -1,5 +1,21 @@
 application.controllerProvider.register("marks-distribution", ($scope, $timeout) => {
 	
+	$scope.semesters = new Array();
+	$scope.sourceSemester = null;
+	
+	$scope.getArray("semesters", semesters =>{
+		$scope.semesters = semesters.filter(semester => semester.id != $scope.currentSemester);
+	});
+	
+	$scope.copyFromSemester = ()=> {
+		
+		$scope.get("semester-info/" + $scope.sourceSemester + "/marks-distribution", marksDistribution => {
+
+			$scope.marksDistribution = marksDistribution;
+		});
+	}
+	
+	$scope.noMarksDistribution = false;
 	$scope.marks = new Array();
 	$scope.marksDistribution = new Object();
 
@@ -10,6 +26,8 @@ application.controllerProvider.register("marks-distribution", ($scope, $timeout)
 	$scope.getBySemester("marks-distribution", marksDistribution => {
 
 		$scope.marksDistribution = marksDistribution;
+		
+		$scope.noMarksDistribution = $scope.isListEmpty(marksDistribution);
 		
 		if($scope.isListEmpty($scope.marksDistribution)){
 			$scope.addDistribution();

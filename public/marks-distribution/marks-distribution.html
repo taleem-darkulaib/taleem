@@ -1,5 +1,29 @@
 <div ng-controller="marks-distribution">
 	
+	<div class="card mb-4" ng-show="noMarksDistribution">
+		<div class="card-header">
+			<i class="bi bi-copy"></i>
+			نسخ من فصل دراسي آخر
+		</div>
+		<div class="card-body">
+			<div class="form-group">
+				<label for="sourceSemester" class="form-label">
+					<i class="bi bi-calendar3"></i>
+					اختر الفصل الدراسي للنسخ منه
+				</label>
+				<select id="sourceSemester" ng-model="sourceSemester" class="form-select" ng-options="semester.id as semester.name for semester in semesters" ng-change="copyFromSemester()" ng-disabled="submitted">
+					<option value="">-- اختر الفصل الدراسي --</option>
+				</select>
+				<div class="help-text-enhanced">
+					<small class="text-helper">
+						<i class="bi bi-info-circle"></i>
+						سيتم نقل توزيع الدرجات من الفصل السابق إلى الفصل الحالي
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	
 	<div class="d-flex justify-content-between align-items-center mb-4">
 		<h3>إدارة توزيع الدرجات</h3>
 		<button class="btn btn-add" ng-click="addDistribution()" ng-hide="submitted">

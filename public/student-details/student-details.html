@@ -558,7 +558,7 @@
 					</a>
 				</div>
 				<div id="attendance" class="collapse" aria-labelledby="attendance-head">
-					<div class="table-responsive mb-4">
+					<div class="table-responsive">
 						<table class="table table-striped">
 							<thead>
 								<tr>
@@ -1713,6 +1713,69 @@
 				</div>
 			</div>
 			
+		</ng-container>
+		
+		<ng-container ng-if="isListNotEmpty(student.lastMarks)">
+		
+			<div class="section-divider">
+				<span class="section-divider-text">
+					<i class="bi bi-percent"></i>
+					درجات {{dependentSemester.name}}
+				</span>
+			</div>
+			
+			<div class="card">
+				<div class="card-header">
+					<a class="btn text-white" type="button" data-bs-toggle="collapse" data-bs-target="#lastMarks" aria-expanded="false" aria-controls="marks">
+						<i class="bi bi-percent"></i>
+						الدرجات
+					</a>
+				</div>
+				<div id="lastMarks" class="collapse" aria-labelledby="lastMarks-head">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>
+										<i class="bi bi-hash"></i>
+										#
+									</th>
+									<th>
+										<i class="bi bi-book"></i>
+										{{labels.course}}
+									</th>
+									<th ng-repeat="distribution in lastMarksDistribution track by $index">
+										<i class="bi bi-clipboard-data"></i>
+										{{distribution.title}} ({{distribution.mark}})
+									</th>
+									<th>
+										<i class="bi bi-calculator"></i>
+										المجموع (100)
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="(course, marks) in student.lastMarks track by $index">
+									<td>
+										<div class="counter-badge counter-badge-sm">
+											{{$index + 1}}
+										</div>
+									</td>
+									<td>
+										{{courses[course].name}}
+									</td>
+									<td ng-repeat="distribution in lastMarksDistribution track by $index">
+										{{marks[distribution.id]}}
+									</td>
+									<td>
+										{{marks['المجموع']}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 		</ng-container>
 		
 	</ng-container>
