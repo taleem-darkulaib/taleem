@@ -43,15 +43,7 @@ application.controller("controller", ($scope, $rootScope, $timeout, $sce, $locat
 	
 	$scope.deleteMessage = message => {
 		
-		$scope.remove("whatsapp/" + message.id, ()=> {
-
-			$scope.success("تم حذف الرسالة بنجاح");
-			
-			$timeout(()=>{
-				$scope.submitted = false;
-				$scope.info("يرجى ادخال رقم الهاتف والرسالة النصية");
-			}, 3000);
-		});
+		$scope.removeSilent("whatsapp/" + message.id);
 	}
 	
 	$scope.deleteSent = ()=> {

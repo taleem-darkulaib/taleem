@@ -32,6 +32,16 @@ application.controllerProvider.register("semesters", ($scope, $timeout, $rootSco
 			title:"توزيع الدرجات",
 			path:"marksDistribution",
 			selected: true
+		},
+		{
+			title:"التقسيمات",
+			path:"groups",
+			selected: true
+		},
+		{
+			title:"التقييمات",
+			path:"evaluations",
+			selected: true
 		}
 	];
 	

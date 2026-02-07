@@ -1,5 +1,20 @@
 application.controllerProvider.register("groups", ($scope, $timeout) => {
 	
+	$scope.semesters = new Array();
+	$scope.sourceSemester = null;
+	
+	$scope.getArray("semesters", semesters =>{
+		$scope.semesters = semesters.filter(semester => semester.id != $scope.currentSemester);
+	});
+	
+	$scope.copyFromSemester = ()=> {
+		
+		$scope.get("semester-info/" + $scope.sourceSemester + "/groups", groups => {
+
+			$scope.groups = groups;
+		});
+	}
+	
 	$scope.rooms = new Array();
 	$scope.courses = new Object();
 	$scope.teachers = new Array();

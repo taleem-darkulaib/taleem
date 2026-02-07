@@ -1,5 +1,29 @@
 <div ng-controller="evaluations">
 	
+	<div class="card mb-4" ng-show="isListEmpty(evaluations)">
+		<div class="card-header">
+			<i class="bi bi-copy"></i>
+			نسخ من فصل دراسي آخر
+		</div>
+		<div class="card-body">
+			<div class="form-group">
+				<label for="sourceSemester" class="form-label">
+					<i class="bi bi-calendar3"></i>
+					اختر الفصل الدراسي للنسخ منه
+				</label>
+				<select id="sourceSemester" ng-model="sourceSemester" class="form-control" ng-options="semester.id as semester.name for semester in semesters" ng-change="copyFromSemester()" ng-disabled="submitted">
+					<option value="">-- اختر الفصل الدراسي --</option>
+				</select>
+				<div class="help-text-enhanced">
+					<small>
+						<i class="bi bi-info-circle"></i>
+						سيتم نسخ جميع التقييمات من الفصل السابق
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	
 	<div class="card">
 		<div class="card-header d-flex justify-content-between align-items-center py-3">
 			<div class="d-flex align-items-center">

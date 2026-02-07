@@ -199,6 +199,30 @@ application.controllerProvider.register("groups-attend", ($scope, $timeout, $htt
 			$scope.setSilentBySemester("groups-attend/" + $scope.group + "/" + $scope.partition + "/" + $scope.date + "/" + student.cpr, $scope.attendance[student.cpr]);
 			$scope.setSilentBySemester("night-attend/" + student.level + "/" + $scope.course + "/" + $scope.date + "/" + student.cpr, $scope.attendance[student.cpr]);
 			$scope.setSilentBySemester("students-attend/" + student.cpr + "/" + $scope.course + "/" + $scope.date, $scope.attendance[student.cpr]);
+			
+			if($scope.attendance[student.cpr].status == "غائب"
+				|| $scope.attendance[student.cpr].status == "متأخر"){
+				
+				let group = $scope.groups.find(group => group.id == $scope.group);
+				
+				let message = $scope.attendance[student.cpr].status == "غائب" ? $scope.config.absentLetter : $scope.config.lateLetter;
+				let contact = student[$scope.config.absentContact];
+				message = message.replace(new RegExp('"اسم الطالب"', "g"), student.name);
+				message = message.replace(new RegExp('"المادة"', "g"), $scope.courses[group.course]);
+				message = message.replace(new RegExp('"التاريخ"', "g"), $scope.date);
+				message = message.replace(new RegExp('"الوقت"', "g"), moment().format("HH:mm"));
+				message = message.replace(new RegExp('"' + $scope.labels.level + '"', "g"), group.name);
+				
+				let whatsapp = new Object();
+				whatsapp.id = moment().valueOf();
+				whatsapp.type = "الحضور";
+				whatsapp.send = false;
+				whatsapp.time = moment().format("DD-MM-YYYY HH:mm:ss");
+				whatsapp.mobile = contact;
+				whatsapp.content = message;
+				
+				$scope.setSilent("whatsapp/" + whatsapp.id, whatsapp);
+			}
 		}
 	}
 	
@@ -220,16 +244,6 @@ application.controllerProvider.register("groups-attend", ($scope, $timeout, $htt
 			message = message.replace(new RegExp('"التاريخ"', "g"), $scope.date);
 			message = message.replace(new RegExp('"الوقت"', "g"), moment().format("HH:mm"));
 			message = message.replace(new RegExp('"' + $scope.labels.level + '"', "g"), group.name);
-			
-			let whatsapp = new Object();
-			whatsapp.id = moment().valueOf();
-			whatsapp.type = "الحضور";
-			whatsapp.send = false;
-			whatsapp.time = moment().format("DD-MM-YYYY HH:mm:ss");
-			whatsapp.mobile = contact;
-			whatsapp.content = message;
-			
-			$scope.setSilent("whatsapp/" + whatsapp.id, whatsapp);
 			
 			if($scope.isStringNotEmpty($scope.config.textMeBot)
 				&& $scope.isStringNotEmpty(contact)

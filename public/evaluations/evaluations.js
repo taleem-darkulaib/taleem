@@ -1,5 +1,20 @@
 application.controllerProvider.register("evaluations", ($scope, $timeout) => {
 	
+	$scope.semesters = new Array();
+	$scope.sourceSemester = null;
+	
+	$scope.getArray("semesters", semesters =>{
+		$scope.semesters = semesters.filter(semester => semester.id != $scope.currentSemester);
+	});
+	
+	$scope.copyFromSemester = ()=> {
+		
+		$scope.get("semester-info/" + $scope.sourceSemester + "/evaluations", evaluations => {
+
+			$scope.evaluations = evaluations;
+		});
+	}
+	
 	$scope.marks = new Array();
 	$scope.evaluations = new Object();
 	$scope.evaluation = new Object();
