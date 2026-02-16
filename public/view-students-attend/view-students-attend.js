@@ -202,4 +202,18 @@ application.controllerProvider.register("view-students-attend", ($scope, $timeou
 			$scope.excuseStudents = $scope.levelStudents.filter(student => student.excuseDates.length >= 1);
 		});
 	}
+	
+	$scope.exportAbsentToExcel = ()=>{
+		
+		let rows = [];
+		
+		rows.push(["#", "اسم الطالب", "أرقام التواصل", "أيام الغياب"]);
+		
+		$scope.absentStudents.forEach((student, index) => {
+			
+			rows.push([index + 1, student.name, student.mobile + "\n" + student.phone, student.absentDates.join("\n")]);
+		});
+		
+		$scope.writeExcel(rows, "قائمة الغياب");
+	}
 });

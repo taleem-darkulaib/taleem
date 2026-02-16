@@ -202,8 +202,6 @@
 							</tbody>
 						</table>
 					</div>
-					
-					<a id="download" ng-href="{{href}}" download="{{download}}"></a>
 
 					<div class="form-controls fade-in" ng-hide="submitted">
 						<button class="btn btn-primary" ng-click="exportToExcel()" ng-hide="loading">
@@ -275,7 +273,7 @@
 				<div id="absent-tab-pane" class="tab-pane fade" role="tabpanel" aria-labelledby="absent-tab" tabindex="2">
 					
 					<div class="table-responsive">
-						<table class="table table-responsive">
+						<table id="absents" class="table table-responsive">
 							<thead>
 								<tr>
 									<th>
@@ -352,6 +350,13 @@
 								</tr>
 							</tbody>
 						</table>
+					</div>
+					
+					<div class="form-controls fade-in" ng-hide="submitted">
+						<button class="btn btn-primary" ng-click="exportAbsentToExcel()" ng-hide="loading">
+							<i class="bi bi-download"></i>
+							حفظ غياب الطلبة
+						</button>
 					</div>
 					
 				</div>
@@ -490,5 +495,7 @@
 			</div>
 		</div>
 	</div>
+	
+	<a id="download" ng-href="{{href}}" download="{{download}}"></a>
 	
 </div>

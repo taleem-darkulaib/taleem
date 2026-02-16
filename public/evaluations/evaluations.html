@@ -1,6 +1,6 @@
 <div ng-controller="evaluations">
 	
-	<div class="card mb-4" ng-show="isListEmpty(evaluations)">
+	<div class="card mb-4" ng-show="noEvaluation">
 		<div class="card-header">
 			<i class="bi bi-copy"></i>
 			نسخ من فصل دراسي آخر
@@ -21,6 +21,12 @@
 					</small>
 				</div>
 			</div>
+		</div>
+		<div class="card-footer" ng-hide="submitted">
+			<button class="btn-action-primary" ng-click="saveEvaluations()">
+				<i class="bi bi-floppy"></i>
+				حفظ التقييمات
+			</button>
 		</div>
 	</div>
 	

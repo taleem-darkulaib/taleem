@@ -15,6 +15,11 @@ application.controllerProvider.register("groups", ($scope, $timeout) => {
 		});
 	}
 	
+	$scope.saveGroups = ()=> {
+		
+		$scope.saveResetBySemester("groups", $scope.groups);
+	}
+	
 	$scope.rooms = new Array();
 	$scope.courses = new Object();
 	$scope.teachers = new Array();
@@ -23,6 +28,7 @@ application.controllerProvider.register("groups", ($scope, $timeout) => {
 	$scope.group = new Object();
 	$scope.partitions = new Array();
 	$scope.students = new Array();
+	$scope.noGroup = false;
 	
 	$scope.getActiveBySemester("levels", levels => {
 		
@@ -50,6 +56,7 @@ application.controllerProvider.register("groups", ($scope, $timeout) => {
 	
 	$scope.getBySemester("groups", groups => {
 		$scope.groups = groups;
+		$scope.noGroup = $scope.isListEmpty(groups);
 	});
 
 	$scope.toAddGroup = ()=> {

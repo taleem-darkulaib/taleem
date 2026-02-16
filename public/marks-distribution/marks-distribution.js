@@ -19,7 +19,7 @@ application.controllerProvider.register("marks-distribution", ($scope, $timeout)
 	$scope.marks = new Array();
 	$scope.marksDistribution = new Object();
 
-	for(let i=0; i<=60; i+=5){
+	for(let i=0; i<=100; i+=5){
 		$scope.marks.push(i);
 	}
 	

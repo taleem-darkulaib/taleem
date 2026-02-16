@@ -15,16 +15,23 @@ application.controllerProvider.register("evaluations", ($scope, $timeout) => {
 		});
 	}
 	
+	$scope.saveEvaluations = ()=> {
+		
+		$scope.saveResetBySemester("evaluations", $scope.evaluations);
+	}
+	
 	$scope.marks = new Array();
 	$scope.evaluations = new Object();
 	$scope.evaluation = new Object();
-
+	$scope.noEvaluation = false;
+	
 	for(let i=0; i<=10; i+=0.5){
 		$scope.marks.push(i);
 	}
 	
 	$scope.getBySemester("evaluations", evaluations => {
 		$scope.evaluations = evaluations;
+		$scope.noEvaluation = $scope.isListEmpty(evaluations);
 	});
 	
 	$scope.toAddEvaluation = () => {
