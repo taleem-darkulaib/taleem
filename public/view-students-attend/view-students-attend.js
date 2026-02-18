@@ -205,7 +205,7 @@ application.controllerProvider.register("view-students-attend", ($scope, $timeou
 	
 	$scope.exportAbsentToExcel = ()=>{
 		
-		let rows = [];
+		let rows = new Array();
 		
 		rows.push(["#", "اسم الطالب", "أرقام التواصل", "أيام الغياب"]);
 		
@@ -215,5 +215,54 @@ application.controllerProvider.register("view-students-attend", ($scope, $timeou
 		});
 		
 		$scope.writeExcel(rows, "قائمة الغياب");
+	}
+	
+	$scope.exportAllAbsentToExcel = ()=>{
+		
+		$scope.getBySemester("night-attend", attendance =>{
+			
+			let sheets = new Array();
+			
+			let levels = $scope.indexedArray($scope.levels);
+			
+			levels.forEach(level => {
+				
+				let attendanceByDate = $scope.getAttendanceByDates(attendance[level.id]);
+				
+				let levelStudents = $scope.students.filter(student => student.level == level.id);
+				
+				let startDate = moment($scope.search.startDate, "DD-MM-YYYY");
+				let endDate = moment($scope.search.endDate, "DD-MM-YYYY");
+
+				let dates = $scope.attendanceDates.filter(date => moment(date, "DD-MM-YYYY").isBetween(startDate, endDate, null, '[]'));
+				
+				levelStudents.forEach(student => {
+					
+					student.absentDates = $scope.dates.filter(date => {
+						
+						return $scope.attendanceByDate[date][student.cpr] != null
+								&& $scope.attendanceByDate[date][student.cpr].status == "غائب";
+					});
+				});
+				
+				let absentStudents = levelStudents.filter(student => student.absentDates.length >= 1);
+				
+				let sheet = new Object();
+				
+				sheet.name = level.name;
+				sheet.rows = new Array();
+		
+				sheet.rows.push(["#", "اسم الطالب", "أرقام التواصل", "أيام الغياب"]);
+				
+				absentStudents.forEach((student, index) => {
+					
+					sheet.rows.push([index + 1, student.name, student.mobile + "\n" + student.phone, student.absentDates.join("\n")]);
+				});
+				
+				sheets.push(sheet);
+			});
+			
+			$scope.writeExcelSheets(sheets, "قائمة الغياب");
+		});
 	}
 });

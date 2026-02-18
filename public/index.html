@@ -57,10 +57,16 @@
 	<body class="bg-light" ng-app="application" ng-controller="controller">
 		
 		<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
-			<div class="container">
-				<div class="logo-container">
-					<img class="logo-icon" src="images/logo.jpg">
-					<h1 class="company-name">{{config.title}}</h1>
+			<div class="container-fluid d-block">
+				<div class="row">
+					<div class="col-lg-10 mx-auto">
+						<div class="d-flex justify-content-between">
+							<div class="logo-container">
+								<img class="logo-icon" src="images/logo.jpg">
+								<h1 class="company-name">{{config.title}}</h1>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</nav>
@@ -68,7 +74,7 @@
 		<div class="container-fluid py-5">
 			
 			<div class="row">
-				<div class="col-lg-8 mx-auto">
+				<div class="col-lg-10 mx-auto">
 					<div class="form-card">
 
 						<h3 class="form-title arabic-text">

@@ -13,7 +13,7 @@
 				<i class="bi bi-mortarboard-fill"></i>
 				البرنامج
 			</label>
-			<select id="program" ng-model="program" class="form-select" placeholder="البرنامج" ng-options="program as program.name for program in programs" ng-disabled="programs.length == 1 || submitted" ng-change="updateProgram()">
+			<select id="program" ng-model="program" class="form-select" placeholder="البرنامج" ng-options="program as program.name for program in programs" ng-disabled="submitted" ng-change="updateProgram()">
 				<option disabled="disabled" value="">اختر البرنامج</option>
 			</select>
 		</div>
