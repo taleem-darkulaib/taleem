@@ -101,7 +101,21 @@
 					<i class="bi bi-check-circle me-1"></i>
 				</label>
 			</div>
-			<input class="form-control" ng-model="attendance[student.cpr].comment" maxlength="100" type="text" placeholder="ملاحظات على حضور الطالب..." ng-blur="updateStudentAttend(student)">
+			<div class="input-group">
+				<button type="button" class="btn btn-action-warning" ng-click="sendWhatsappMessage(student)" ng-show="isStringNotEmpty(config.textMeBot) && isStringNotEmpty(config.absentLetter) && attendance[student.cpr].status == 'غائب' && attendance[student.cpr].notification == null">
+					<i class="bi bi-whatsapp"></i>
+					إرسال
+				</button>
+				<button type="button" class="btn btn-action-warning" ng-click="sendWhatsappMessage(student)" ng-show="isStringNotEmpty(config.textMeBot) && isStringNotEmpty(config.lateLetter) && attendance[student.cpr].status == 'متأخر' && attendance[student.cpr].notification == null">
+					<i class="bi bi-whatsapp"></i>
+					إرسال
+				</button>
+				<label class="btn btn-action-primary" ng-show="attendance[student.cpr].notification">
+					<i class="bi bi-send"></i>
+					تم الارسال
+				</label>
+				<input class="form-control" ng-model="attendance[student.cpr].comment" maxlength="100" type="text" placeholder="ملاحظات على حضور الطالب..." ng-blur="updateStudentAttend(student)">
+			</div>
 		</div>
 		
 	</div>

@@ -128,7 +128,7 @@ application.controllerProvider.register("trip-register", ($scope, $timeout) => {
 	
 	$scope.saveStudent = () => {
 		
-		if($scope.isValidForm() && $scope.config.transfer){
+		if($scope.isValidForm()){
 			
 			let payment = new Object();
 			payment.id = moment().valueOf();

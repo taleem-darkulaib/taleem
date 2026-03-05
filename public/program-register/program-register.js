@@ -30,6 +30,8 @@ application.controllerProvider.register("program-register", ($scope, $timeout) =
 		
 		$scope.programs = programs.filter(program => program.registration);
 		
+		$scope.programs.forEach(program => program.count = 0);
+		
 		$scope.onUpdate("programs-students", programs => {
 			
 			Object.entries(programs).forEach(([programId, students])=>{

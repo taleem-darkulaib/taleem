@@ -1,4 +1,4 @@
-application.controllerProvider.register("programs-attend", ($scope, $timeout) => {
+application.controllerProvider.register("programs-attend", ($scope, $timeout, $http) => {
 	
 	$scope.students = new Array();
 	$scope.programs = new Array();
@@ -76,6 +76,73 @@ application.controllerProvider.register("programs-attend", ($scope, $timeout) =>
 		
 		$scope.setSilent("programs-night-attend/" + $scope.program.id + "/" + $scope.date + "/" + student.cpr, $scope.attendance[student.cpr]);
 		$scope.setSilent("programs-attend/" + $scope.program.id + "/" + student.cpr + "/" + $scope.date, $scope.attendance[student.cpr]);
+		
+		if($scope.attendance[student.cpr].status == "غائب"
+			|| $scope.attendance[student.cpr].status == "متأخر"){
+			
+			let program = $scope.programs.find(program => program.id == $scope.program.id);
+			
+			let message = $scope.attendance[student.cpr].status == "غائب" ? $scope.config.absentLetter : $scope.config.lateLetter;
+			let contact = student[$scope.config.absentContact];
+			
+			message = message.replace(new RegExp('"اسم الطالب"', "g"), student.name);
+			message = message.replace(new RegExp('"التاريخ"', "g"), $scope.date);
+			message = message.replace(new RegExp('"الوقت"', "g"), moment().format("HH:mm"));
+			message = message.replace(new RegExp('"' + $scope.labels.level + '"', "g"), program.name);
+			message = message.replace(new RegExp('"المادة"', "g"), program.name);
+			
+			let whatsapp = new Object();
+			whatsapp.id = moment().valueOf();
+			whatsapp.type = "الحضور";
+			whatsapp.send = false;
+			whatsapp.time = moment().format("DD-MM-YYYY HH:mm:ss");
+			whatsapp.mobile = contact;
+			whatsapp.content = message;
+			
+			$scope.setSilent("whatsapp/" + whatsapp.id, whatsapp);
+		}
+	}
+	
+	$scope.clickStudentAttend = (student, status) => {
+		
+		student.cpr = student.cpr.toString();
+		
+		if($scope.attendance[student.cpr] != null && status == $scope.attendance[student.cpr].status){
+			
+			$scope.attendance[student.cpr] = null;
+			
+			$scope.removeSilent("programs-night-attend/" + $scope.program.id + "/" + $scope.date + "/" + student.cpr);
+			$scope.removeSilent("programs-attend/" + $scope.program.id + "/" + student.cpr + "/" + $scope.date);
+		}
+	}
+	
+	$scope.sendWhatsappMessage = student => {
+		
+		student.cpr = student.cpr.toString();
+		
+		if($scope.attendance[student.cpr].status == "غائب"
+			|| $scope.attendance[student.cpr].status == "متأخر"){
+			
+			$scope.attendance[student.cpr].notification = true;
+			
+			let program = $scope.programs.find(program => program.id == $scope.program.id);
+			
+			let message = $scope.attendance[student.cpr].status == "غائب" ? $scope.config.absentLetter : $scope.config.lateLetter;
+			let contact = student[$scope.config.absentContact];
+			
+			message = message.replace(new RegExp('"اسم الطالب"', "g"), student.name);
+			message = message.replace(new RegExp('"التاريخ"', "g"), $scope.date);
+			message = message.replace(new RegExp('"الوقت"', "g"), moment().format("HH:mm"));
+			message = message.replace(new RegExp('"' + $scope.labels.level + '"', "g"), $scope.program.name);
+			message = message.replace(new RegExp('"المادة"', "g"), $scope.program.name);
+			
+			if($scope.isStringNotEmpty($scope.config.textMeBot)
+				&& $scope.isStringNotEmpty(contact)
+				&& $scope.isStringNotEmpty(message)){
+
+				$http.get("https://api.textmebot.com/send.php?recipient=+973" + contact + "&apikey=" + $scope.config.textMeBot + "&text=" + encodeURIComponent(message));
+			}
+		}
 	}
 	
 	$scope.attendAll = ()=>{
