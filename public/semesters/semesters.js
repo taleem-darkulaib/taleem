@@ -88,6 +88,11 @@ application.controllerProvider.register("semesters", ($scope, $timeout, $rootSco
 			fields.forEach(field => {
 				
 				$scope.get("semester-info/" + $scope.semester.dependent + "/" + field.path, list => {
+					
+					if(field.path == "students"){
+						$scope.values(list).forEach(student => delete student.payment);
+					}
+					
 					$scope.set("semester-info/" + $scope.semester.id + "/" + field.path, list);
 				});
 			});

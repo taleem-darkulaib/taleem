@@ -69,4 +69,34 @@ application.controller("controller", ($scope, $rootScope, $timeout, $sce, $locat
 			}, 3000);
 		});
 	}
+	
+	$scope.uploadedMessages = null;
+	
+	$("#file").on("change", ()=> {
+		
+		$scope.readExcel("file", rows => {
+			
+			let messages = rows.slice(1);
+			
+			$scope.uploadedMessages = new Array();
+			
+			messages.forEach((cells, index) => {
+				
+				let message = new Object();
+				message.id = moment().valueOf() + index;
+				message.send = false;
+				message.type = "محدد";
+				message.time = moment().format("DD-MM-YYYY HH:mm:ss");
+				message.mobile = cells[1];
+				message.content = cells[2];
+				
+				$scope.uploadedMessages.push(message);
+			});
+		});
+	});
+	
+	$scope.saveMessages = ()=> {
+		
+		$scope.update("whatsapp", $scope.uploadedMessages, "تم حفظ الرسائل المرفعة بنجاح");
+	}
 });

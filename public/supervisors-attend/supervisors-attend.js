@@ -43,6 +43,21 @@ application.controllerProvider.register("supervisors-attend", ($scope, $timeout)
 	
 	$scope.updateSupervisors = ()=>{
 		
+		console.log("$scope.night", $scope.night);
+		
+		$scope.areas.forEach(area => {
+			
+			if($scope.nightsSupervisors[$scope.night] != null){
+				
+				console.log("$scope.nightsSupervisors[$scope.night]", $scope.nightsSupervisors[$scope.night]);
+				
+				if($scope.nightsSupervisors[$scope.night][area.id] != null){
+					
+					console.log("$scope.nightsSupervisors[$scope.night][area.id]", $scope.nightsSupervisors[$scope.night][area.id]);
+				}
+			}
+		});
+		
 		$scope.areas.forEach(area => area.supervisors = $scope.supervisors.filter(supervisor => $scope.nightsSupervisors[$scope.night] != null && $scope.nightsSupervisors[$scope.night][area.id] != null && $scope.nightsSupervisors[$scope.night][area.id].includes(supervisor.id)));
 		
 		let supervisors = $scope.values($scope.nightsSupervisors[$scope.night]).flatMap(areaSupervisors => $scope.values(areaSupervisors));
@@ -83,6 +98,8 @@ application.controllerProvider.register("supervisors-attend", ($scope, $timeout)
 	$scope.updateDate = () => {
 		
 		$scope.night = ((moment($scope.date, "DD-MM-YYYY").day() + 1) % 7) + 1;
+		
+		$scope.updateSupervisors();
 		
 		$scope.getAttendance();
 	}

@@ -8,6 +8,7 @@ application.controllerProvider.register("programs-attend", ($scope, $timeout, $h
 	$scope.date = moment().format("DD-MM-YYYY");
 	$scope.night = ((moment($scope.date, "DD-MM-YYYY").day() + 1) % 7) + 1;
 	$scope.attendance = new Object();
+	$scope.counts = new Object();
 	
 	for(let i=-90; i<=30; i++){
 		$scope.dates.push(moment().add(i, "days").format("DD-MM-YYYY"));
@@ -40,7 +41,10 @@ application.controllerProvider.register("programs-attend", ($scope, $timeout, $h
 			$scope.attendance = new Object();
 			
 			$scope.get("programs-night-attend/" + $scope.program.id + "/" + $scope.date, attendance => {
+				
 				$scope.attendance = attendance;
+				
+				$scope.updateAttendanceCount();
 			});
 		}
 	}
@@ -70,12 +74,29 @@ application.controllerProvider.register("programs-attend", ($scope, $timeout, $h
 		$scope.updateProgram();
 	}
 	
+	$scope.updateAttendanceCount = () => {
+		
+		$scope.counts = {
+			total: $scope.students.length,
+			records : $scope.values($scope.attendance).filter(attend => attend != null && attend.status != null).length,
+			attend : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "حاضر").length,
+			absent : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "غائب").length,
+			late : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "متأخر").length,
+			notify : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "معتذر").length,
+			time : moment().format("DD-MM-YYYY HH:mm:ss")
+		};
+		
+		$scope.counts.percent = Math.ceil($scope.counts.records/$scope.counts.total * 100.0);
+	}
+	
 	$scope.updateStudentAttend = student => {
 		
 		student.cpr = student.cpr.toString();
 		
 		$scope.setSilent("programs-night-attend/" + $scope.program.id + "/" + $scope.date + "/" + student.cpr, $scope.attendance[student.cpr]);
 		$scope.setSilent("programs-attend/" + $scope.program.id + "/" + student.cpr + "/" + $scope.date, $scope.attendance[student.cpr]);
+		
+		$scope.updateAttendanceCount();
 		
 		if($scope.attendance[student.cpr].status == "غائب"
 			|| $scope.attendance[student.cpr].status == "متأخر"){
@@ -110,6 +131,8 @@ application.controllerProvider.register("programs-attend", ($scope, $timeout, $h
 		if($scope.attendance[student.cpr] != null && status == $scope.attendance[student.cpr].status){
 			
 			$scope.attendance[student.cpr] = null;
+			
+			$scope.updateAttendanceCount();
 			
 			$scope.removeSilent("programs-night-attend/" + $scope.program.id + "/" + $scope.date + "/" + student.cpr);
 			$scope.removeSilent("programs-attend/" + $scope.program.id + "/" + student.cpr + "/" + $scope.date);

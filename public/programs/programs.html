@@ -321,7 +321,7 @@
 							<button class="btn btn-danger" ng-click="deleteComment($index)" ng-if="$index != 0 && !submitted" title="حذف الملاحظة">
 								<i class="bi bi-x-lg"></i>
 							</button>
-							<input id="comments{{$index}}" name="comments" ng-model="comment.content" type="text" class="form-control is-valid" maxlength="100" placeholder="الملاحظة" autocomplete="off" ng-disabled="submitted">
+							<input id="comments{{$index}}" name="comments" ng-model="comment.content" type="text" class="form-control is-valid" maxlength="300" placeholder="الملاحظة" autocomplete="off" ng-disabled="submitted">
 							<span class="input-group-text">{{$index + 1}}</span>
 						</div>
 					</div>

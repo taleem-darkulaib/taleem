@@ -15,6 +15,7 @@ application.controllerProvider.register("groups-attend", ($scope, $timeout, $htt
 	$scope.group = localStorage.getItem("group") != null ? Number(localStorage.getItem("group")) : null;
 	$scope.partition = localStorage.getItem("partition") != null ? Number(localStorage.getItem("partition")) : null;
 	$scope.night = ((moment($scope.date, "DD-MM-YYYY").day() + 1) % 7) + 1;
+	$scope.counts = new Object();
 	
 	for(let i=-90; i<=30; i++){
 		$scope.dates.push(moment().add(i, "days").format("DD-MM-YYYY"));
@@ -127,6 +128,8 @@ application.controllerProvider.register("groups-attend", ($scope, $timeout, $htt
 			$scope.getBySemester("groups-attend/" + $scope.group + "/" + $scope.partition + "/" + $scope.date, attendance => {
 				
 				$scope.attendance = attendance;
+				
+				$scope.updateAttendanceCount();
 			});
 		}
 	}
@@ -175,6 +178,21 @@ application.controllerProvider.register("groups-attend", ($scope, $timeout, $htt
 		}
 	}
 	
+	$scope.updateAttendanceCount = () => {
+		
+		$scope.counts = {
+			total: $scope.partitionStudents.length,
+			records : $scope.values($scope.attendance).filter(attend => attend != null && attend.status != null).length,
+			attend : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "حاضر").length,
+			absent : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "غائب").length,
+			late : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "متأخر").length,
+			notify : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "معتذر").length,
+			time : moment().format("DD-MM-YYYY HH:mm:ss")
+		};
+		
+		$scope.counts.percent = Math.ceil($scope.counts.records/$scope.counts.total * 100.0);
+	}
+	
 	$scope.clickStudentAttend = (student, status) => {
 		
 		student.cpr = student.cpr.toString();
@@ -182,6 +200,8 @@ application.controllerProvider.register("groups-attend", ($scope, $timeout, $htt
 		if($scope.attendance[student.cpr] != null && status == $scope.attendance[student.cpr].status){
 			
 			$scope.attendance[student.cpr] = null;
+			
+			$scope.updateAttendanceCount();
 			
 			$scope.removeSilentBySemester("groups-attend/" + $scope.group + "/" + $scope.partition + "/" + $scope.date + "/" + student.cpr);
 			$scope.removeSilentBySemester("night-attend/" + student.level + "/" + $scope.course + "/" + $scope.date + "/" + student.cpr);
@@ -195,7 +215,9 @@ application.controllerProvider.register("groups-attend", ($scope, $timeout, $htt
 		
 		if($scope.attendance[student.cpr] != null){
 			
-			$scope.setSilentBySemester("group-attendance-monitor/" + $scope.date + "/" + $scope.group + "/" + $scope.partition + "/students", moment().format("DD-MM-YYYY HH:mm:ss"));
+			$scope.updateAttendanceCount();
+			
+			$scope.setSilentBySemester("group-attendance-monitor/" + $scope.date + "/" + $scope.group + "/" + $scope.partition + "/students", $scope.counts);
 			$scope.setSilentBySemester("groups-attend/" + $scope.group + "/" + $scope.partition + "/" + $scope.date + "/" + student.cpr, $scope.attendance[student.cpr]);
 			$scope.setSilentBySemester("night-attend/" + student.level + "/" + $scope.course + "/" + $scope.date + "/" + student.cpr, $scope.attendance[student.cpr]);
 			$scope.setSilentBySemester("students-attend/" + student.cpr + "/" + $scope.course + "/" + $scope.date, $scope.attendance[student.cpr]);

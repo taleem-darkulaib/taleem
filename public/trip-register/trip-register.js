@@ -113,6 +113,10 @@ application.controllerProvider.register("trip-register", ($scope, $timeout) => {
 			console.log($scope.student.payment);
 			
 			$scope.$digest();
+			
+			$scope.upload("trips/" + $scope.trip.id + "/" + $scope.student.cpr + ".jpg", "payment", url => {
+				$scope.student.payment = url;
+			});
 		});
 	}
 	

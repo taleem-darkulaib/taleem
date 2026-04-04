@@ -80,6 +80,64 @@
 				
 				<div class="card">
 					<div class="card-header text-bg-primary">
+						<i class="bi bi-list ms-1"></i>
+						رفع ملف الرسائل
+					</div>
+					<div class="card-body">
+						
+						<div class="mb-3">
+							<label for="mobiles" class="form-label">
+								<i class="bi bi-file ms-1"></i>
+								ملف الرسائل
+							</label>
+							<input id="file" type="file" class="form-control" placeholder="ملف الرسائل" ng-disabled="submitted"></textarea>
+						</div>
+						
+						<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>
+											<i class="bi bi-hash ms-1"></i>
+											#
+										</th>
+										<th>
+											<i class="bi bi-telephone ms-1"></i>
+											رقم الهاتف
+										</th>
+										<th>
+											<i class="bi bi-chat-dots ms-1"></i>
+											الرسالة
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="message in uploadedMessages track by $index">
+										<td>
+											{{$index + 1}}
+										</td>
+										<td>
+											{{message.mobile}}
+										</td>
+										<td>
+											{{message.content}}
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						
+					</div>
+					<div class="card-footer text-center" ng-hide="submitted">
+						<button class="btn btn-primary" ng-click="saveMessages()" ng-disabled="!uploaded">
+							<i class="bi bi-floppy ms-1"></i>
+							حفظ
+						</button>
+					</div>
+				</div>
+				
+				<div class="card">
+					<div class="card-header text-bg-primary">
 						<i class="bi bi-whatsapp ms-1"></i>
 						الرسائل
 					</div>

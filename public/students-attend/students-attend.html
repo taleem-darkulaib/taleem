@@ -113,10 +113,79 @@
 				<input id="attend_teacher" name="teacherAttend" ng-model="teacherAttend.status" type="radio" value="حاضر" class="btn-check" ng-change="updateTeacherAttend()" ng-click="clickTeacherAttend('حاضر')">
 				<label for="attend_teacher" class="btn attend-btn">
 					حاضر
-					<i class="bi bi-check-circle me-1"></i>
+					<i class="bi bi-person-check-fill me-1"></i>
 				</label>
 			</div>
 			<input class="form-control" ng-model="teacherAttend.comment" type="text" placeholder="ملاحظات على حضور المعلم..." ng-blur="updateTeacherAttend()">
+		</div>
+	</div>
+	
+	<div class="row mb-3 g-3">
+		<div class="col-12 col-sm-6 col-lg-4">
+			<div class="card text-bg-primary shadow-sm text-center">
+				<div class="card-body p-1">
+					<i class="bi bi-people-fill fs-5 mb-2"></i>
+					<div class="card-title">عدد الطلاب الكلي</div>
+					<div class="fw-bold">
+						{{counts.total}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-sm-6 col-lg-4">
+			<div class="card text-bg-success shadow-sm text-center">
+				<div class="card-body p-1">
+					<i class="bi bi-person-check-fill fs-5 mb-2"></i>
+					<div class="card-title">عدد الحضور</div>
+					<div class="fw-bold">
+						{{counts.attend}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-sm-6 col-lg-4">
+			<div class="card text-bg-warning shadow-sm text-center">
+				<div class="card-body p-1">
+					<i class="bi bi-stopwatch-fill fs-5 mb-2"></i>
+					<div class="card-title">عدد التأخير</div>
+					<div class="fw-bold">
+						{{counts.late}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-sm-6 col-lg-4">
+			<div class="card text-bg-danger shadow-sm text-center">
+				<div class="card-body p-1">
+					<i class="bi bi-x-circle-fill fs-5 mb-2"></i>
+					<div class="card-title">عدد الغياب</div>
+					<div class="fw-bold">
+						{{counts.absent}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-sm-6 col-lg-4">
+			<div class="card text-bg-info shadow-sm text-center">
+				<div class="card-body p-1">
+					<i class="bi bi-clock-fill fs-5 mb-2"></i>
+					<div class="card-title">عدد الأعذار</div>
+					<div class="fw-bold">
+						{{counts.notify}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-sm-6 col-lg-4">
+			<div class="card text-bg-dark shadow-sm text-center">
+				<div class="card-body p-1">
+					<i class="bi bi-bar-chart-fill fs-5 mb-2"></i>
+					<div class="card-title">مجموع الرصد</div>
+					<div class="fw-bold">
+						{{counts.records}}
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	
@@ -148,7 +217,7 @@
 						'status-badge-absent': attendance[student.cpr].status == 'غائب',
 						'status-badge-present': attendance[student.cpr].status == 'حاضر'}">
 						<i class="bi ms-1" ng-class="{
-						'bi-check-circle-fill': attendance[student.cpr].status == 'حاضر',
+						'bi-person-check-fill': attendance[student.cpr].status == 'حاضر',
 						'bi-stopwatch-fill': attendance[student.cpr].status == 'متأخر',
 						'bi-clock-fill': attendance[student.cpr].status == 'معتذر',
 						'bi-x-circle-fill': attendance[student.cpr].status == 'غائب'}"></i>
@@ -163,21 +232,18 @@
 			<div class="btn-group" role="group">
 				<input id="notify{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="معتذر" class="btn-check" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'معتذر')">
 				<label for="notify{{student.cpr}}" class="btn attend-btn">
-					
 					معتذر
 					<i class="bi bi-clock me-1"></i>
 				</label>
 				
 				<input id="late{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="متأخر" class="btn-check" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'متأخر')">
 				<label for="late{{student.cpr}}" class="btn attend-btn">
-					
 					متأخر
 					<i class="bi bi-stopwatch me-1"></i>
 				</label>
 				
 				<input id="absent{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="غائب" class="btn-check" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'غائب')">
 				<label for="absent{{student.cpr}}" class="btn attend-btn">
-					
 					غائب
 					<i class="bi bi-x-circle me-1"></i>
 				</label>
@@ -185,7 +251,7 @@
 				<input id="attend{{student.cpr}}" name="status{{student.cpr}}" ng-model="attendance[student.cpr].status" type="radio" value="حاضر" class="btn-check" ng-change="updateStudentAttend(student)" ng-click="clickStudentAttend(student, 'حاضر')">
 				<label for="attend{{student.cpr}}" class="btn attend-btn">
 					حاضر
-					<i class="bi bi-check-circl me-1"></i>
+					<i class="bi bi-person-check-fill me-1"></i>
 				</label>
 			</div>
 			

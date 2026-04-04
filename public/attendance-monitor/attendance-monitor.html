@@ -58,14 +58,20 @@
 						{{level.name}}
 					</td>
 					<td class="text-center">
-						<div ng-if="attendance[level.id].students != null">
+						<div ng-if="attendance[level.id].students != null && attendance[level.id].students.records == attendance[level.id].students.total">
 							<div class="status-badge status-badge-completed">
 								<i class="bi bi-people-fill"></i>
-								{{attendance[level.id].students}}
+								{{attendance[level.id].students.time}} ({{attendance[level.id].students.records}}/{{attendance[level.id].students.total}} = {{attendance[level.id].students.percent}}%)
+							</div>
+						</div>
+						<div ng-if="attendance[level.id].students != null && attendance[level.id].students.records < attendance[level.id].students.total">
+							<div class="status-badge status-badge-warning">
+								<i class="bi bi-people-fill"></i>
+								{{attendance[level.id].students.time}} ({{attendance[level.id].students.records}}/{{attendance[level.id].students.total}} = {{attendance[level.id].students.percent}}%)
 							</div>
 						</div>
 						<div ng-if="attendance[level.id].students == null">
-							<div class="status-badge status-badge-warning">
+							<div class="status-badge status-badge-error">
 								<i class="bi bi-exclamation-triangle-fill"></i>
 								غير مسجل
 							</div>
@@ -79,7 +85,7 @@
 							</div>
 						</div>
 						<div ng-if="attendance[level.id].teacher == null">
-							<div class="status-badge status-badge-warning">
+							<div class="status-badge status-badge-error">
 								<i class="bi bi-person-x-fill"></i>
 								غير مسجل
 							</div>
@@ -117,7 +123,7 @@
 							</div>
 						</div>
 						<div ng-if="attendance.supervisors == null">
-							<div class="status-badge status-badge-warning">
+							<div class="status-badge status-badge-error">
 								<i class="bi bi-shield-x"></i>
 								غير مسجل
 							</div>

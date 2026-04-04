@@ -223,11 +223,13 @@ application.controllerProvider.register("students", ($scope, $timeout, $sce) => 
 		$scope.get("semester-info/" + $scope.sourceSemester + "/students", archive => {
 
 			$scope.archive = archive;
+			
+			$scope.values(archive).forEach(student => delete student.payment);
 		});
 	}
 	
 	$scope.saveFromArchive = ()=> {
 		
-		$scope.saveBySemester("students", $scope.archive, "تم حفظ الطلبة بنجاح");
+		$scope.setBySemester("students", $scope.archive, "تم حفظ الطلبة بنجاح");
 	}
 });

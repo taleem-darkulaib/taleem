@@ -17,7 +17,7 @@ application.controllerProvider.register("evaluations", ($scope, $timeout) => {
 	
 	$scope.saveEvaluations = ()=> {
 		
-		$scope.saveResetBySemester("evaluations", $scope.evaluations);
+		$scope.setResetBySemester("evaluations", $scope.evaluations, "تم حفظ التقييمات بنجاح");
 	}
 	
 	$scope.marks = new Array();

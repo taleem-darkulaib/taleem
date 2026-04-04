@@ -9,6 +9,7 @@ application.controllerProvider.register("trips-attend", ($scope, $timeout) => {
 	$scope.tripStudents = new Array();
 	$scope.attendance = new Object();
 	$scope.payments = new Object();
+	$scope.counts = new Object();
 	
 	$scope.getArrayBySemester("students", students => {
 
@@ -68,6 +69,8 @@ application.controllerProvider.register("trips-attend", ($scope, $timeout) => {
 			$scope.getBySemester("trip-attend/" + $scope.trip, attendance =>{
 
 				$scope.attendance = attendance;
+				
+				$scope.updateAttendanceCount();
 			});
 			
 			$scope.payments = new Object();
@@ -91,6 +94,21 @@ application.controllerProvider.register("trips-attend", ($scope, $timeout) => {
 		}
 	}
 	
+	$scope.updateAttendanceCount = () => {
+		
+		$scope.counts = {
+			total: $scope.tripStudents.length,
+			records : $scope.values($scope.attendance).filter(attend => attend != null && attend.status != null).length,
+			attend : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "حاضر").length,
+			absent : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "غائب").length,
+			late : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "متأخر").length,
+			notify : $scope.values($scope.attendance).filter(attend => attend != null && attend.status == "معتذر").length,
+			time : moment().format("DD-MM-YYYY HH:mm:ss")
+		};
+		
+		$scope.counts.percent = Math.ceil($scope.counts.records/$scope.counts.total * 100.0);
+	}
+	
 	$scope.clickStudentAttend = (student, status) => {
 		
 		student.cpr = student.cpr.toString();
@@ -99,6 +117,8 @@ application.controllerProvider.register("trips-attend", ($scope, $timeout) => {
 			&& status == $scope.attendance[student.cpr].status){
 
 			$scope.attendance[student.cpr] = null;
+			
+			$scope.updateAttendanceCount();
 			
 			$scope.removeSilentBySemester("trip-attend/" + $scope.trip + "/" + student.cpr, $scope.attendance[student.cpr]);
 		}
@@ -110,6 +130,8 @@ application.controllerProvider.register("trips-attend", ($scope, $timeout) => {
 		
 		if($scope.attendance[student.cpr] != null){
 			
+			$scope.updateAttendanceCount();
+
 			$scope.attendance[student.cpr].id = moment().valueOf();
 			$scope.attendance[student.cpr].time = moment().format("DD-MM-YYYY HH:mm:ss");
 			$scope.attendance[student.cpr].cpr = student.cpr;

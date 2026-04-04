@@ -17,7 +17,7 @@ application.controllerProvider.register("groups", ($scope, $timeout) => {
 	
 	$scope.saveGroups = ()=> {
 		
-		$scope.saveResetBySemester("groups", $scope.groups);
+		$scope.setResetBySemester("groups", $scope.groups, "تم حفظ التقسيمات بنجاح");
 	}
 	
 	$scope.rooms = new Array();
