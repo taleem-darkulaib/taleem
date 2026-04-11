@@ -334,6 +334,7 @@ application.controllerProvider.register("student-info", ($scope, $timeout) => {
 		$scope.student.attendance[$scope.course][$scope.date].comment = $scope.comment;
 		
 		$scope.student.sortedAttendance = $scope.getSortedAttendance($scope.student.attendance);
+		$scope.student.coursesAttendance = $scope.calculateStudentAttendance(attendance);
 		
 		$scope.saveBySemester("night-attend/" + $scope.student.level + "/" + $scope.course + "/" + $scope.date + "/" + $scope.student.cpr, $scope.student.attendance[$scope.course][$scope.date], "تم حفظ الملاحظة بنجاح");
 		$scope.saveBySemester("students-attend/" + $scope.student.cpr + "/" + $scope.course + "/" + $scope.date, $scope.student.attendance[$scope.course][$scope.date], "تم حفظ الملاحظة بنجاح");
