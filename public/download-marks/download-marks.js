@@ -85,7 +85,8 @@ application.controllerProvider.register("download-marks", ($scope, $timeout, $sc
 		});
 		
 		header.push("المجموع");
-			
+		header.push("الملاحظة");
+		
 		rows.push(header);
 		
 		let attendancePercentage = new Object();
@@ -144,7 +145,9 @@ application.controllerProvider.register("download-marks", ($scope, $timeout, $sc
 			});
 
 			row.push({formula:"=SUM(D" + (index + 2) + ":" + String.fromCharCode(67 + $scope.marksDistribution.length) + (index + 2) + ")"});
-
+			
+			row.push(marks[student.cpr].comment);
+			
 			rows.push(row);
 		});
 		

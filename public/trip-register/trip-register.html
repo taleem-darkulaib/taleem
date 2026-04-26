@@ -46,7 +46,7 @@
 							<div class="list-badge-primary ms-1" ng-repeat="level in trip.levels track by $index">{{levels[level].name}}</div>
 						</td>
 					</tr>
-					<tr>
+					<tr ng-show="trip.type != null">
 						<th>
 							<i class="bi bi-signpost-2"></i>
 							نوع الرحلة
@@ -82,7 +82,7 @@
 							{{trip.date}}
 						</td>
 					</tr>
-					<tr>
+					<tr ng-show="trip.startTime != null">
 						<th>
 							<i class="bi bi-clock"></i>
 							من الساعة
@@ -91,7 +91,7 @@
 							{{trip.startTime}}
 						</td>
 					</tr>
-					<tr>
+					<tr ng-show="trip.endTime != null">
 						<th>
 							<i class="bi bi-clock-history"></i>
 							إلى الساعة
@@ -100,7 +100,7 @@
 							{{trip.endTime}}
 						</td>
 					</tr>
-					<tr>
+					<tr ng-show="trip.feesAmount != 0">
 						<th>
 							<i class="bi bi-cash-coin"></i>
 							رسوم الرحلة
@@ -109,7 +109,7 @@
 							{{trip.feesAmount}}
 						</td>
 					</tr>
-					<tr>
+					<tr ng-show="trip.covered != null">
 						<th>
 							<i class="bi bi-check-circle"></i>
 							الرحلة تشمل
@@ -118,7 +118,7 @@
 							{{trip.covered}}
 						</td>
 					</tr>
-					<tr>
+					<tr ng-show="trip.comment != null">
 						<th>
 							<i class="bi bi-journal-text"></i>
 							الملاحظة
@@ -127,7 +127,7 @@
 							{{trip.comment}}
 						</td>
 					</tr>
-					<tr>
+					<tr ng-show="trip.contact != null">
 						<th>
 							<i class="bi bi-telephone"></i>
 							رقم التواصل
@@ -136,7 +136,7 @@
 							{{trip.contact}}
 						</td>
 					</tr>
-					<tr>
+					<tr ng-show="trip.responsible != null">
 						<th>
 							<i class="bi bi-person-workspace"></i>
 							مسؤول الرحلة
@@ -145,7 +145,7 @@
 							{{trip.responsible}}
 						</td>
 					</tr>
-					<tr>
+					<tr ng-show="trip.benefit != null">
 						<th>
 							<i class="bi bi-credit-card"></i>
 							رقم دفع بنفت

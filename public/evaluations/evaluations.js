@@ -25,7 +25,7 @@ application.controllerProvider.register("evaluations", ($scope, $timeout) => {
 	$scope.evaluation = new Object();
 	$scope.noEvaluation = false;
 	
-	for(let i=0; i<=10; i+=0.5){
+	for(let i=0; i<=20; i+=0.5){
 		$scope.marks.push(i);
 	}
 	
